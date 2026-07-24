@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { useHospital } from '../../context/HospitalContext';
 import {
   Building,
-  MessageSquare,
   Database,
   ShieldCheck,
   Check,
   X as XIcon,
   Briefcase,
   Plus,
+  ToggleLeft,
+  ToggleRight,
+  UserCheck,
 } from 'lucide-react';
 
 interface RolePermission {
@@ -31,7 +33,7 @@ interface RolePermission {
 export const SettingsModule: React.FC = () => {
   const { activeTenant, addToast } = useHospital();
 
-  const [activeTab, setActiveTab] = useState<'rbac' | 'departments' | 'tariffs' | 'saas' | 'templates'>('rbac');
+  const [activeTab, setActiveTab] = useState<'rbac' | 'departments' | 'workflows' | 'tariffs' | 'saas'>('rbac');
 
   // Role Permissions State Matrix
   const [roles, setRoles] = useState<RolePermission[]>([
@@ -133,12 +135,33 @@ export const SettingsModule: React.FC = () => {
     },
   ]);
 
-  const [smsTemplate, setSmsTemplate] = useState(
-    'Dear {PATIENT_NAME}, your token #{TOKEN_NUMBER} with Dr. {DOCTOR_NAME} at {HOSPITAL_NAME} is confirmed for {TIME}.'
-  );
-  const [whatsappTemplate, setWhatsappTemplate] = useState(
-    '🏥 *{HOSPITAL_NAME} Alert*: Hello {PATIENT_NAME}, your appointment is scheduled today. Follow-up validity active until {OP_VALID_DATE}.'
-  );
+  // Dynamic Departments State
+  const [departmentsList, setDepartmentsList] = useState([
+    { name: 'Obstetrics & Gynecology (Women Health)', code: 'OBGY', opdRoom: 'OPD-102', head: 'Dr. Madhu Latha Marreddy', beds: 40 },
+    { name: 'Cardiology & Cardiac Surgery', code: 'CARD', opdRoom: 'OPD-101', head: 'Dr. Vikram Reddy', beds: 45 },
+    { name: 'Orthopedics & Joint Replacement', code: 'ORTH', opdRoom: 'OPD-202', head: 'Dr. Rajeshwar Rao', beds: 50 },
+    { name: 'Neurology & Neurosurgery', code: 'NEUR', opdRoom: 'OPD-104', head: 'Dr. Ananya Swaminathan', beds: 30 },
+    { name: 'Emergency & Trauma Critical Care', code: 'EMER', opdRoom: 'EMR-BAY-01', head: 'Dr. Sameer Khan', beds: 25 },
+  ]);
+
+  // System Workflow Feature Toggles
+  const [workflows, setWorkflows] = useState([
+    { id: 'opd-work', name: 'OPD Consultation & e-Prescription Module', description: 'Enable vital telemetry and digital prescription builder', enabled: true },
+    { id: 'ipd-work', name: 'IPD Admissions & Bed Grid Engine', description: 'Enable floor-wise bed allocation and ward transfer tracking', enabled: true },
+    { id: 'pharmacy-work', name: 'Pharmacy & Stock Telemetry Module', description: 'Enable e-prescription queue dispensing and batch tracking', enabled: true },
+    { id: 'lis-work', name: 'Laboratory & Radiology LIS Desk', description: 'Enable sample processing and automated PDF report verification', enabled: true },
+    { id: 'ot-work', name: 'Operation Theatre & Surgical Suite Roster', description: 'Enable OT scheduling, pre-op checklists, and PACU recovery log', enabled: true },
+    { id: 'tpa-work', name: 'TPA Insurance Cashless Pre-Auth Engine', description: 'Enable Dr. YSR Aarogyasri & private TPA claim processing', enabled: true },
+    { id: 'emergency-work', name: '24/7 Emergency Triage & MLC Intimation Bay', description: 'Enable Red/Yellow/Green triage and police MLC registration', enabled: true },
+  ]);
+
+  // Modal States for Add Department
+  const [isAddDeptModalOpen, setIsAddDeptModalOpen] = useState(false);
+  const [newDeptName, setNewDeptName] = useState('');
+  const [newDeptCode, setNewDeptCode] = useState('');
+  const [newDeptRoom, setNewDeptRoom] = useState('');
+  const [newDeptHead, setNewDeptHead] = useState('');
+  const [newDeptBeds, setNewDeptBeds] = useState('20');
 
   const togglePermission = (roleCode: string, key: keyof RolePermission['permissions']) => {
     setRoles((prev) =>
@@ -158,24 +181,49 @@ export const SettingsModule: React.FC = () => {
     addToast('RBAC Permission Updated', `Security policy updated for ${roleCode}`, 'info');
   };
 
-  const handleSaveTemplates = (e: React.FormEvent) => {
+  const toggleWorkflow = (id: string) => {
+    setWorkflows((prev) =>
+      prev.map((w) => (w.id === id ? { ...w, enabled: !w.enabled } : w))
+    );
+    addToast('Workflow Configured', 'System feature module status updated live', 'success');
+  };
+
+  const handleAddDepartment = (e: React.FormEvent) => {
     e.preventDefault();
-    addToast('Templates Saved', 'SMS & WhatsApp notification templates updated successfully.', 'success');
+    if (!newDeptName || !newDeptCode) return;
+
+    setDepartmentsList((prev) => [
+      ...prev,
+      {
+        name: newDeptName,
+        code: newDeptCode.toUpperCase(),
+        opdRoom: newDeptRoom || 'OPD-110',
+        head: newDeptHead || 'Dr. Specialist',
+        beds: Number(newDeptBeds) || 20,
+      },
+    ]);
+
+    addToast('Department Registered', `Created new clinical department: ${newDeptName} (${newDeptCode.toUpperCase()})`, 'success');
+    setNewDeptName('');
+    setNewDeptCode('');
+    setNewDeptRoom('');
+    setNewDeptHead('');
+    setIsAddDeptModalOpen(false);
   };
 
   return (
-    <div className="space-y-6 pb-12">
-      {/* Title */}
+    <div className="space-y-6 pb-12 text-slate-100 font-sans">
+      {/* Title Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800/80">
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-              System Governance & Admin Console
+              System Governance & Admin Department
             </span>
           </div>
-          <h2 className="text-2xl font-extrabold text-white mt-1">Administration, User Roles & Master Data</h2>
+          <h2 className="text-2xl font-extrabold text-white mt-1">Administration & Hospital Control Center</h2>
           <p className="text-xs text-slate-400">
-            Role-Based Access Control (RBAC), multi-tenant branch settings, and master tariff matrices.
+            Configure departments, user RBAC permissions, active system workflows, and multi-tenant campuses.
           </p>
         </div>
 
@@ -198,6 +246,14 @@ export const SettingsModule: React.FC = () => {
             Departments Master
           </button>
           <button
+            onClick={() => setActiveTab('workflows')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              activeTab === 'workflows' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            System Workflows
+          </button>
+          <button
             onClick={() => setActiveTab('tariffs')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
               activeTab === 'tariffs' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
@@ -211,15 +267,7 @@ export const SettingsModule: React.FC = () => {
               activeTab === 'saas' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            Multi-Tenant SaaS
-          </button>
-          <button
-            onClick={() => setActiveTab('templates')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-              activeTab === 'templates' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            SMS / WhatsApp Alerts
+            Multi-Tenant Campuses
           </button>
         </div>
       </div>
@@ -301,53 +349,75 @@ export const SettingsModule: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Briefcase className="w-5 h-5 text-cyan-400" />
-              <h3 className="text-sm font-bold text-slate-100">Hospital Departments Master Register</h3>
+              <div>
+                <h3 className="text-sm font-bold text-slate-100">Hospital Departments Master Register ({departmentsList.length})</h3>
+                <p className="text-xs text-slate-400">Add or manage clinical divisions across the hospital</p>
+              </div>
             </div>
             <button
-              onClick={() => addToast('Department Added', 'New specialty division registered.', 'success')}
-              className="px-3 py-1.5 rounded-xl bg-cyan-600 text-white text-xs font-bold"
+              onClick={() => setIsAddDeptModalOpen(true)}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow-md"
             >
-              + Add Department
+              <Plus className="w-4 h-4" /> Add New Department
             </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="flex justify-between font-bold text-slate-100">
-                <span>Cardiology & Cardiac Surgery (CARD)</span>
-                <span className="text-cyan-400 font-mono">OPD Room: 101</span>
+            {departmentsList.map((dept) => (
+              <div key={dept.code} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <div className="flex justify-between items-start font-bold text-slate-100">
+                  <span>{dept.name}</span>
+                  <span className="text-cyan-400 font-mono font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                    {dept.code}
+                  </span>
+                </div>
+                <div className="flex justify-between text-slate-400 text-[11px]">
+                  <span>Head: {dept.head}</span>
+                  <span>Room: {dept.opdRoom} • Beds: {dept.beds}</span>
+                </div>
               </div>
-              <div className="text-slate-400">Head: Dr. Vikram Reddy • Beds: 45</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="flex justify-between font-bold text-slate-100">
-                <span>Neurology & Neurosurgery (NEUR)</span>
-                <span className="text-cyan-400 font-mono">OPD Room: 104</span>
-              </div>
-              <div className="text-slate-400">Head: Dr. Ananya Swaminathan • Beds: 30</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="flex justify-between font-bold text-slate-100">
-                <span>Orthopedics & Joint Replacement (ORTH)</span>
-                <span className="text-cyan-400 font-mono">OPD Room: 202</span>
-              </div>
-              <div className="text-slate-400">Head: Dr. Rajeshwar Rao • Beds: 50</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="flex justify-between font-bold text-slate-100">
-                <span>Emergency & Trauma Critical Care (EMER)</span>
-                <span className="text-rose-400 font-mono">Bay 1-6</span>
-              </div>
-              <div className="text-slate-400">Head: Dr. Sameer Khan • Resuscitation Beds: 25</div>
-            </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* Tab 3: Tariffs & Rules */}
+      {/* Tab 3: System Workflows & Feature Toggles */}
+      {activeTab === 'workflows' && (
+        <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-4">
+          <div className="flex items-center gap-2">
+            <UserCheck className="w-5 h-5 text-purple-400" />
+            <div>
+              <h3 className="text-sm font-bold text-slate-100">System Feature Modules & Workflow Toggles</h3>
+              <p className="text-xs text-slate-400">Enable or disable operational modules across the platform</p>
+            </div>
+          </div>
+
+          <div className="space-y-3 text-xs">
+            {workflows.map((wf) => (
+              <div key={wf.id} className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-slate-100">{wf.name}</div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">{wf.description}</div>
+                </div>
+
+                <button
+                  onClick={() => toggleWorkflow(wf.id)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border font-bold transition ${
+                    wf.enabled
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                      : 'bg-slate-900 text-slate-500 border-slate-800'
+                  }`}
+                >
+                  {wf.enabled ? <ToggleRight className="w-5 h-5 text-emerald-400" /> : <ToggleLeft className="w-5 h-5 text-slate-600" />}
+                  <span>{wf.enabled ? 'Active' : 'Disabled'}</span>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Tab 4: Tariffs & Rules */}
       {activeTab === 'tariffs' && (
         <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-4 max-w-3xl">
           <div className="flex items-center gap-2">
@@ -379,19 +449,11 @@ export const SettingsModule: React.FC = () => {
               </div>
               <span className="font-bold text-emerald-400 font-mono text-sm">15 Days Active</span>
             </div>
-
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-              <div>
-                <div className="font-bold text-slate-200">ICU Suite Daily Tariff</div>
-                <div className="text-[10px] text-slate-400">Includes Cardiac & Neuro Monitoring Line</div>
-              </div>
-              <span className="font-bold text-slate-100 font-mono text-sm">₹7,500 / day</span>
-            </div>
           </div>
         </div>
       )}
 
-      {/* Tab 4: Multi-Tenant SaaS */}
+      {/* Tab 5: Multi-Tenant SaaS */}
       {activeTab === 'saas' && (
         <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-6 max-w-3xl">
           <div className="flex items-center gap-3">
@@ -403,7 +465,7 @@ export const SettingsModule: React.FC = () => {
           </div>
 
           <div className="space-y-3 pt-2">
-            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Registered Hospital Branches</h4>
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Registered Hospital Campuses</h4>
             <div className="space-y-2">
               {activeTenant.branches.map((b) => (
                 <div
@@ -426,45 +488,81 @@ export const SettingsModule: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 5: Templates */}
-      {activeTab === 'templates' && (
-        <form onSubmit={handleSaveTemplates} className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-4 max-w-3xl">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-sm font-bold text-slate-100">SMS & WhatsApp Notification Templates</h3>
-          </div>
+      {/* Add Department Modal */}
+      {isAddDeptModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <form onSubmit={handleAddDepartment} className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4 text-xs">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="font-bold text-white text-sm">Add New Hospital Department</h3>
+              <button type="button" onClick={() => setIsAddDeptModalOpen(false)} className="text-slate-400 hover:text-white">
+                <XIcon className="w-4 h-4" />
+              </button>
+            </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-              SMS Gateway Template
-            </label>
-            <textarea
-              rows={3}
-              value={smsTemplate}
-              onChange={(e) => setSmsTemplate(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 font-mono"
-            />
-          </div>
+            <div>
+              <label className="block text-slate-400 mb-1">Department Name *</label>
+              <input
+                type="text"
+                placeholder="e.g. Pulmonology & Respiratory Medicine"
+                value={newDeptName}
+                onChange={(e) => setNewDeptName(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 font-bold"
+                required
+              />
+            </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-              WhatsApp API Gateway Template
-            </label>
-            <textarea
-              rows={3}
-              value={whatsappTemplate}
-              onChange={(e) => setWhatsappTemplate(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 font-mono"
-            />
-          </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-slate-400 mb-1">Department Code *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. PULM"
+                  value={newDeptCode}
+                  onChange={(e) => setNewDeptCode(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-cyan-400 font-mono font-bold"
+                  required
+                />
+              </div>
 
-          <button
-            type="submit"
-            className="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition shadow-md"
-          >
-            Save Gateway Templates
-          </button>
-        </form>
+              <div>
+                <label className="block text-slate-400 mb-1">OPD Room No</label>
+                <input
+                  type="text"
+                  placeholder="e.g. OPD-305"
+                  value={newDeptRoom}
+                  onChange={(e) => setNewDeptRoom(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-slate-400 mb-1">Head Consultant Doctor</label>
+              <input
+                type="text"
+                placeholder="e.g. Dr. Ramesh Kumar, MD"
+                value={newDeptHead}
+                onChange={(e) => setNewDeptHead(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-400 mb-1">Total Inpatient Beds</label>
+              <input
+                type="number"
+                placeholder="20"
+                value={newDeptBeds}
+                onChange={(e) => setNewDeptBeds(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+              />
+            </div>
+
+            <button type="submit" className="w-full py-2.5 rounded-xl bg-cyan-600 text-white font-bold">
+              Register Department
+            </button>
+          </form>
+        </div>
       )}
     </div>
   );
