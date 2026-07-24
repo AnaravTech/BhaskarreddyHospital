@@ -35,7 +35,7 @@ interface NavItem {
   icon: React.ElementType;
   badge?: string | number;
   isHot?: boolean;
-  allowedRoles: UserRole[]; // Strict designation filter
+  allowedRoles: UserRole[]; // Strict designation boundary
 }
 
 export const Sidebar: React.FC = () => {
@@ -58,29 +58,29 @@ export const Sidebar: React.FC = () => {
   const allNavItems: NavItem[] = [
     { id: 'settings', label: 'Administration Console', icon: Settings, allowedRoles: ['admin'] },
     { id: 'dashboard', label: 'CEO Executive Dashboard', icon: LayoutDashboard, allowedRoles: ['ceo'] },
-    { id: 'reception', label: 'Reception & Queue Desk', icon: UserPlus, badge: 'Token', allowedRoles: ['receptionist'] },
-    { id: 'patients', label: 'Patient Directory', icon: Users, allowedRoles: ['admin', 'ceo', 'doctor', 'receptionist', 'billing', 'insurance', 'emergency'] },
-    { id: 'appointments', label: 'Appointments Matrix', icon: CalendarCheck, badge: '4 Today', allowedRoles: ['receptionist', 'doctor'] },
+    { id: 'reception', label: 'Reception Desk & Tokens', icon: UserPlus, badge: 'Token', allowedRoles: ['receptionist'] },
+    { id: 'appointments', label: 'Appointments Booking', icon: CalendarCheck, badge: '4 Today', allowedRoles: ['receptionist'] },
     { id: 'opd', label: 'OPD Consultation Desk', icon: Stethoscope, allowedRoles: ['doctor'] },
     { id: 'ipd', label: 'IPD Admissions', icon: Building2, allowedRoles: ['doctor', 'billing'] },
-    { id: 'bed-management', label: 'Ward & Bed Grid', icon: BedDouble, badge: `${occupiedBeds}/${beds.length}`, allowedRoles: ['admin', 'ceo', 'doctor', 'emergency'] },
-    { id: 'patient-movement', label: 'Patient Movement', icon: GitCommit, allowedRoles: ['doctor', 'receptionist', 'emergency'] },
-    { id: 'pharmacy', label: 'Pharmacy & e-Rx', icon: Pill, badge: 'Active', allowedRoles: ['admin', 'doctor', 'billing'] },
-    { id: 'diagnostics', label: 'Laboratory & LIS Desk', icon: FlaskConical, allowedRoles: ['doctor', 'emergency'] },
     { id: 'operation-theatre', label: 'Operation Theatre', icon: Scissors, badge: '3 OT', allowedRoles: ['doctor', 'emergency'] },
+    { id: 'diagnostics', label: 'Laboratory & LIS Desk', icon: FlaskConical, allowedRoles: ['doctor', 'emergency'] },
+    { id: 'pharmacy', label: 'Pharmacy & e-Rx', icon: Pill, badge: 'Active', allowedRoles: ['doctor', 'billing', 'admin'] },
     { id: 'discharge-summary', label: 'Discharge Summary', icon: FileCheck, allowedRoles: ['doctor'] },
+    { id: 'consent-forms', label: 'Digital Consent Forms', icon: FileCheck2, allowedRoles: ['doctor', 'insurance', 'emergency'] },
+    { id: 'bed-management', label: 'Ward & Bed Grid', icon: BedDouble, badge: `${occupiedBeds}/${beds.length}`, allowedRoles: ['admin', 'ceo', 'doctor', 'emergency'] },
+    { id: 'patient-movement', label: 'Patient Movement', icon: GitCommit, allowedRoles: ['receptionist', 'emergency'] },
     { id: 'doctors', label: 'Doctors & Schedule', icon: UserCheck, allowedRoles: ['admin', 'ceo', 'receptionist'] },
     { id: 'departments', label: 'Clinical Departments', icon: Briefcase, allowedRoles: ['admin', 'ceo'] },
     { id: 'billing', label: 'Billing & Cashier', icon: Receipt, allowedRoles: ['billing'] },
     { id: 'insurance', label: 'Insurance / TPA Desk', icon: ShieldAlert, badge: pendingClaims > 0 ? pendingClaims : undefined, allowedRoles: ['insurance'] },
     { id: 'emergency', label: 'Emergency & Resuscitation', icon: Siren, badge: criticalEmergency > 0 ? criticalEmergency : undefined, isHot: true, allowedRoles: ['emergency'] },
-    { id: 'consent-forms', label: 'Consent Forms', icon: FileCheck2, allowedRoles: ['doctor', 'insurance', 'emergency'] },
     { id: 'housekeeping', label: 'Housekeeping & Cleanliness', icon: Sparkles, allowedRoles: ['admin', 'receptionist'] },
+    { id: 'patients', label: 'Patient Directory', icon: Users, allowedRoles: ['admin', 'ceo', 'doctor', 'receptionist', 'billing', 'insurance', 'emergency'] },
     { id: 'reports', label: 'Reports & Analytics', icon: BarChart3, allowedRoles: ['admin', 'ceo', 'billing'] },
   ];
 
   // Strict Designation-Based Filtering (No Overlap)
-  const currentRole = currentUser?.role || 'admin';
+  const currentRole = currentUser?.role || 'doctor';
   const filteredNavItems = allNavItems.filter((item) => item.allowedRoles.includes(currentRole));
 
   return (
