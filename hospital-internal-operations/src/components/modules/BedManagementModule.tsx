@@ -6,10 +6,18 @@ import {
   CheckCircle2,
   User,
   ArrowRightLeft,
+  Plus,
+  Edit3,
+  Trash2,
+  X as XIcon,
 } from 'lucide-react';
 
 export const BedManagementModule: React.FC = () => {
-  const { beds, updateBedStatus, addToast } = useHospital();
+  const { beds, updateBedStatus, addToast, currentUser } = useHospital();
+
+  const isAdminOrBedManager = currentUser?.role === 'admin' || currentUser?.role === 'bed-manager';
+
+  const [bedsList, setBedsList] = useState<Bed[]>(beds);
 
   const [selectedFloor, setSelectedFloor] = useState<string>('All');
   const [selectedType, setSelectedType] = useState<string>('All');
@@ -20,11 +28,20 @@ export const BedManagementModule: React.FC = () => {
   const [sourceBed, setSourceBed] = useState<Bed | null>(null);
   const [targetBedId, setTargetBedId] = useState('');
 
+  // Add / Edit Bed Modal State
+  const [isBedModalOpen, setIsBedModalOpen] = useState(false);
+  const [editingBedId, setEditingBedId] = useState<string | null>(null);
+  const [bedNo, setBedNo] = useState('');
+  const [wardName, setWardName] = useState('');
+  const [floor, setFloor] = useState('2nd Floor');
+  const [bedType, setBedType] = useState<'ICU' | 'Private' | 'Semi-Private' | 'General'>('ICU');
+  const [dailyRate, setDailyRate] = useState('7500');
+
   const floors = ['All', '1st Floor', '2nd Floor', '3rd Floor', '4th Floor'];
   const bedTypes = ['All', 'ICU', 'Private', 'General', 'Isolation'];
   const statuses = ['All', 'Available', 'Occupied', 'Cleaning', 'Reserved', 'Maintenance'];
 
-  const filteredBeds = beds.filter((b) => {
+  const filteredBeds = bedsList.filter((b) => {
     const matchFloor = selectedFloor === 'All' || b.floor === selectedFloor;
     const matchType = selectedType === 'All' || b.bedType === selectedType;
     const matchStatus = selectedStatus === 'All' || b.status === selectedStatus;
@@ -46,12 +63,76 @@ export const BedManagementModule: React.FC = () => {
     }
   };
 
+  const openAddBedModal = () => {
+    setEditingBedId(null);
+    setBedNo('');
+    setWardName('Deluxe Ward Suite');
+    setFloor('2nd Floor');
+    setBedType('Private');
+    setDailyRate('4500');
+    setIsBedModalOpen(true);
+  };
+
+  const openEditBedModal = (bed: Bed) => {
+    setEditingBedId(bed.id);
+    setBedNo(bed.bedNumber);
+    setWardName(bed.wardName);
+    setFloor(bed.floor);
+    setBedType(bed.bedType as any);
+    setDailyRate(bed.dailyRate.toString());
+    setIsBedModalOpen(true);
+  };
+
+  const handleSaveBed = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bedNo || !wardName) return;
+
+    if (editingBedId) {
+      setBedsList((prev) =>
+        prev.map((b) =>
+          b.id === editingBedId
+            ? {
+                ...b,
+                bedNumber: bedNo,
+                wardName,
+                floor,
+                bedType,
+                dailyRate: Number(dailyRate) || 3500,
+              }
+            : b
+        )
+      );
+      addToast('Bed Configuration Updated', `Modified bed details for ${bedNo}`, 'success');
+    } else {
+      const newBed: Bed = {
+        id: `bed-${Date.now()}`,
+        bedNumber: bedNo,
+        wardId: `ward-${Date.now()}`,
+        wardName,
+        floor,
+        bedType,
+        status: 'Available',
+        dailyRate: Number(dailyRate) || 3500,
+      };
+      setBedsList((prev) => [...prev, newBed]);
+      addToast('New Bed Commissioned', `Added new bed ${bedNo} (${wardName}) to floor grid`, 'success');
+    }
+
+    setIsBedModalOpen(false);
+  };
+
+  const handleDeleteBed = (id: string, bedNumber: string) => {
+    if (confirm(`Decommission and delete bed "${bedNumber}" from inventory?`)) {
+      setBedsList((prev) => prev.filter((b) => b.id !== id));
+      addToast('Bed Decommissioned', `Removed bed ${bedNumber} from hospital inventory`, 'warning');
+    }
+  };
+
   const handleExecuteTransfer = () => {
     if (!sourceBed || !targetBedId) return;
-    const targetBed = beds.find((b) => b.id === targetBedId);
+    const targetBed = bedsList.find((b) => b.id === targetBedId);
     if (!targetBed) return;
 
-    // Clear source bed & occupy target bed
     updateBedStatus(sourceBed.id, 'Available');
     updateBedStatus(
       targetBed.id,
@@ -72,7 +153,7 @@ export const BedManagementModule: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-12 font-sans">
       {/* Title Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800/80">
         <div>
@@ -83,26 +164,35 @@ export const BedManagementModule: React.FC = () => {
           </div>
           <h2 className="text-2xl font-extrabold text-white mt-1">Ward & Bed Occupancy Grid</h2>
           <p className="text-xs text-slate-400">
-            Real-time interactive floor map, status toggles, and instant bed transfer engine.
+            Real-time interactive floor map, status toggles, and admin bed commissioning CRUD engine.
           </p>
         </div>
 
-        {/* Live Counters */}
-        <div className="flex items-center gap-3">
+        {/* Action Button & Live Counters */}
+        <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+          {isAdminOrBedManager && (
+            <button
+              onClick={openAddBedModal}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md shadow-amber-600/30"
+            >
+              <Plus className="w-4 h-4" /> + Add New Bed / Ward
+            </button>
+          )}
+
           <div className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-            <span className="text-slate-400">Total Capacity: </span>
-            <span className="font-extrabold text-white">{beds.length} Beds</span>
+            <span className="text-slate-400">Total: </span>
+            <span className="font-extrabold text-white">{bedsList.length} Beds</span>
           </div>
           <div className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs">
             <span className="text-slate-400">Occupied: </span>
             <span className="font-extrabold text-rose-400">
-              {beds.filter((b) => b.status === 'Occupied').length}
+              {bedsList.filter((b) => b.status === 'Occupied').length}
             </span>
           </div>
           <div className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-            <span className="text-slate-400">Vacant Ready: </span>
+            <span className="text-slate-400">Vacant: </span>
             <span className="font-extrabold text-emerald-400">
-              {beds.filter((b) => b.status === 'Available').length}
+              {bedsList.filter((b) => b.status === 'Available').length}
             </span>
           </div>
         </div>
@@ -120,7 +210,7 @@ export const BedManagementModule: React.FC = () => {
                 onClick={() => setSelectedFloor(f)}
                 className={`px-3 py-1 rounded-lg text-xs font-semibold transition ${
                   selectedFloor === f
-                    ? 'bg-cyan-600 text-white'
+                    ? 'bg-cyan-600 text-white font-bold'
                     : 'bg-slate-950 text-slate-400 border border-slate-800 hover:text-slate-200'
                 }`}
               >
@@ -177,9 +267,30 @@ export const BedManagementModule: React.FC = () => {
                 </div>
               </div>
 
-              <span className={`px-2 py-0.5 text-[10px] font-bold rounded border ${getStatusBadge(bed.status)}`}>
-                {bed.status}
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className={`px-2 py-0.5 text-[10px] font-bold rounded border ${getStatusBadge(bed.status)}`}>
+                  {bed.status}
+                </span>
+
+                {isAdminOrBedManager && (
+                  <div className="flex items-center gap-1 opacity-80 hover:opacity-100">
+                    <button
+                      onClick={() => openEditBedModal(bed)}
+                      title="Modify Bed Configuration"
+                      className="p-1 rounded bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800"
+                    >
+                      <Edit3 className="w-3 h-3" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteBed(bed.id, bed.bedNumber)}
+                      title="Delete / Decommission Bed"
+                      className="p-1 rounded bg-slate-950 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 border border-slate-800"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Bed Patient Body */}
@@ -250,6 +361,91 @@ export const BedManagementModule: React.FC = () => {
         ))}
       </div>
 
+      {/* Add / Edit Bed Modal */}
+      {isBedModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <form onSubmit={handleSaveBed} className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4 text-xs">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="font-bold text-white text-sm">
+                {editingBedId ? 'Modify Bed Configuration' : 'Commission New Hospital Bed'}
+              </h3>
+              <button type="button" onClick={() => setIsBedModalOpen(false)} className="text-slate-400 hover:text-white">
+                <XIcon className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <label className="block text-slate-400 mb-1">Bed Code / Number *</label>
+              <input
+                type="text"
+                placeholder="e.g. ICU-103 or PVT-304"
+                value={bedNo}
+                onChange={(e) => setBedNo(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-cyan-400 font-mono font-bold"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-400 mb-1">Ward Name *</label>
+              <input
+                type="text"
+                placeholder="e.g. Cardiac ICU Suite"
+                value={wardName}
+                onChange={(e) => setWardName(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 font-bold"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-slate-400 mb-1">Floor Location</label>
+                <select
+                  value={floor}
+                  onChange={(e) => setFloor(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+                >
+                  <option value="1st Floor">1st Floor</option>
+                  <option value="2nd Floor">2nd Floor</option>
+                  <option value="3rd Floor">3rd Floor</option>
+                  <option value="4th Floor">4th Floor</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 mb-1">Ward Type</label>
+                <select
+                  value={bedType}
+                  onChange={(e) => setBedType(e.target.value as any)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+                >
+                  <option value="ICU">ICU</option>
+                  <option value="Private">Private</option>
+                  <option value="Semi-Private">Semi-Private</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-slate-400 mb-1">Daily Bed Rate (₹)</label>
+              <input
+                type="number"
+                placeholder="4500"
+                value={dailyRate}
+                onChange={(e) => setDailyRate(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 font-mono font-bold"
+              />
+            </div>
+
+            <button type="submit" className="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold">
+              {editingBedId ? 'Save Changes' : 'Commission Bed'}
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* Bed Transfer Modal */}
       {transferModalOpen && sourceBed && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
@@ -281,7 +477,7 @@ export const BedManagementModule: React.FC = () => {
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
                 >
                   <option value="">-- Choose Vacant Bed --</option>
-                  {beds
+                  {bedsList
                     .filter((b) => b.status === 'Available' && b.id !== sourceBed.id)
                     .map((b) => (
                       <option key={b.id} value={b.id}>
