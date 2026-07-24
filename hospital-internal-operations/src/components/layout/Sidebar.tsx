@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHospital } from '../../context/HospitalContext';
+import { useHospital, DEMO_PERSONAS } from '../../context/HospitalContext';
 import type { ModuleType } from '../../types';
 import {
   LayoutDashboard,
@@ -28,6 +28,7 @@ import {
   FlaskConical,
   Scissors,
   FileCheck,
+  UserCog,
 } from 'lucide-react';
 
 interface NavItem {
@@ -36,6 +37,7 @@ interface NavItem {
   icon: React.ElementType;
   badge?: string | number;
   isHot?: boolean;
+  allowedRoles?: string[]; // Allowed roles filter
 }
 
 export const Sidebar: React.FC = () => {
@@ -49,6 +51,7 @@ export const Sidebar: React.FC = () => {
     insuranceClaims,
     beds,
     currentUser,
+    login,
     logout,
   } = useHospital();
 
@@ -56,29 +59,37 @@ export const Sidebar: React.FC = () => {
   const pendingClaims = insuranceClaims.filter((c) => c.status === 'Pre-Auth Submitted').length;
   const criticalEmergency = emergencyCases.filter((e) => e.status !== 'Discharged').length;
 
-  const navItems: NavItem[] = [
-    { id: 'dashboard', label: 'CEO Dashboard', icon: LayoutDashboard },
-    { id: 'reception', label: 'Reception & Queue', icon: UserPlus, badge: 'Token' },
+  const allNavItems: NavItem[] = [
+    { id: 'dashboard', label: 'CEO Dashboard', icon: LayoutDashboard, allowedRoles: ['ceo', 'admin'] },
+    { id: 'reception', label: 'Reception & Queue', icon: UserPlus, badge: 'Token', allowedRoles: ['receptionist', 'ceo', 'admin'] },
     { id: 'patients', label: 'Patient Directory', icon: Users },
-    { id: 'appointments', label: 'Appointments', icon: CalendarCheck, badge: '4 Today' },
-    { id: 'opd', label: 'OPD & Follow-up', icon: Stethoscope },
-    { id: 'ipd', label: 'IPD Admissions', icon: Building2 },
+    { id: 'appointments', label: 'Appointments', icon: CalendarCheck, badge: '4 Today', allowedRoles: ['receptionist', 'doctor', 'ceo', 'admin'] },
+    { id: 'opd', label: 'OPD & Follow-up', icon: Stethoscope, allowedRoles: ['doctor', 'receptionist', 'ceo', 'admin'] },
+    { id: 'ipd', label: 'IPD Admissions', icon: Building2, allowedRoles: ['doctor', 'billing', 'ceo', 'admin'] },
     { id: 'bed-management', label: 'Ward & Beds', icon: BedDouble, badge: `${occupiedBeds}/${beds.length}` },
     { id: 'patient-movement', label: 'Patient Movement', icon: GitCommit },
-    { id: 'pharmacy', label: 'Pharmacy & e-Rx', icon: Pill, badge: 'Active' },
-    { id: 'diagnostics', label: 'Laboratory & LIS', icon: FlaskConical },
-    { id: 'operation-theatre', label: 'Operation Theatre', icon: Scissors, badge: '3 OT' },
-    { id: 'discharge-summary', label: 'Discharge Summary', icon: FileCheck },
-    { id: 'doctors', label: 'Doctors & Schedule', icon: UserCheck },
+    { id: 'pharmacy', label: 'Pharmacy & e-Rx', icon: Pill, badge: 'Active', allowedRoles: ['doctor', 'billing', 'ceo', 'admin'] },
+    { id: 'diagnostics', label: 'Laboratory & LIS', icon: FlaskConical, allowedRoles: ['doctor', 'emergency', 'ceo', 'admin'] },
+    { id: 'operation-theatre', label: 'Operation Theatre', icon: Scissors, badge: '3 OT', allowedRoles: ['doctor', 'emergency', 'ceo', 'admin'] },
+    { id: 'discharge-summary', label: 'Discharge Summary', icon: FileCheck, allowedRoles: ['doctor', 'ceo', 'admin'] },
+    { id: 'doctors', label: 'Doctors & Schedule', icon: UserCheck, allowedRoles: ['receptionist', 'ceo', 'admin'] },
     { id: 'departments', label: 'Departments', icon: Briefcase },
-    { id: 'billing', label: 'Billing & Cash', icon: Receipt },
-    { id: 'insurance', label: 'Insurance / TPA', icon: ShieldAlert, badge: pendingClaims > 0 ? pendingClaims : undefined },
-    { id: 'emergency', label: 'Emergency Bay', icon: Siren, badge: criticalEmergency > 0 ? criticalEmergency : undefined, isHot: true },
+    { id: 'billing', label: 'Billing & Cash', icon: Receipt, allowedRoles: ['billing', 'insurance', 'ceo', 'admin'] },
+    { id: 'insurance', label: 'Insurance / TPA', icon: ShieldAlert, badge: pendingClaims > 0 ? pendingClaims : undefined, allowedRoles: ['insurance', 'billing', 'ceo', 'admin'] },
+    { id: 'emergency', label: 'Emergency Bay', icon: Siren, badge: criticalEmergency > 0 ? criticalEmergency : undefined, isHot: true, allowedRoles: ['emergency', 'doctor', 'ceo', 'admin'] },
     { id: 'consent-forms', label: 'Consent Forms', icon: FileCheck2 },
     { id: 'housekeeping', label: 'Housekeeping', icon: Sparkles },
-    { id: 'reports', label: 'Reports & Analytics', icon: BarChart3 },
+    { id: 'reports', label: 'Reports & Analytics', icon: BarChart3, allowedRoles: ['ceo', 'billing', 'admin'] },
     { id: 'settings', label: 'Administration', icon: Settings },
   ];
+
+  // Role-based filtering: Admin and CEO see all, specific roles see relevant modules
+  const currentRole = currentUser?.role || 'ceo';
+  const filteredNavItems = allNavItems.filter((item) => {
+    if (currentUser?.id === 'user-admin' || currentRole === 'ceo') return true;
+    if (!item.allowedRoles) return true;
+    return item.allowedRoles.includes(currentRole);
+  });
 
   return (
     <aside className="w-64 bg-slate-900/90 border-r border-slate-800/80 flex flex-col h-screen select-none z-30 shrink-0">
@@ -135,13 +146,37 @@ export const Sidebar: React.FC = () => {
         </div>
       </div>
 
+      {/* Quick Role Persona Switcher for Presentation */}
+      <div className="px-3 pt-3">
+        <div className="p-2 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-1">
+          <div className="text-[9px] font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1">
+            <UserCog className="w-3 h-3 text-cyan-400" /> Switch Demo Role
+          </div>
+          <select
+            value={currentUser?.id || 'user-admin'}
+            onChange={(e) => {
+              const found = DEMO_PERSONAS.find((p) => p.id === e.target.value);
+              if (found) login(found);
+            }}
+            className="w-full bg-slate-900 text-slate-200 border border-slate-800 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-cyan-500 font-semibold"
+          >
+            {DEMO_PERSONAS.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name} ({p.roleTitle})
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       {/* Scrollable Navigation Items */}
       <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
-        <div className="px-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-          Core Operating Modules
+        <div className="px-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex justify-between items-center">
+          <span>Operating Modules</span>
+          <span className="text-[9px] text-cyan-400">{filteredNavItems.length} Available</span>
         </div>
 
-        {navItems.map((item) => {
+        {filteredNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeModule === item.id;
 
@@ -210,7 +245,7 @@ export const Sidebar: React.FC = () => {
 
             <button
               onClick={logout}
-              title="Log Out & Switch Demo Role"
+              title="Log Out & Switch Persona"
               className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 transition shrink-0"
               aria-label="Log Out"
             >
