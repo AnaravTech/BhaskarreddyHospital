@@ -16,6 +16,10 @@ import { OPDModule } from './components/modules/OPDModule';
 import { IPDModule } from './components/modules/IPDModule';
 import { BedManagementModule } from './components/modules/BedManagementModule';
 import { PatientMovementModule } from './components/modules/PatientMovementModule';
+import { PharmacyModule } from './components/modules/PharmacyModule';
+import { DiagnosticsModule } from './components/modules/DiagnosticsModule';
+import { OperationTheatreModule } from './components/modules/OperationTheatreModule';
+import { DischargeSummaryModule } from './components/modules/DischargeSummaryModule';
 import { DoctorsModule } from './components/modules/DoctorsModule';
 import { DepartmentsModule } from './components/modules/DepartmentsModule';
 import { BillingModule } from './components/modules/BillingModule';
@@ -53,6 +57,14 @@ const MainContent: React.FC = () => {
         return <BedManagementModule />;
       case 'patient-movement':
         return <PatientMovementModule />;
+      case 'pharmacy':
+        return <PharmacyModule />;
+      case 'diagnostics':
+        return <DiagnosticsModule />;
+      case 'operation-theatre':
+        return <OperationTheatreModule />;
+      case 'discharge-summary':
+        return <DischargeSummaryModule />;
       case 'doctors':
         return <DoctorsModule />;
       case 'departments':

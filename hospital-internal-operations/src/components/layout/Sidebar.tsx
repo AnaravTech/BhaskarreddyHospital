@@ -24,6 +24,10 @@ import {
   Activity,
   LogOut,
   UserCheck2,
+  Pill,
+  FlaskConical,
+  Scissors,
+  FileCheck,
 } from 'lucide-react';
 
 interface NavItem {
@@ -61,6 +65,10 @@ export const Sidebar: React.FC = () => {
     { id: 'ipd', label: 'IPD Admissions', icon: Building2 },
     { id: 'bed-management', label: 'Ward & Beds', icon: BedDouble, badge: `${occupiedBeds}/${beds.length}` },
     { id: 'patient-movement', label: 'Patient Movement', icon: GitCommit },
+    { id: 'pharmacy', label: 'Pharmacy & e-Rx', icon: Pill, badge: 'Active' },
+    { id: 'diagnostics', label: 'Laboratory & LIS', icon: FlaskConical },
+    { id: 'operation-theatre', label: 'Operation Theatre', icon: Scissors, badge: '3 OT' },
+    { id: 'discharge-summary', label: 'Discharge Summary', icon: FileCheck },
     { id: 'doctors', label: 'Doctors & Schedule', icon: UserCheck },
     { id: 'departments', label: 'Departments', icon: Briefcase },
     { id: 'billing', label: 'Billing & Cash', icon: Receipt },
