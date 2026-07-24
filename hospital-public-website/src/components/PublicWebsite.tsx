@@ -12,13 +12,12 @@ import {
   Sparkles,
   X,
   Quote,
-  Heart,
-  Stethoscope,
-  Briefcase,
-  Award,
-  Clock,
+  MapPin,
   Phone,
-  Building,
+  FileText,
+  CreditCard,
+  Video,
+  Download,
 } from 'lucide-react';
 
 export const PublicWebsite: React.FC = () => {
@@ -40,6 +39,11 @@ export const PublicWebsite: React.FC = () => {
   // Doctor Search
   const [docSearchQuery, setDocSearchQuery] = useState('');
   const [selectedDeptFilter, setSelectedDeptFilter] = useState('All');
+
+  // Self Service Tools
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isBillModalOpen, setIsBillModalOpen] = useState(false);
+  const [lookupUhid, setLookupUhid] = useState('');
 
   // Booking Wizard State
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -118,23 +122,28 @@ export const PublicWebsite: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-blue-600 selection:text-white flex flex-col justify-between">
       <div>
-        {/* Top Portal Switcher Bar */}
-        <div className="bg-slate-900 text-slate-200 py-2 px-4 md:px-12 flex items-center justify-between text-xs border-b border-slate-800">
-          <div className="flex items-center gap-2 text-cyan-400 font-bold">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>Bhaskar Reddy Hospital • Official Healthcare Portal</span>
+        {/* Top Notification Bar & Nellore Location */}
+        <div className="bg-slate-900 text-slate-200 py-2 px-4 md:px-12 flex flex-col sm:flex-row items-center justify-between text-xs border-b border-slate-800 gap-2">
+          <div className="flex items-center gap-3 text-cyan-400 font-bold">
+            <div className="flex items-center gap-1.5 text-emerald-400">
+              <ShieldCheck className="w-4 h-4 shrink-0" />
+              <span>Bhaskar Reddy Hospital • Nellore Campus</span>
+            </div>
+            <span className="hidden md:inline text-slate-500">|</span>
+            <div className="hidden md:flex items-center gap-1 text-slate-300 font-medium">
+              <MapPin className="w-3.5 h-3.5 text-rose-400" />
+              <span>Pogathota, Near Vijayamahal Gate, Nellore - 524001</span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setActiveView('public-website')}
-              className="px-2.5 py-1 rounded bg-blue-600 text-white font-bold text-[10px]"
-            >
-              🌐 Public Patient Website
-            </button>
+          <div className="flex items-center gap-3">
+            <a href="tel:08612345678" className="text-slate-300 hover:text-white font-mono text-[11px] flex items-center gap-1">
+              <Phone className="w-3 h-3 text-blue-400" />
+              <span>Helpline: 0861-2345678</span>
+            </a>
             <button
               onClick={() => setActiveView('website-cms')}
-              className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-[10px]"
+              className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-[10px]"
             >
               ⚙️ Website CMS Admin
             </button>
@@ -153,7 +162,7 @@ export const PublicWebsite: React.FC = () => {
               <h1 className="font-extrabold text-slate-900 text-lg tracking-tight">
                 Bhaskar Reddy <span className="text-blue-600">Hospital</span>
               </h1>
-              <p className="text-[10px] text-slate-500 font-medium">Multi-Specialty & Cardiac Institute</p>
+              <p className="text-[10px] text-slate-500 font-medium">Multi-Specialty & Women Health Care • Nellore</p>
             </div>
           </div>
 
@@ -203,16 +212,16 @@ export const PublicWebsite: React.FC = () => {
                 <div className="lg:col-span-7 space-y-6">
                   <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-100/80 border border-blue-200 text-blue-800 text-xs font-semibold">
                     <Sparkles className="w-4 h-4 text-blue-600" />
-                    <span>24/7 Level-1 Trauma & Multi-Specialty Hospital</span>
+                    <span>Leading Hospital in Pogathota, Nellore • Dr. YSR Aarogyasri Empanelled</span>
                   </div>
 
                   <h1 className="text-4xl md:text-5xl font-black text-slate-900 leading-tight">
-                    World-Class Healthcare Dedicated to <span className="text-blue-600">Your Family's Trust</span>
+                    Trusted Healthcare Excellence in <span className="text-blue-600">Pogathota, Nellore</span>
                   </h1>
 
                   <p className="text-slate-600 text-sm md:text-base leading-relaxed max-w-2xl">
-                    Equipped with 4th Gen Robotic Joint Replacement, 24/7 Cath Lab & Emergency Resuscitation, 
-                    and over 45+ renowned medical specialists delivering compassionate clinical care.
+                    Renowned for Advanced Obstetrics, Gynecology, Interventional Cardiology, and 24/7 Emergency Care. 
+                    Led by Dr. Madhu Latha Marreddy and a panel of senior specialists.
                   </p>
 
                   <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -223,16 +232,16 @@ export const PublicWebsite: React.FC = () => {
                       }}
                       className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition transform hover:-translate-y-0.5"
                     >
-                      <span>Instant Appointment Booking</span>
+                      <span>Instant Doctor Booking</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
 
                     <a
-                      href="tel:040-23456789"
+                      href="tel:08612345678"
                       className="flex items-center gap-2.5 px-5 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-rose-600 border border-rose-200 shadow-xs text-xs font-bold transition"
                     >
                       <Siren className="w-4 h-4 text-rose-600 animate-pulse" />
-                      <span>Emergency Hotline: 040-23456789</span>
+                      <span>Nellore Hotline: 0861-2345678</span>
                     </a>
                   </div>
                 </div>
@@ -241,9 +250,56 @@ export const PublicWebsite: React.FC = () => {
                   <div className="p-3 rounded-3xl bg-white border border-slate-200 shadow-xl">
                     <img
                       src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80"
-                      alt="Bhaskar Reddy Hospital Facility"
+                      alt="Bhaskar Reddy Hospital Nellore Facility"
                       className="w-full h-80 md:h-96 rounded-2xl object-cover"
                     />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Quick Patient Self-Service Desk */}
+            <section className="px-4 md:px-12 py-8 bg-slate-900 text-white">
+              <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div
+                  onClick={() => setIsReportModalOpen(true)}
+                  className="p-5 rounded-2xl bg-slate-800/80 border border-slate-700 hover:border-cyan-400 cursor-pointer transition flex items-center gap-4"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                    <FileText className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-white">Download Lab Reports</h3>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Enter UHID / Phone to fetch PDF test reports online</p>
+                  </div>
+                </div>
+
+                <div
+                  onClick={() => setIsBillModalOpen(true)}
+                  className="p-5 rounded-2xl bg-slate-800/80 border border-slate-700 hover:border-cyan-400 cursor-pointer transition flex items-center gap-4"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <CreditCard className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-white">Pay Hospital Bill Online</h3>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Instant online payment via UPI, GPay, Cards & NetBanking</p>
+                  </div>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setIsBookingModalOpen(true);
+                    setBookingStep(1);
+                  }}
+                  className="p-5 rounded-2xl bg-slate-800/80 border border-slate-700 hover:border-cyan-400 cursor-pointer transition flex items-center gap-4"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
+                    <Video className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-white">Video Tele-Consultation</h3>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Consult with Senior Doctors virtually from home</p>
                   </div>
                 </div>
               </div>
@@ -258,7 +314,7 @@ export const PublicWebsite: React.FC = () => {
                 </div>
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs space-y-1">
                   <div className="text-3xl md:text-4xl font-black text-emerald-600 font-mono">25+</div>
-                  <div className="text-xs text-slate-600 font-semibold">Years of Medical Excellence</div>
+                  <div className="text-xs text-slate-600 font-semibold">Years of Healthcare Service</div>
                 </div>
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs space-y-1">
                   <div className="text-3xl md:text-4xl font-black text-indigo-600 font-mono">45+</div>
@@ -266,20 +322,35 @@ export const PublicWebsite: React.FC = () => {
                 </div>
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs space-y-1">
                   <div className="text-3xl md:text-4xl font-black text-amber-600 font-mono">50,000+</div>
-                  <div className="text-xs text-slate-600 font-semibold">Successful Surgeries</div>
+                  <div className="text-xs text-slate-600 font-semibold">Successful Deliveries & Surgeries</div>
                 </div>
               </div>
             </section>
 
-            {/* WOW Factor 2: Doctor Finder */}
+            {/* Insurance & TPA Cashless Strip */}
+            <section className="px-4 md:px-12 py-6 bg-slate-100/80 border-b border-slate-200">
+              <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-600">
+                <span className="font-bold text-slate-800 shrink-0">Cashless Insurance & Govt Schemes:</span>
+                <div className="flex flex-wrap items-center gap-3 font-semibold text-[11px]">
+                  <span className="px-3 py-1 bg-white border rounded border-slate-200">Dr. YSR Aarogyasri</span>
+                  <span className="px-3 py-1 bg-white border rounded border-slate-200">Star Health</span>
+                  <span className="px-3 py-1 bg-white border rounded border-slate-200">ESI Corporation</span>
+                  <span className="px-3 py-1 bg-white border rounded border-slate-200">ICICI Lombard</span>
+                  <span className="px-3 py-1 bg-white border rounded border-slate-200">HDFC ERGO</span>
+                  <span className="px-3 py-1 bg-white border rounded border-slate-200">Care Health</span>
+                </div>
+              </div>
+            </section>
+
+            {/* Doctor Finder */}
             <section className="px-4 md:px-12 py-16 max-w-7xl mx-auto space-y-8">
               <div className="text-center space-y-2">
                 <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
                   WOW Factor 2
                 </span>
-                <h2 className="text-3xl font-black text-slate-900">Find Your Specialist Doctor</h2>
+                <h2 className="text-3xl font-black text-slate-900">Find Your Specialist Doctor in Nellore</h2>
                 <p className="text-xs text-slate-500 max-w-xl mx-auto">
-                  Search our panel of interventional cardiologists, neurosurgeons, robotic joint specialists, and emergency physicians.
+                  Search gynecologists, interventional cardiologists, robotic joint surgeons, and emergency leads.
                 </p>
               </div>
 
@@ -359,124 +430,15 @@ export const PublicWebsite: React.FC = () => {
                 ))}
               </div>
             </section>
-
-            {/* WOW Factor 4: Interactive Department Explorer */}
-            <section className="px-4 md:px-12 py-16 bg-slate-100/60 border-y border-slate-200">
-              <div className="max-w-7xl mx-auto space-y-8">
-                <div className="text-center space-y-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
-                    WOW Factor 4
-                  </span>
-                  <h2 className="text-3xl font-black text-slate-900">Interactive Department Explorer</h2>
-                  <p className="text-xs text-slate-500">
-                    Discover specialized care, procedures, and technology across our departments.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {departments.map((dept) => (
-                    <div
-                      key={dept.id}
-                      className="p-6 rounded-2xl bg-white border border-slate-200 hover:border-blue-500 hover:shadow-md transition space-y-4"
-                    >
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-base font-extrabold text-slate-900">{dept.name}</h3>
-                        <span className="font-mono text-[10px] text-blue-700 font-bold px-2 py-0.5 bg-blue-50 rounded">
-                          {dept.code}
-                        </span>
-                      </div>
-
-                      <p className="text-xs text-slate-600 leading-relaxed">{dept.description}</p>
-
-                      <div className="space-y-1">
-                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Services & Procedures:</div>
-                        <div className="flex flex-wrap gap-1">
-                          {dept.services?.map((srv) => (
-                            <span key={srv} className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px]">
-                              {srv}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-xs">
-                        <span className="text-slate-500">Head: {dept.headDoctor.split(',')[0]}</span>
-                        <button
-                          onClick={() => {
-                            setIsBookingModalOpen(true);
-                            setBookingStep(1);
-                          }}
-                          className="text-blue-600 font-bold hover:underline"
-                        >
-                          Book Slot →
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            {/* Health Packages Section on Home */}
-            <section className="px-4 md:px-12 py-16 bg-blue-50/40 border-b border-slate-200">
-              <div className="max-w-7xl mx-auto space-y-8">
-                <div className="text-center space-y-2">
-                  <h2 className="text-3xl font-black text-slate-900">Preventive Health Checkup Packages</h2>
-                  <p className="text-xs text-slate-500">Comprehensive health screenings designed for peace of mind</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {healthPackages.map((pkg) => (
-                    <div
-                      key={pkg.id}
-                      className={`p-6 rounded-2xl bg-white border transition flex flex-col justify-between space-y-4 ${
-                        pkg.isPopular ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-lg' : 'border-slate-200 shadow-xs'
-                      }`}
-                    >
-                      <div>
-                        {pkg.isPopular && (
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-600 text-white uppercase tracking-wider mb-2 inline-block">
-                            Most Popular
-                          </span>
-                        )}
-                        <h3 className="text-lg font-extrabold text-slate-900">{pkg.title}</h3>
-                        <div className="text-xs text-slate-500 mt-1">{pkg.recommendedFor}</div>
-
-                        <div className="mt-4 flex items-baseline gap-2 font-mono">
-                          <span className="text-2xl font-black text-blue-600">₹{pkg.price}</span>
-                          <span className="text-xs text-slate-400 line-through">₹{pkg.originalPrice}</span>
-                        </div>
-
-                        <div className="mt-4 space-y-2 text-xs text-slate-700">
-                          {pkg.features.map((feat) => (
-                            <div key={feat} className="flex items-center gap-2">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                              <span>{feat}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => addToast('Package Booked', `Booked ${pkg.title}`, 'success')}
-                        className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition"
-                      >
-                        Book Checkup Package
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
           </>
         )}
 
-        {/* Dedicated Departments Tab Page */}
+        {/* Dedicated Departments Tab */}
         {activeTab === 'departments' && (
           <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-8">
             <div className="text-center space-y-2">
               <h2 className="text-3xl font-black text-slate-900">All Specialty Medical Departments ({departments.length})</h2>
-              <p className="text-xs text-slate-500">Comprehensive surgical and clinical specialties at Bhaskar Reddy Hospital</p>
+              <p className="text-xs text-slate-500">Clinical & surgical specialties at Bhaskar Reddy Hospital, Pogathota Nellore</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -485,7 +447,7 @@ export const PublicWebsite: React.FC = () => {
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-lg font-bold text-slate-900">{dept.name}</h3>
-                      <div className="text-xs text-blue-600 font-semibold mt-0.5">Department Code: {dept.code}</div>
+                      <div className="text-xs text-blue-600 font-semibold mt-0.5">Code: {dept.code}</div>
                     </div>
                     <span className="px-2.5 py-1 rounded bg-blue-50 text-blue-800 text-xs font-mono font-bold">
                       {dept.opdRoom}
@@ -496,7 +458,7 @@ export const PublicWebsite: React.FC = () => {
 
                   <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2 text-xs">
                     <div className="font-bold text-slate-800">Specialty Head: {dept.headDoctor}</div>
-                    <div className="text-slate-500">Inpatient Bed Capacity: {dept.totalBeds} Beds</div>
+                    <div className="text-slate-500">Inpatient Beds: {dept.totalBeds} Beds</div>
                   </div>
 
                   <div className="space-y-1 text-xs">
@@ -526,12 +488,12 @@ export const PublicWebsite: React.FC = () => {
           </div>
         )}
 
-        {/* Dedicated Health Packages Tab Page */}
+        {/* Dedicated Health Packages Tab */}
         {activeTab === 'packages' && (
           <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-8">
             <div className="text-center space-y-2">
               <h2 className="text-3xl font-black text-slate-900">Preventive Health Checkup Packages ({healthPackages.length})</h2>
-              <p className="text-xs text-slate-500">Early detection and comprehensive health screenings tailored for all age groups</p>
+              <p className="text-xs text-slate-500">Comprehensive health screenings tailored for Nellore families</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -581,7 +543,7 @@ export const PublicWebsite: React.FC = () => {
         {/* Doctor Directory */}
         {activeTab === 'doctors' && (
           <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-6">
-            <h2 className="text-2xl font-black text-slate-900">Our Senior Medical Specialists</h2>
+            <h2 className="text-2xl font-black text-slate-900">Senior Doctors & Consultants (Nellore Campus)</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {doctors.map((doc) => (
                 <div key={doc.id} className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
@@ -604,15 +566,15 @@ export const PublicWebsite: React.FC = () => {
           </div>
         )}
 
-        {/* WOW Factor 6: Virtual Facility Gallery */}
+        {/* WOW Factor 6: Virtual Tour */}
         {activeTab === 'gallery' && (
           <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-6">
             <div className="text-center space-y-2">
               <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
                 WOW Factor 6
               </span>
-              <h2 className="text-3xl font-black text-slate-900">Virtual Hospital Tour & Infrastructure</h2>
-              <p className="text-xs text-slate-500">Explore our Operation Theatres, ICUs, and Patient Suites</p>
+              <h2 className="text-3xl font-black text-slate-900">Virtual Tour of Bhaskar Reddy Hospital Nellore</h2>
+              <p className="text-xs text-slate-500">Operation Theatres, ICUs, and Maternity Suites at Pogathota</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -632,70 +594,17 @@ export const PublicWebsite: React.FC = () => {
           </div>
         )}
 
-        {/* Blog */}
-        {activeTab === 'blog' && (
-          <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-6">
-            <h2 className="text-2xl font-black text-slate-900">Health Education & Blog</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {blogPosts.map((post) => (
-                <div key={post.id} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
-                  <img src={post.image} alt={post.title} className="w-full h-48 rounded-xl object-cover" />
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
-                    {post.category}
-                  </span>
-                  <h3 className="text-lg font-bold text-slate-900">{post.title}</h3>
-                  <p className="text-xs text-slate-600 leading-relaxed">{post.excerpt}</p>
-                  <div className="text-[10px] text-slate-500 font-mono">By {post.author} • {post.date}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Careers */}
-        {activeTab === 'careers' && (
-          <div className="px-4 md:px-12 py-12 max-w-3xl mx-auto space-y-6">
-            <h2 className="text-2xl font-black text-slate-900">Join Our Healthcare Team</h2>
-            <p className="text-xs text-slate-500">Explore open opportunities for Staff Nurses, RMOs, and Technicians.</p>
-
-            <form onSubmit={handleCareerSubmit} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4 text-xs">
-              <div>
-                <label className="block text-slate-600 mb-1">Full Name *</label>
-                <input
-                  type="text"
-                  placeholder="Applicant Name"
-                  value={applicantName}
-                  onChange={(e) => setApplicantName(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-600 mb-1">Select Position</label>
-                <select
-                  value={applicantRole}
-                  onChange={(e) => setApplicantRole(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
-                >
-                  <option value="Staff Nurse (ICU/OT)">Staff Nurse (ICU/OT)</option>
-                  <option value="Resident Medical Officer (RMO)">Resident Medical Officer (RMO)</option>
-                  <option value="Medical Counselor">Medical Counselor</option>
-                  <option value="Radiology Technician">Radiology Technician</option>
-                </select>
-              </div>
-
-              <button type="submit" className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold">
-                Submit Online Application
-              </button>
-            </form>
-          </div>
-        )}
-
         {/* Contact */}
         {activeTab === 'contact' && (
           <div className="px-4 md:px-12 py-12 max-w-4xl mx-auto space-y-6">
-            <h2 className="text-2xl font-black text-slate-900">Contact & Location</h2>
+            <h2 className="text-2xl font-black text-slate-900">Contact & Nellore Location</h2>
+            <div className="p-6 rounded-2xl bg-slate-900 text-white space-y-3 text-xs">
+              <div className="font-bold text-sm text-cyan-400">Bhaskar Reddy Hospital - Pogathota Campus</div>
+              <div>📍 Address: Near Vijayamahal Gate, Pogathota, Nellore, Andhra Pradesh - 524001</div>
+              <div>📞 Emergency Hotline: 0861-2345678 / 0861-2345679</div>
+              <div>✉️ Email: care@bhaskarreddyhospital.com</div>
+            </div>
+
             <form onSubmit={handleContactSubmit} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4 text-xs">
               <div>
                 <label className="block text-slate-600 mb-1">Your Name *</label>
@@ -737,15 +646,79 @@ export const PublicWebsite: React.FC = () => {
         )}
       </div>
 
+      {/* Lab Report Lookup Modal */}
+      {isReportModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4 text-xs">
+            <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <FileText className="w-4 h-4 text-blue-600" /> Download Patient Lab Reports
+              </h3>
+              <button onClick={() => setIsReportModalOpen(false)} className="text-slate-400"><X className="w-4 h-4" /></button>
+            </div>
+            <div>
+              <label className="block text-slate-600 mb-1">Enter Patient UHID or Phone Number</label>
+              <input
+                type="text"
+                placeholder="e.g. UHID-908123 or 9849012345"
+                value={lookupUhid}
+                onChange={(e) => setLookupUhid(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
+              />
+            </div>
+            <button
+              onClick={() => {
+                addToast('Lab Report Found', 'Downloading Lab_Report_CBC_Lipid.pdf...', 'success');
+                setIsReportModalOpen(false);
+              }}
+              className="w-full py-2.5 rounded-xl bg-blue-600 text-white font-bold flex items-center justify-center gap-2"
+            >
+              <Download className="w-4 h-4" /> Download PDF Report
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Pay Hospital Bill Modal */}
+      {isBillModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4 text-xs">
+            <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-emerald-600" /> Pay Hospital Bill Online
+              </h3>
+              <button onClick={() => setIsBillModalOpen(false)} className="text-slate-400"><X className="w-4 h-4" /></button>
+            </div>
+            <div>
+              <label className="block text-slate-600 mb-1">Enter IPD / OPD Bill Number</label>
+              <input
+                type="text"
+                placeholder="e.g. BILL-2026-8801"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
+              />
+            </div>
+            <button
+              onClick={() => {
+                addToast('Payment Gateway Redirect', 'Redirecting to Razorpay / PhonePe Gateway...', 'success');
+                setIsBillModalOpen(false);
+              }}
+              className="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold"
+            >
+              Proceed to Pay via UPI / Cards
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Floating Emergency Banner */}
       <div className="fixed bottom-4 left-4 z-40 bg-rose-600 text-white p-3.5 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce">
         <Siren className="w-6 h-6 text-white animate-pulse shrink-0" />
         <div className="text-xs">
-          <div className="font-extrabold text-white">24/7 Emergency & Ambulance Dispatch</div>
-          <div className="text-[10px] text-rose-100 font-mono">Hotline: 040-23456789</div>
+          <div className="font-extrabold text-white">24/7 Nellore Emergency & Ambulance</div>
+          <div className="text-[10px] text-rose-100 font-mono">Hotline: 0861-2345678</div>
         </div>
         <a
-          href="tel:040-23456789"
+          href="tel:08612345678"
           className="px-3 py-1.5 rounded-xl bg-white text-rose-600 text-[10px] font-bold shrink-0 shadow-xs"
         >
           Call Now
@@ -845,7 +818,7 @@ export const PublicWebsite: React.FC = () => {
             {bookingStep === 2 && (
               <div className="space-y-4 text-xs">
                 <div>
-                  <label className="block text-slate-600 mb-1 font-medium">Available Premium Time Slots for Tomorrow</label>
+                  <label className="block text-slate-600 mb-1 font-medium font-mono">Available Premium Time Slots for Tomorrow</label>
                   <div className="grid grid-cols-3 gap-2 font-mono">
                     {['10:00 AM', '10:10 AM', '10:20 AM', '10:30 AM', '11:00 AM', '11:15 AM'].map((time) => (
                       <button
@@ -962,9 +935,9 @@ export const PublicWebsite: React.FC = () => {
           <div className="space-y-3">
             <h3 className="text-white font-extrabold text-sm">Bhaskar Reddy Hospital</h3>
             <p className="text-slate-400 text-[11px] leading-relaxed">
-              Leading multi-specialty institute providing 24/7 cardiac, trauma, and surgical healthcare services.
+              Leading multi-specialty and women healthcare hospital in Pogathota, Nellore, Andhra Pradesh.
             </p>
-            <div className="text-[10px] text-slate-500 font-mono">Gachibowli, Hyderabad, Telangana</div>
+            <div className="text-[10px] text-slate-500 font-mono">Near Vijayamahal Gate, Pogathota, Nellore - 524001</div>
           </div>
 
           <div>
@@ -980,7 +953,7 @@ export const PublicWebsite: React.FC = () => {
           <div>
             <h4 className="text-white font-bold text-xs mb-3">Emergency & Contact</h4>
             <div className="space-y-1.5 text-[11px]">
-              <div>Emergency Hotline: <span className="text-rose-400 font-bold">040-23456789</span></div>
+              <div>Emergency Hotline: <span className="text-rose-400 font-bold">0861-2345678</span></div>
               <div>Ambulance Dispatch: <span className="text-cyan-400 font-bold">+91 98490 11223</span></div>
               <div>Email: <span className="text-slate-300">care@bhaskarreddyhospital.com</span></div>
             </div>
@@ -989,16 +962,16 @@ export const PublicWebsite: React.FC = () => {
           <div>
             <h4 className="text-white font-bold text-xs mb-3">Patient Resources</h4>
             <div className="space-y-1.5 text-[11px]">
-              <div><button onClick={() => setActiveTab('blog')} className="hover:text-cyan-400">Health Tips & Blog</button></div>
-              <div><button onClick={() => setActiveTab('careers')} className="hover:text-cyan-400">Careers & Recruitment</button></div>
-              <div><button onClick={() => setActiveTab('contact')} className="hover:text-cyan-400">Inquiry & Feedback</button></div>
+              <div><button onClick={() => setIsReportModalOpen(true)} className="hover:text-cyan-400">Download Lab Reports</button></div>
+              <div><button onClick={() => setIsBillModalOpen(true)} className="hover:text-cyan-400">Pay Hospital Bill Online</button></div>
+              <div><button onClick={() => setActiveTab('contact')} className="hover:text-cyan-400">Inquiry & Location</button></div>
             </div>
           </div>
         </div>
 
         <div className="max-w-7xl mx-auto pt-8 mt-8 border-t border-slate-800 flex justify-between items-center text-[10px]">
-          <div>© 2026 Bhaskar Reddy Hospital. All rights reserved.</div>
-          <div>NABH & NABL Accredited Healthcare Institute</div>
+          <div>© 2026 Bhaskar Reddy Hospital, Nellore. All rights reserved.</div>
+          <div>Empanelled under Dr. YSR Aarogyasri Scheme</div>
         </div>
       </footer>
     </div>
