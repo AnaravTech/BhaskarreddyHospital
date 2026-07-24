@@ -53,6 +53,15 @@ interface ToastNotification {
 
 export const DEMO_PERSONAS: UserSession[] = [
   {
+    id: 'user-admin',
+    name: 'Rajesh V (Chief Admin)',
+    email: 'admin@anaravhealth.com',
+    role: 'ceo',
+    roleTitle: 'System Super Administrator',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
+    defaultModule: 'settings',
+  },
+  {
     id: 'user-ceo',
     name: 'Dr. Bhaskar Reddy',
     email: 'ceo@anaravhealth.com',
@@ -147,6 +156,24 @@ interface HospitalContextType {
   consentForms: DigitalConsentForm[];
   housekeepingTasks: HousekeepingTask[];
 
+  // Tariff & Rule Engine State
+  tariffConfig: {
+    stdOpdMinFee: number;
+    stdOpdMaxFee: number;
+    premiumSlotMinFee: number;
+    premiumSlotMaxFee: number;
+    opReturnValidityDays: number;
+    icuBedDailyTariff: number;
+  };
+  setTariffConfig: React.Dispatch<React.SetStateAction<{
+    stdOpdMinFee: number;
+    stdOpdMaxFee: number;
+    premiumSlotMinFee: number;
+    premiumSlotMaxFee: number;
+    opReturnValidityDays: number;
+    icuBedDailyTariff: number;
+  }>>;
+
   // Website Collections
   healthPackages: HealthPackage[];
   blogPosts: BlogPost[];
@@ -181,7 +208,7 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [appMode, setAppMode] = useState<AppMode>('public-website');
 
   const [currentUser, setCurrentUser] = useState<UserSession | null>(DEMO_PERSONAS[0]);
-  const [activeModule, setActiveModule] = useState<ModuleType>('dashboard');
+  const [activeModule, setActiveModule] = useState<ModuleType>('settings');
   const [activeTenant] = useState<HospitalTenant>(mockTenants[0]);
   const [activeBranch, setActiveBranch] = useState<Branch>(mockTenants[0].branches[0]);
   
@@ -202,6 +229,16 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [consentForms, setConsentForms] = useState<DigitalConsentForm[]>(mockConsentForms);
   const [housekeepingTasks, setHousekeepingTasks] = useState<HousekeepingTask[]>(mockHousekeepingTasks);
   
+  // Tariff & Rule Engine Config State
+  const [tariffConfig, setTariffConfig] = useState({
+    stdOpdMinFee: 300,
+    stdOpdMaxFee: 500,
+    premiumSlotMinFee: 400,
+    premiumSlotMaxFee: 850,
+    opReturnValidityDays: 15,
+    icuBedDailyTariff: 7500,
+  });
+
   const [healthPackages] = useState<HealthPackage[]>(mockHealthPackages);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>(mockBlogPosts);
   const [galleryItems] = useState<GalleryItem[]>(mockGalleryItems);
@@ -211,9 +248,9 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [toasts, setToasts] = useState<ToastNotification[]>([
     {
       id: 't-1',
-      title: 'Welcome to Bhaskar Reddy Healthcare Portal',
-      message: 'Toggle between Public Patient Website, CMS Admin, and Hospital OS.',
-      type: 'info',
+      title: 'Authenticated as System Super Administrator',
+      message: 'Full governance access to Tariff Master, RBAC, and Department provisioning.',
+      type: 'success',
       timestamp: 'Just now',
     },
   ]);
@@ -244,11 +281,11 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // 15-day OP Consultation Validity Calculator Engine
+  // Dynamic OP Consultation Validity Calculator Engine
   const checkOPValidity = (lastVisitDateStr: string) => {
     const lastVisit = new Date(lastVisitDateStr);
     const validUntil = new Date(lastVisit);
-    validUntil.setDate(validUntil.getDate() + 15);
+    validUntil.setDate(validUntil.getDate() + tariffConfig.opReturnValidityDays);
     
     const today = new Date('2026-07-24');
     const diffTime = validUntil.getTime() - today.getTime();
@@ -266,7 +303,7 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const uhid = `BRH-2026-${Math.floor(1000 + Math.random() * 9000)}`;
     const todayStr = '2026-07-24';
     const endDate = new Date('2026-07-24');
-    endDate.setDate(endDate.getDate() + 15);
+    endDate.setDate(endDate.getDate() + tariffConfig.opReturnValidityDays);
 
     const created: Patient = {
       ...newPatData,
@@ -439,6 +476,8 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         emergencyCases,
         consentForms,
         housekeepingTasks,
+        tariffConfig,
+        setTariffConfig,
         healthPackages,
         blogPosts,
         galleryItems,

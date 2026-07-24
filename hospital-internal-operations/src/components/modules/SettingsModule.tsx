@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useHospital } from '../../context/HospitalContext';
 import {
   Building,
-  Database,
   ShieldCheck,
   Check,
   X as XIcon,
@@ -11,6 +10,8 @@ import {
   ToggleLeft,
   ToggleRight,
   UserCheck,
+  Save,
+  Sliders,
 } from 'lucide-react';
 
 interface RolePermission {
@@ -31,9 +32,9 @@ interface RolePermission {
 }
 
 export const SettingsModule: React.FC = () => {
-  const { activeTenant, addToast } = useHospital();
+  const { activeTenant, addToast, tariffConfig, setTariffConfig, currentUser } = useHospital();
 
-  const [activeTab, setActiveTab] = useState<'rbac' | 'departments' | 'workflows' | 'tariffs' | 'saas'>('rbac');
+  const [activeTab, setActiveTab] = useState<'rbac' | 'departments' | 'workflows' | 'tariffs' | 'saas'>('tariffs');
 
   // Role Permissions State Matrix
   const [roles, setRoles] = useState<RolePermission[]>([
@@ -117,22 +118,6 @@ export const SettingsModule: React.FC = () => {
         modifyTariffs: false,
       },
     },
-    {
-      roleName: 'TPA & Insurance Claims Officer',
-      roleCode: 'ROLE_INSURANCE',
-      userCount: 5,
-      description: 'Pre-Authorization request submissions, claim document upload, and TPA settlement tracking.',
-      permissions: {
-        patientReg: false,
-        writePrescription: false,
-        bedTransfer: false,
-        processPayment: true,
-        applyDiscount: false,
-        tpaPreAuth: true,
-        viewFinancials: true,
-        modifyTariffs: false,
-      },
-    },
   ]);
 
   // Dynamic Departments State
@@ -154,6 +139,14 @@ export const SettingsModule: React.FC = () => {
     { id: 'tpa-work', name: 'TPA Insurance Cashless Pre-Auth Engine', description: 'Enable Dr. YSR Aarogyasri & private TPA claim processing', enabled: true },
     { id: 'emergency-work', name: '24/7 Emergency Triage & MLC Intimation Bay', description: 'Enable Red/Yellow/Green triage and police MLC registration', enabled: true },
   ]);
+
+  // Tariff Form Local Inputs
+  const [stdMin, setStdMin] = useState(tariffConfig.stdOpdMinFee);
+  const [stdMax, setStdMax] = useState(tariffConfig.stdOpdMaxFee);
+  const [premMin, setPremMin] = useState(tariffConfig.premiumSlotMinFee);
+  const [premMax, setPremMax] = useState(tariffConfig.premiumSlotMaxFee);
+  const [validDays, setValidDays] = useState(tariffConfig.opReturnValidityDays);
+  const [icuTariff, setIcuTariff] = useState(tariffConfig.icuBedDailyTariff);
 
   // Modal States for Add Department
   const [isAddDeptModalOpen, setIsAddDeptModalOpen] = useState(false);
@@ -186,6 +179,24 @@ export const SettingsModule: React.FC = () => {
       prev.map((w) => (w.id === id ? { ...w, enabled: !w.enabled } : w))
     );
     addToast('Workflow Configured', 'System feature module status updated live', 'success');
+  };
+
+  const handleSaveTariffs = (e: React.FormEvent) => {
+    e.preventDefault();
+    setTariffConfig({
+      stdOpdMinFee: Number(stdMin),
+      stdOpdMaxFee: Number(stdMax),
+      premiumSlotMinFee: Number(premMin),
+      premiumSlotMaxFee: Number(premMax),
+      opReturnValidityDays: Number(validDays),
+      icuBedDailyTariff: Number(icuTariff),
+    });
+
+    addToast(
+      'Tariff Master Saved',
+      `Updated Tariff Engine: Standard OPD (₹${stdMin}-₹${stdMax}), Premium (₹${premMin}-₹${premMax}), Validity (${validDays} Days)`,
+      'success'
+    );
   };
 
   const handleAddDepartment = (e: React.FormEvent) => {
@@ -223,12 +234,20 @@ export const SettingsModule: React.FC = () => {
           </div>
           <h2 className="text-2xl font-extrabold text-white mt-1">Administration & Hospital Control Center</h2>
           <p className="text-xs text-slate-400">
-            Configure departments, user RBAC permissions, active system workflows, and multi-tenant campuses.
+            Logged in as <span className="text-cyan-400 font-bold">{currentUser?.name} ({currentUser?.roleTitle})</span>. Modify tariffs, OP validity rules, and RBAC matrix.
           </p>
         </div>
 
         {/* Tabs */}
         <div className="flex items-center p-1 bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab('tariffs')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              activeTab === 'tariffs' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Master Tariffs & Rules
+          </button>
           <button
             onClick={() => setActiveTab('rbac')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
@@ -254,14 +273,6 @@ export const SettingsModule: React.FC = () => {
             System Workflows
           </button>
           <button
-            onClick={() => setActiveTab('tariffs')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-              activeTab === 'tariffs' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Master Tariffs
-          </button>
-          <button
             onClick={() => setActiveTab('saas')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
               activeTab === 'saas' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
@@ -272,7 +283,123 @@ export const SettingsModule: React.FC = () => {
         </div>
       </div>
 
-      {/* Tab 1: RBAC Permission Matrix */}
+      {/* Tab: Master Tariffs & Rule Engine (Interactive Editing) */}
+      {activeTab === 'tariffs' && (
+        <form onSubmit={handleSaveTariffs} className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-6 max-w-4xl">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div className="flex items-center gap-2.5">
+              <Sliders className="w-5 h-5 text-cyan-400" />
+              <div>
+                <h3 className="text-sm font-bold text-slate-100">Configurable Tariff Master Data & Rule Engine</h3>
+                <p className="text-xs text-slate-400">Modify fee structures, consultation rules, and OP validity thresholds live</p>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30"
+            >
+              <Save className="w-4 h-4" /> Save Tariff & Rule Engine
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+            {/* Standard OPD Consultation Fee */}
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div className="font-bold text-slate-200 flex justify-between items-center">
+                <span>Standard OPD Consultation Fee</span>
+                <span className="text-cyan-400 font-mono text-xs">Normal Walk-in Queue</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-slate-400 text-[10px] mb-1">Min Fee (₹)</label>
+                  <input
+                    type="number"
+                    value={stdMin}
+                    onChange={(e) => setStdMin(Number(e.target.value))}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 font-mono text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 text-[10px] mb-1">Max Fee (₹)</label>
+                  <input
+                    type="number"
+                    value={stdMax}
+                    onChange={(e) => setStdMax(Number(e.target.value))}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 font-mono text-slate-100"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Premium Fixed Slot Fee */}
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div className="font-bold text-slate-200 flex justify-between items-center">
+                <span>Premium Time Slot Consultation Fee</span>
+                <span className="text-purple-400 font-mono text-xs">10-Min Reserved Slot</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-slate-400 text-[10px] mb-1">Min Fee (₹)</label>
+                  <input
+                    type="number"
+                    value={premMin}
+                    onChange={(e) => setPremMin(Number(e.target.value))}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 font-mono text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 text-[10px] mb-1">Max Fee (₹)</label>
+                  <input
+                    type="number"
+                    value={premMax}
+                    onChange={(e) => setPremMax(Number(e.target.value))}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 font-mono text-slate-100"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 15-Day OP Return Validity Rule */}
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div className="font-bold text-slate-200 flex justify-between items-center">
+                <span>OP Consultation Return Validity Rule</span>
+                <span className="text-emerald-400 font-mono text-xs">Auto Waiver Threshold</span>
+              </div>
+              <div>
+                <label className="block text-slate-400 text-[10px] mb-1">Validity Days (e.g. 7, 10, 15, 30 days)</label>
+                <input
+                  type="number"
+                  value={validDays}
+                  onChange={(e) => setValidDays(Number(e.target.value))}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 font-mono text-emerald-400 font-bold"
+                />
+              </div>
+              <p className="text-[10px] text-slate-500">Patients returning within {validDays} days pay zero consultation fee.</p>
+            </div>
+
+            {/* ICU Daily Bed Rate */}
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div className="font-bold text-slate-200 flex justify-between items-center">
+                <span>ICU Critical Care Suite Daily Tariff</span>
+                <span className="text-rose-400 font-mono text-xs">Per Day Inpatient Charge</span>
+              </div>
+              <div>
+                <label className="block text-slate-400 text-[10px] mb-1">Daily ICU Rate (₹)</label>
+                <input
+                  type="number"
+                  value={icuTariff}
+                  onChange={(e) => setIcuTariff(Number(e.target.value))}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 font-mono text-slate-100 font-bold"
+                />
+              </div>
+              <p className="text-[10px] text-slate-500">Includes cardiac telemetry, oxygen line, and 1:1 nursing monitoring.</p>
+            </div>
+          </div>
+        </form>
+      )}
+
+      {/* Tab: RBAC Permission Matrix */}
       {activeTab === 'rbac' && (
         <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-6">
           <div className="flex items-center justify-between">
@@ -343,7 +470,7 @@ export const SettingsModule: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 2: Departments Master */}
+      {/* Tab: Departments Master */}
       {activeTab === 'departments' && (
         <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-4">
           <div className="flex items-center justify-between">
@@ -381,7 +508,7 @@ export const SettingsModule: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 3: System Workflows & Feature Toggles */}
+      {/* Tab: System Workflows & Feature Toggles */}
       {activeTab === 'workflows' && (
         <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-4">
           <div className="flex items-center gap-2">
@@ -417,43 +544,7 @@ export const SettingsModule: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 4: Tariffs & Rules */}
-      {activeTab === 'tariffs' && (
-        <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-4 max-w-3xl">
-          <div className="flex items-center gap-2">
-            <Database className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-sm font-bold text-slate-100">Configurable Tariff Master Data & Rule Engine</h3>
-          </div>
-
-          <div className="space-y-2 text-xs">
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-              <div>
-                <div className="font-bold text-slate-200">Standard OPD Consultation Fee</div>
-                <div className="text-[10px] text-slate-400">Normal Walk-in Queue Model</div>
-              </div>
-              <span className="font-bold text-cyan-400 font-mono text-sm">₹300 - ₹500</span>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-              <div>
-                <div className="font-bold text-slate-200">Premium Time Slot Consultation Fee</div>
-                <div className="text-[10px] text-slate-400">Fixed 10-Min Reservation Model</div>
-              </div>
-              <span className="font-bold text-purple-400 font-mono text-sm">₹400 - ₹850</span>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-              <div>
-                <div className="font-bold text-slate-200">15-Day OP Consultation Return Validity</div>
-                <div className="text-[10px] text-slate-400">Automatic Fee Waiver Threshold Engine</div>
-              </div>
-              <span className="font-bold text-emerald-400 font-mono text-sm">15 Days Active</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 5: Multi-Tenant SaaS */}
+      {/* Tab: Multi-Tenant SaaS */}
       {activeTab === 'saas' && (
         <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-6 max-w-3xl">
           <div className="flex items-center gap-3">
