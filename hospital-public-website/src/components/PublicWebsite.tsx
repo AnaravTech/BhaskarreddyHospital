@@ -18,6 +18,18 @@ import {
   CreditCard,
   Video,
   Download,
+  Award,
+  Heart,
+  Stethoscope,
+  ChevronDown,
+  Building2,
+  Clock,
+  Check,
+  HelpCircle,
+  Pill,
+  Droplet,
+  Coffee,
+  Car,
 } from 'lucide-react';
 
 export const PublicWebsite: React.FC = () => {
@@ -39,6 +51,12 @@ export const PublicWebsite: React.FC = () => {
   // Doctor Search
   const [docSearchQuery, setDocSearchQuery] = useState('');
   const [selectedDeptFilter, setSelectedDeptFilter] = useState('All');
+
+  // Interactive Specialty Tab on Home
+  const [selectedSpecialtyTab, setSelectedSpecialtyTab] = useState('Obstetrics & Gynecology (Women Health)');
+
+  // FAQ Accordion State
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   // Self Service Tools
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -73,6 +91,8 @@ export const PublicWebsite: React.FC = () => {
     const matchesDept = selectedDeptFilter === 'All' || doc.departmentName === selectedDeptFilter;
     return matchesSearch && matchesDept;
   });
+
+  const activeDeptObj = departments.find((d) => d.name === selectedSpecialtyTab) || departments[0];
 
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,6 +138,25 @@ export const PublicWebsite: React.FC = () => {
     addToast('Application Received', `Received job application for ${applicantRole} position from ${applicantName}.`, 'success');
     setApplicantName('');
   };
+
+  const faqs = [
+    {
+      q: 'Is Dr. YSR Aarogyasri accepted for cashless treatments?',
+      a: 'Yes! Bhaskar Reddy Hospital is officially empanelled under Dr. YSR Aarogyasri Scheme (AP Govt) for eligible surgeries, cardiac procedures, and maternity care.',
+    },
+    {
+      q: 'How does the 10-Minute Premium Reserved Slot work?',
+      a: 'When you book a Premium Reserved Slot (e.g. 10:00 AM, 10:10 AM), your consultation with the doctor is scheduled at an exact guaranteed time with zero waiting line.',
+    },
+    {
+      q: 'What are the OPD and Emergency hours at Pogathota Nellore?',
+      a: 'Outpatient (OPD) consultation operates Monday through Saturday from 9:00 AM to 5:00 PM. Emergency & Trauma Resuscitation, Cardiac Cath Lab, and NICU operate 24/7 365 days a year.',
+    },
+    {
+      q: 'How can I download diagnostic lab test reports online?',
+      a: 'Click on "Download Lab Reports" in the top bar or footer, enter your patient UHID or registered mobile number, and your PDF report will download instantly.',
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-blue-600 selection:text-white flex flex-col justify-between">
@@ -206,8 +245,8 @@ export const PublicWebsite: React.FC = () => {
         {/* Home Page Content */}
         {activeTab === 'home' && (
           <>
-            {/* Hero Section */}
-            <section className="relative px-4 md:px-12 py-16 md:py-24 bg-gradient-to-b from-blue-50/60 via-slate-50 to-white overflow-hidden">
+            {/* 1. Hero Section */}
+            <section className="relative px-4 md:px-12 py-16 md:py-24 bg-gradient-to-b from-blue-50/70 via-slate-50 to-white overflow-hidden">
               <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 <div className="lg:col-span-7 space-y-6">
                   <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-100/80 border border-blue-200 text-blue-800 text-xs font-semibold">
@@ -216,12 +255,12 @@ export const PublicWebsite: React.FC = () => {
                   </div>
 
                   <h1 className="text-4xl md:text-5xl font-black text-slate-900 leading-tight">
-                    Trusted Healthcare Excellence in <span className="text-blue-600">Pogathota, Nellore</span>
+                    World-Class Healthcare Dedicated to <span className="text-blue-600">Your Family's Trust</span>
                   </h1>
 
                   <p className="text-slate-600 text-sm md:text-base leading-relaxed max-w-2xl">
-                    Renowned for Advanced Obstetrics, Gynecology, Interventional Cardiology, and 24/7 Emergency Care. 
-                    Led by Dr. Madhu Latha Marreddy and a panel of senior specialists.
+                    Equipped with Advanced Laparoscopic Surgery, 24/7 Interventional Cardiology & Cath Lab, 
+                    Level-3 NICU, and Robotic Joint Replacement. Led by Dr. Madhu Latha Marreddy and renowned medical specialists.
                   </p>
 
                   <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -247,18 +286,22 @@ export const PublicWebsite: React.FC = () => {
                 </div>
 
                 <div className="lg:col-span-5 relative">
-                  <div className="p-3 rounded-3xl bg-white border border-slate-200 shadow-xl">
+                  <div className="p-3 rounded-3xl bg-white border border-slate-200 shadow-xl space-y-3">
                     <img
                       src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80"
                       alt="Bhaskar Reddy Hospital Nellore Facility"
                       className="w-full h-80 md:h-96 rounded-2xl object-cover"
                     />
+                    <div className="p-3 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-between text-xs font-bold text-blue-900">
+                      <span>NABH Accredited Tertiary Care Center</span>
+                      <span className="text-emerald-600">✓ 24/7 Resuscitation Open</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* Quick Patient Self-Service Desk */}
+            {/* 2. Patient Self-Service Desk */}
             <section className="px-4 md:px-12 py-8 bg-slate-900 text-white">
               <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div
@@ -305,7 +348,7 @@ export const PublicWebsite: React.FC = () => {
               </div>
             </section>
 
-            {/* WOW Factor 1: Animated Overview Counters */}
+            {/* 3. WOW Factor 1: Overview Counters */}
             <section className="px-4 md:px-12 py-12 bg-white border-y border-slate-200">
               <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs space-y-1">
@@ -314,7 +357,7 @@ export const PublicWebsite: React.FC = () => {
                 </div>
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs space-y-1">
                   <div className="text-3xl md:text-4xl font-black text-emerald-600 font-mono">25+</div>
-                  <div className="text-xs text-slate-600 font-semibold">Years of Healthcare Service</div>
+                  <div className="text-xs text-slate-600 font-semibold">Years of Medical Service</div>
                 </div>
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs space-y-1">
                   <div className="text-3xl md:text-4xl font-black text-indigo-600 font-mono">45+</div>
@@ -322,33 +365,165 @@ export const PublicWebsite: React.FC = () => {
                 </div>
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs space-y-1">
                   <div className="text-3xl md:text-4xl font-black text-amber-600 font-mono">50,000+</div>
-                  <div className="text-xs text-slate-600 font-semibold">Successful Deliveries & Surgeries</div>
+                  <div className="text-xs text-slate-600 font-semibold">Successful Surgeries & Deliveries</div>
                 </div>
               </div>
             </section>
 
-            {/* Insurance & TPA Cashless Strip */}
-            <section className="px-4 md:px-12 py-6 bg-slate-100/80 border-b border-slate-200">
-              <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-600">
-                <span className="font-bold text-slate-800 shrink-0">Cashless Insurance & Govt Schemes:</span>
-                <div className="flex flex-wrap items-center gap-3 font-semibold text-[11px]">
-                  <span className="px-3 py-1 bg-white border rounded border-slate-200">Dr. YSR Aarogyasri</span>
-                  <span className="px-3 py-1 bg-white border rounded border-slate-200">Star Health</span>
-                  <span className="px-3 py-1 bg-white border rounded border-slate-200">ESI Corporation</span>
-                  <span className="px-3 py-1 bg-white border rounded border-slate-200">ICICI Lombard</span>
-                  <span className="px-3 py-1 bg-white border rounded border-slate-200">HDFC ERGO</span>
-                  <span className="px-3 py-1 bg-white border rounded border-slate-200">Care Health</span>
+            {/* 4. Interactive Clinical Specialty Explorer (Tabbed Explorer) */}
+            <section className="px-4 md:px-12 py-16 max-w-7xl mx-auto space-y-8">
+              <div className="text-center space-y-2">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+                  Clinical Excellence
+                </span>
+                <h2 className="text-3xl font-black text-slate-900">Centers of Clinical Excellence</h2>
+                <p className="text-xs text-slate-500 max-w-xl mx-auto">
+                  Explore specialized clinical divisions, advanced technology, and head consultants at Bhaskar Reddy Hospital Nellore.
+                </p>
+              </div>
+
+              {/* Specialty Selector Tabs */}
+              <div className="flex flex-wrap items-center justify-center gap-2 border-b border-slate-200 pb-4">
+                {departments.map((dept) => (
+                  <button
+                    key={dept.id}
+                    onClick={() => setSelectedSpecialtyTab(dept.name)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+                      selectedSpecialtyTab === dept.name
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                    }`}
+                  >
+                    {dept.name}
+                  </button>
+                ))}
+              </div>
+
+              {/* Active Specialty Detail View */}
+              {activeDeptObj && (
+                <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-md grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                  <div className="md:col-span-7 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <span className="px-3 py-1 rounded-full text-xs font-bold font-mono bg-blue-50 text-blue-800 border border-blue-200">
+                        {activeDeptObj.code} DIVISION
+                      </span>
+                      <span className="text-xs text-slate-500 font-medium">OPD Room: {activeDeptObj.opdRoom}</span>
+                    </div>
+
+                    <h3 className="text-2xl font-black text-slate-900">{activeDeptObj.name}</h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">{activeDeptObj.description}</p>
+
+                    <div className="space-y-2 pt-2">
+                      <div className="text-xs font-bold text-slate-800">Key Procedures & Clinical Treatments:</div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {activeDeptObj.services.map((srv) => (
+                          <div key={srv} className="flex items-center gap-2 text-xs text-slate-700">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                            <span>{srv}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                      <div className="text-xs">
+                        <span className="text-slate-500">Head Consultant: </span>
+                        <span className="font-bold text-slate-900">{activeDeptObj.headDoctor}</span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setBookingDept(activeDeptObj.name);
+                          setIsBookingModalOpen(true);
+                          setBookingStep(1);
+                        }}
+                        className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs"
+                      >
+                        Book Appointment in {activeDeptObj.name.split(' ')[0]} →
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-5">
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                      <div className="text-xs font-bold text-slate-800">Inpatient Infrastructure</div>
+                      <div className="grid grid-cols-2 gap-3 text-center">
+                        <div className="p-3 bg-white rounded-xl border border-slate-200">
+                          <div className="text-xl font-mono font-black text-blue-600">{activeDeptObj.totalBeds}</div>
+                          <div className="text-[10px] text-slate-500">Dedicated Beds</div>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-slate-200">
+                          <div className="text-xl font-mono font-black text-emerald-600">24/7</div>
+                          <div className="text-[10px] text-slate-500">Emergency On-Call</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </section>
+
+            {/* 5. Patient Care Journey (4 Steps) */}
+            <section className="px-4 md:px-12 py-16 bg-gradient-to-b from-slate-100/80 to-white border-y border-slate-200">
+              <div className="max-w-7xl mx-auto space-y-8">
+                <div className="text-center space-y-2">
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+                    Seamless Experience
+                  </span>
+                  <h2 className="text-3xl font-black text-slate-900">Your 4-Step Patient Care Journey</h2>
+                  <p className="text-xs text-slate-500">From initial consultation to complete recovery and follow-up care</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-xs">
+                  <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3 relative">
+                    <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-mono font-black flex items-center justify-center text-sm shadow-md">
+                      01
+                    </div>
+                    <h3 className="font-bold text-slate-900 text-sm">Doctor Consultation</h3>
+                    <p className="text-slate-500 text-[11px] leading-relaxed">
+                      Book online with guaranteed 10-minute reserved slots or walk into Pogathota OPD desk.
+                    </p>
+                  </div>
+
+                  <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3 relative">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-mono font-black flex items-center justify-center text-sm shadow-md">
+                      02
+                    </div>
+                    <h3 className="font-bold text-slate-900 text-sm">Diagnostic Screening</h3>
+                    <p className="text-slate-500 text-[11px] leading-relaxed">
+                      Rapid in-house digital radiology, 128-slice CT, and automated biochemistry lab testing.
+                    </p>
+                  </div>
+
+                  <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3 relative">
+                    <div className="w-10 h-10 rounded-xl bg-purple-600 text-white font-mono font-black flex items-center justify-center text-sm shadow-md">
+                      03
+                    </div>
+                    <h3 className="font-bold text-slate-900 text-sm">Advanced Clinical Care</h3>
+                    <p className="text-slate-500 text-[11px] leading-relaxed">
+                      Minimally invasive laparoscopic surgery, robotic joint replacement, or comfortable IPD stay.
+                    </p>
+                  </div>
+
+                  <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3 relative">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white font-mono font-black flex items-center justify-center text-sm shadow-md">
+                      04
+                    </div>
+                    <h3 className="font-bold text-slate-900 text-sm">Post-Care & Tele-Support</h3>
+                    <p className="text-slate-500 text-[11px] leading-relaxed">
+                      Digital discharge summary, WhatsApp prescription updates, and remote tele-followups.
+                    </p>
+                  </div>
                 </div>
               </div>
             </section>
 
-            {/* Doctor Finder */}
+            {/* 6. WOW Factor 2: Doctor Finder */}
             <section className="px-4 md:px-12 py-16 max-w-7xl mx-auto space-y-8">
               <div className="text-center space-y-2">
                 <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
                   WOW Factor 2
                 </span>
-                <h2 className="text-3xl font-black text-slate-900">Find Your Specialist Doctor in Nellore</h2>
+                <h2 className="text-3xl font-black text-slate-900">Find Specialist Doctors in Nellore</h2>
                 <p className="text-xs text-slate-500 max-w-xl mx-auto">
                   Search gynecologists, interventional cardiologists, robotic joint surgeons, and emergency leads.
                 </p>
@@ -428,6 +603,128 @@ export const PublicWebsite: React.FC = () => {
                     </button>
                   </div>
                 ))}
+              </div>
+            </section>
+
+            {/* 7. Health Checkup Packages Section */}
+            <section className="px-4 md:px-12 py-16 bg-blue-50/40 border-y border-slate-200">
+              <div className="max-w-7xl mx-auto space-y-8">
+                <div className="text-center space-y-2">
+                  <h2 className="text-3xl font-black text-slate-900">Preventive Health Checkup Packages</h2>
+                  <p className="text-xs text-slate-500">Comprehensive health screenings designed for peace of mind</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {healthPackages.map((pkg) => (
+                    <div
+                      key={pkg.id}
+                      className={`p-6 rounded-2xl bg-white border transition flex flex-col justify-between space-y-4 ${
+                        pkg.isPopular ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-lg' : 'border-slate-200 shadow-xs'
+                      }`}
+                    >
+                      <div>
+                        {pkg.isPopular && (
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-600 text-white uppercase tracking-wider mb-2 inline-block">
+                            Most Popular
+                          </span>
+                        )}
+                        <h3 className="text-lg font-extrabold text-slate-900">{pkg.title}</h3>
+                        <div className="text-xs text-slate-500 mt-1">{pkg.recommendedFor}</div>
+
+                        <div className="mt-4 flex items-baseline gap-2 font-mono">
+                          <span className="text-2xl font-black text-blue-600">₹{pkg.price}</span>
+                          <span className="text-xs text-slate-400 line-through">₹{pkg.originalPrice}</span>
+                        </div>
+
+                        <div className="mt-4 space-y-2 text-xs text-slate-700">
+                          {pkg.features.map((feat) => (
+                            <div key={feat} className="flex items-center gap-2">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              <span>{feat}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => addToast('Package Booked', `Booked ${pkg.title}`, 'success')}
+                        className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition"
+                      >
+                        Book Checkup Package
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 8. Campus Patient Amenities Showcase */}
+            <section className="px-4 md:px-12 py-16 max-w-7xl mx-auto space-y-8">
+              <div className="text-center space-y-2">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+                  Patient Comfort
+                </span>
+                <h2 className="text-3xl font-black text-slate-900">World-Class Campus Amenities</h2>
+                <p className="text-xs text-slate-500">Designed for patient comfort and family convenience at Pogathota Nellore</p>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2 text-center">
+                  <Pill className="w-8 h-8 text-blue-600 mx-auto" />
+                  <div className="font-bold text-slate-900">24/7 In-House Pharmacy</div>
+                  <div className="text-[11px] text-slate-500">100% genuine medications available round-the-clock.</div>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2 text-center">
+                  <Droplet className="w-8 h-8 text-rose-600 mx-auto" />
+                  <div className="font-bold text-slate-900">24/7 Blood Bank Storage</div>
+                  <div className="text-[11px] text-slate-500">Cross-matched blood components & platelet storage.</div>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2 text-center">
+                  <Coffee className="w-8 h-8 text-amber-600 mx-auto" />
+                  <div className="font-bold text-slate-900">Hygienic Dietary Cafeteria</div>
+                  <div className="text-[11px] text-slate-500">Clinical dietitian planned meals for patient recovery.</div>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2 text-center">
+                  <Car className="w-8 h-8 text-indigo-600 mx-auto" />
+                  <div className="font-bold text-slate-900">Valet & Multi-Level Parking</div>
+                  <div className="text-[11px] text-slate-500">Ample parking space with instant ambulance driveway.</div>
+                </div>
+              </div>
+            </section>
+
+            {/* 9. Interactive FAQ Accordion */}
+            <section className="px-4 md:px-12 py-16 bg-slate-100/70 border-t border-slate-200">
+              <div className="max-w-4xl mx-auto space-y-8">
+                <div className="text-center space-y-2">
+                  <h2 className="text-3xl font-black text-slate-900">Frequently Asked Questions (FAQs)</h2>
+                  <p className="text-xs text-slate-500">Common questions from patients visiting Bhaskar Reddy Hospital Nellore</p>
+                </div>
+
+                <div className="space-y-4 text-xs">
+                  {faqs.map((faq, idx) => (
+                    <div key={idx} className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2">
+                      <button
+                        onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)}
+                        className="w-full flex items-center justify-between font-bold text-slate-900 text-left"
+                      >
+                        <span className="flex items-center gap-2">
+                          <HelpCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                          {faq.q}
+                        </span>
+                        <ChevronDown className={`w-4 h-4 text-slate-400 transition ${openFaqIndex === idx ? 'rotate-180 text-blue-600' : ''}`} />
+                      </button>
+
+                      {openFaqIndex === idx && (
+                        <p className="text-slate-600 leading-relaxed pt-2 border-t border-slate-100 text-[11px]">
+                          {faq.a}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </section>
           </>
