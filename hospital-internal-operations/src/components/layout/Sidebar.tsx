@@ -58,33 +58,33 @@ export const Sidebar: React.FC = () => {
   const criticalEmergency = emergencyCases.filter((e) => e.status !== 'Discharged').length;
 
   const allNavItems: NavItem[] = [
-    { id: 'dashboard', label: 'CEO Dashboard', icon: LayoutDashboard, allowedRoles: ['ceo', 'admin'] },
-    { id: 'reception', label: 'Reception & Queue', icon: UserPlus, badge: 'Token', allowedRoles: ['receptionist', 'ceo', 'admin'] },
+    { id: 'settings', label: 'Administration Console', icon: Settings, allowedRoles: ['admin', 'ceo'] },
+    { id: 'dashboard', label: 'CEO Executive Dashboard', icon: LayoutDashboard, allowedRoles: ['ceo', 'admin'] },
+    { id: 'reception', label: 'Reception & Queue Desk', icon: UserPlus, badge: 'Token', allowedRoles: ['receptionist', 'ceo', 'admin'] },
     { id: 'patients', label: 'Patient Directory', icon: Users },
-    { id: 'appointments', label: 'Appointments', icon: CalendarCheck, badge: '4 Today', allowedRoles: ['receptionist', 'doctor', 'ceo', 'admin'] },
-    { id: 'opd', label: 'OPD & Follow-up', icon: Stethoscope, allowedRoles: ['doctor', 'receptionist', 'ceo', 'admin'] },
+    { id: 'appointments', label: 'Appointments Matrix', icon: CalendarCheck, badge: '4 Today', allowedRoles: ['receptionist', 'doctor', 'ceo', 'admin'] },
+    { id: 'opd', label: 'OPD Consultation Desk', icon: Stethoscope, allowedRoles: ['doctor', 'receptionist', 'ceo', 'admin'] },
     { id: 'ipd', label: 'IPD Admissions', icon: Building2, allowedRoles: ['doctor', 'billing', 'ceo', 'admin'] },
-    { id: 'bed-management', label: 'Ward & Beds', icon: BedDouble, badge: `${occupiedBeds}/${beds.length}` },
+    { id: 'bed-management', label: 'Ward & Bed Grid', icon: BedDouble, badge: `${occupiedBeds}/${beds.length}` },
     { id: 'patient-movement', label: 'Patient Movement', icon: GitCommit },
     { id: 'pharmacy', label: 'Pharmacy & e-Rx', icon: Pill, badge: 'Active', allowedRoles: ['doctor', 'billing', 'ceo', 'admin'] },
-    { id: 'diagnostics', label: 'Laboratory & LIS', icon: FlaskConical, allowedRoles: ['doctor', 'emergency', 'ceo', 'admin'] },
+    { id: 'diagnostics', label: 'Laboratory & LIS Desk', icon: FlaskConical, allowedRoles: ['doctor', 'emergency', 'ceo', 'admin'] },
     { id: 'operation-theatre', label: 'Operation Theatre', icon: Scissors, badge: '3 OT', allowedRoles: ['doctor', 'emergency', 'ceo', 'admin'] },
     { id: 'discharge-summary', label: 'Discharge Summary', icon: FileCheck, allowedRoles: ['doctor', 'ceo', 'admin'] },
     { id: 'doctors', label: 'Doctors & Schedule', icon: UserCheck, allowedRoles: ['receptionist', 'ceo', 'admin'] },
-    { id: 'departments', label: 'Departments', icon: Briefcase },
-    { id: 'billing', label: 'Billing & Cash', icon: Receipt, allowedRoles: ['billing', 'insurance', 'ceo', 'admin'] },
-    { id: 'insurance', label: 'Insurance / TPA', icon: ShieldAlert, badge: pendingClaims > 0 ? pendingClaims : undefined, allowedRoles: ['insurance', 'billing', 'ceo', 'admin'] },
-    { id: 'emergency', label: 'Emergency Bay', icon: Siren, badge: criticalEmergency > 0 ? criticalEmergency : undefined, isHot: true, allowedRoles: ['emergency', 'doctor', 'ceo', 'admin'] },
+    { id: 'departments', label: 'Clinical Departments', icon: Briefcase },
+    { id: 'billing', label: 'Billing & Cashier', icon: Receipt, allowedRoles: ['billing', 'insurance', 'ceo', 'admin'] },
+    { id: 'insurance', label: 'Insurance / TPA Desk', icon: ShieldAlert, badge: pendingClaims > 0 ? pendingClaims : undefined, allowedRoles: ['insurance', 'billing', 'ceo', 'admin'] },
+    { id: 'emergency', label: 'Emergency & Resuscitation', icon: Siren, badge: criticalEmergency > 0 ? criticalEmergency : undefined, isHot: true, allowedRoles: ['emergency', 'doctor', 'ceo', 'admin'] },
     { id: 'consent-forms', label: 'Consent Forms', icon: FileCheck2 },
-    { id: 'housekeeping', label: 'Housekeeping', icon: Sparkles },
+    { id: 'housekeeping', label: 'Housekeeping & Cleanliness', icon: Sparkles },
     { id: 'reports', label: 'Reports & Analytics', icon: BarChart3, allowedRoles: ['ceo', 'billing', 'admin'] },
-    { id: 'settings', label: 'Administration', icon: Settings },
   ];
 
-  // Role-based filtering: Admin and CEO see all, specific roles see relevant modules
+  // Role-based filtering
   const currentRole = currentUser?.role || 'ceo';
   const filteredNavItems = allNavItems.filter((item) => {
-    if (currentUser?.id === 'user-admin' || currentRole === 'ceo') return true;
+    if (currentUser?.id === 'user-admin' || currentRole === 'admin' || currentRole === 'ceo') return true;
     if (!item.allowedRoles) return true;
     return item.allowedRoles.includes(currentRole);
   });

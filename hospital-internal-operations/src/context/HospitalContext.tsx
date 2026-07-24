@@ -56,7 +56,7 @@ export const DEMO_PERSONAS: UserSession[] = [
     id: 'user-admin',
     name: 'Rajesh V (Chief Admin)',
     email: 'admin@anaravhealth.com',
-    role: 'ceo',
+    role: 'admin',
     roleTitle: 'System Super Administrator',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
     defaultModule: 'settings',
