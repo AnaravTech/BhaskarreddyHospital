@@ -33,7 +33,7 @@ export const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between relative overflow-hidden font-sans selection:bg-cyan-500 selection:text-white">
-      {/* Dynamic Background Ambient Gradients */}
+      {/* Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none" />
 
@@ -51,16 +51,16 @@ export const Login: React.FC = () => {
                 Anarav <span className="text-cyan-400">Hospital OS</span>
               </h1>
               <span className="px-2 py-0.5 text-[9px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded uppercase tracking-wider">
-                Enterprise v4.2
+                Enterprise SSO
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 font-medium">Next-Generation Digital Health Platform</p>
+            <p className="text-[11px] text-slate-400 font-medium">Digital Hospital Management Platform</p>
           </div>
         </div>
 
         <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-400">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>HIPAA & ABDM Compliant Portal</span>
+          <span>HIPAA & ABDM Compliant Security</span>
         </div>
       </header>
 
@@ -68,23 +68,22 @@ export const Login: React.FC = () => {
       <main className="flex-1 flex items-center justify-center p-6 z-10">
         <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          {/* Left Value Proposition & Live Telemetry Features */}
+          {/* Left Feature Summary */}
           <div className="lg:col-span-6 space-y-6 text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/10 to-indigo-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Production-Grade Executive Platform</span>
+              <span>Production Hospital System</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
-              Integrated Digital Operating System for Modern Healthcare Groups
+              Hospital Internal Operations & Clinical Workflows
             </h2>
 
             <p className="text-sm text-slate-400 leading-relaxed">
-              Experience seamless user navigation across OPD consultations, 15-day OP validity calculations, 
-              interactive bed occupancy grids, multi-payment split ledgers, and real-time AI copilot intelligence.
+              Authenticate with your official credentials or select your staff account to access OPD consultations, IPD ward telemetry, 15-day OP validity calculations, and tariff masters.
             </p>
 
-            {/* Platform Feature Checklist */}
+            {/* Feature Checklist */}
             <div className="space-y-2.5 pt-2">
               <div className="flex items-center gap-2.5 text-xs text-slate-300 font-medium">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -105,26 +104,26 @@ export const Login: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Login & Role Persona Selector Box */}
+          {/* Right Staff Account Selector & Login Box */}
           <div className="lg:col-span-6 bg-slate-900/90 border border-slate-800/90 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl space-y-6">
             <div className="border-b border-slate-800 pb-4">
               <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <Lock className="w-5 h-5 text-cyan-400" />
-                Enterprise User Login
+                Staff SSO Account Login
               </h3>
               <p className="text-xs text-slate-400 mt-1">
-                Select a persona to test role-based navigation & permissions.
+                Select your official staff identity to load your workspace
               </p>
             </div>
 
-            {/* Persona Quick Switcher Grid */}
+            {/* Staff Accounts Selector */}
             <div className="space-y-2">
               <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <Users className="w-3.5 h-3.5 text-cyan-400" />
-                1-Click Demo Persona Switcher
+                Select Staff Account
               </label>
 
-              <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+              <div className="grid grid-cols-2 gap-2 max-h-52 overflow-y-auto pr-1">
                 {DEMO_PERSONAS.map((persona) => {
                   const isSelected = selectedPersona.id === persona.id;
                   return (
@@ -153,7 +152,7 @@ export const Login: React.FC = () => {
               </div>
             </div>
 
-            {/* Login Form Inputs */}
+            {/* Login Form */}
             <form onSubmit={handleLoginSubmit} className="space-y-4 text-xs">
               {/* Branch Selector */}
               <div>
@@ -173,7 +172,7 @@ export const Login: React.FC = () => {
                 </select>
               </div>
 
-              {/* Email & Password (Pre-filled for Demo) */}
+              {/* Email & Password */}
               <div>
                 <label className="block text-slate-400 mb-1 font-medium">Username / Official Email</label>
                 <input
@@ -203,10 +202,10 @@ export const Login: React.FC = () => {
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-cyan-600/30 flex items-center justify-center gap-2 transition active:scale-95"
               >
                 {isAuthenticating ? (
-                  <span>Authenticating Role Session...</span>
+                  <span>Authenticating Session...</span>
                 ) : (
                   <>
-                    <span>Enter As {selectedPersona.name} ({selectedPersona.roleTitle})</span>
+                    <span>Sign In As {selectedPersona.name} ({selectedPersona.roleTitle})</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
@@ -218,7 +217,7 @@ export const Login: React.FC = () => {
 
       {/* Footer */}
       <footer className="p-4 text-center text-[11px] text-slate-500 border-t border-slate-900 bg-slate-950/80">
-        © 2026 Anarav Hospital Operating System • Enterprise Digital Healthcare Platform • Demo Ready Mode
+        © 2026 Anarav Hospital Operating System • Enterprise Production System
       </footer>
     </div>
   );
