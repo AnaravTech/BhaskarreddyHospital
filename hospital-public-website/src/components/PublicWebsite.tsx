@@ -11,6 +11,13 @@ import {
   ArrowRight,
   Sparkles,
   X,
+  Building,
+  Briefcase,
+  Quote,
+  Clock,
+  Phone,
+  Mail,
+  MapPin,
 } from 'lucide-react';
 
 export const PublicWebsite: React.FC = () => {
@@ -19,13 +26,15 @@ export const PublicWebsite: React.FC = () => {
     departments,
     healthPackages,
     blogPosts,
+    galleryItems,
+    testimonials,
     addAppointment,
     addContactInquiry,
     addToast,
     setActiveView,
   } = useWebsite();
 
-  const [activeTab, setActiveTab] = useState<'home' | 'doctors' | 'departments' | 'packages' | 'gallery' | 'blog' | 'contact'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'doctors' | 'departments' | 'packages' | 'gallery' | 'blog' | 'careers' | 'contact'>('home');
 
   // Doctor Search
   const [docSearchQuery, setDocSearchQuery] = useState('');
@@ -47,6 +56,10 @@ export const PublicWebsite: React.FC = () => {
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [contactMessage, setContactMessage] = useState('');
+
+  // Career Application State
+  const [applicantName, setApplicantName] = useState('');
+  const [applicantRole, setApplicantRole] = useState('Staff Nurse');
 
   const filteredDoctors = doctors.filter((doc) => {
     const matchesSearch =
@@ -93,335 +106,421 @@ export const PublicWebsite: React.FC = () => {
     setContactMessage('');
   };
 
+  const handleCareerSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!applicantName) return;
+
+    addToast('Application Received', `Received job application for ${applicantRole} position from ${applicantName}.`, 'success');
+    setApplicantName('');
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500 selection:text-white pb-20">
-      
-      {/* Top Bar Switcher */}
-      <div className="bg-slate-900 border-b border-slate-800 py-2 px-4 md:px-12 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2 text-cyan-400 font-bold">
-          <ShieldCheck className="w-4 h-4" />
-          <span>Bhaskar Reddy Hospital • Public Patient Portal</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setActiveView('public-website')}
-            className="px-2.5 py-1 rounded bg-cyan-600 text-white font-bold text-[10px]"
-          >
-            🌐 Public Patient Website
-          </button>
-          <button
-            onClick={() => setActiveView('website-cms')}
-            className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-[10px]"
-          >
-            ⚙️ Website CMS Admin
-          </button>
-        </div>
-      </div>
-
-      {/* Main Header */}
-      <header className="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 px-4 md:px-12 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('home')}>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 p-0.5 shadow-lg shadow-cyan-500/30">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Activity className="w-6 h-6 text-cyan-400 animate-pulse" />
-            </div>
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500 selection:text-white flex flex-col justify-between">
+      <div>
+        {/* Top Bar Switcher */}
+        <div className="bg-slate-900 border-b border-slate-800 py-2 px-4 md:px-12 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2 text-cyan-400 font-bold">
+            <ShieldCheck className="w-4 h-4" />
+            <span>Bhaskar Reddy Hospital • Public Patient Portal</span>
           </div>
-          <div>
-            <h1 className="font-extrabold text-white text-lg tracking-tight">
-              Bhaskar Reddy <span className="text-cyan-400">Hospital</span>
-            </h1>
-            <p className="text-[10px] text-slate-400 font-medium">Multi-Specialty & Cardiac Institute</p>
-          </div>
-        </div>
 
-        <nav className="hidden md:flex items-center gap-6 text-xs font-semibold">
-          {[
-            { id: 'home', label: 'Home' },
-            { id: 'doctors', label: 'Doctors' },
-            { id: 'departments', label: 'Departments' },
-            { id: 'packages', label: 'Health Packages' },
-            { id: 'blog', label: 'Health Blog' },
-            { id: 'contact', label: 'Contact' },
-          ].map((nav) => (
+          <div className="flex items-center gap-2">
             <button
-              key={nav.id}
-              onClick={() => setActiveTab(nav.id as any)}
-              className={`transition ${
-                activeTab === nav.id ? 'text-cyan-400 font-extrabold border-b-2 border-cyan-400 pb-1' : 'text-slate-300 hover:text-white'
-              }`}
+              onClick={() => setActiveView('public-website')}
+              className="px-2.5 py-1 rounded bg-cyan-600 text-white font-bold text-[10px]"
             >
-              {nav.label}
+              🌐 Public Patient Website
             </button>
-          ))}
-        </nav>
+            <button
+              onClick={() => setActiveView('website-cms')}
+              className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-[10px]"
+            >
+              ⚙️ Website CMS Admin
+            </button>
+          </div>
+        </div>
 
-        <button
-          onClick={() => {
-            setIsBookingModalOpen(true);
-            setBookingStep(1);
-          }}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white font-extrabold text-xs shadow-lg shadow-cyan-500/25 transition"
-        >
-          <Calendar className="w-4 h-4" />
-          <span>Book Appointment</span>
-        </button>
-      </header>
-
-      {/* Hero & WOW 1 Stats */}
-      {activeTab === 'home' && (
-        <>
-          <section className="relative px-4 md:px-12 py-16 md:py-24 overflow-hidden max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
-                <span>24/7 Level-1 Trauma & Multi-Specialty Care</span>
+        {/* Main Navigation Header */}
+        <header className="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 px-4 md:px-12 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('home')}>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 p-0.5 shadow-lg shadow-cyan-500/30">
+              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                <Activity className="w-6 h-6 text-cyan-400 animate-pulse" />
               </div>
-
-              <h1 className="text-4xl md:text-5xl font-black text-white leading-tight">
-                World-Class Healthcare Dedicated to <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Your Family's Trust</span>
+            </div>
+            <div>
+              <h1 className="font-extrabold text-white text-lg tracking-tight">
+                Bhaskar Reddy <span className="text-cyan-400">Hospital</span>
               </h1>
-
-              <p className="text-slate-300 text-sm md:text-base leading-relaxed">
-                Equipped with 4th Gen Robotic Joint Replacement, 24/7 Cath Lab & Emergency Resuscitation, 
-                and over 45+ renowned medical specialists.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <button
-                  onClick={() => {
-                    setIsBookingModalOpen(true);
-                    setBookingStep(1);
-                  }}
-                  className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-sm shadow-xl shadow-cyan-500/30 transition"
-                >
-                  <span>Instant Appointment Booking</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-                <a
-                  href="tel:040-23456789"
-                  className="flex items-center gap-2.5 px-5 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-rose-400 border border-rose-500/40 text-xs font-bold transition"
-                >
-                  <Siren className="w-4 h-4 text-rose-400 animate-pulse" />
-                  <span>Emergency Hotline: 040-23456789</span>
-                </a>
-              </div>
+              <p className="text-[10px] text-slate-400 font-medium">Multi-Specialty & Cardiac Institute</p>
             </div>
+          </div>
 
-            <div className="lg:col-span-5">
-              <img
-                src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80"
-                alt="Hospital Facility"
-                className="w-full h-80 md:h-96 rounded-2xl object-cover ring-1 ring-cyan-500/30"
-              />
-            </div>
-          </section>
+          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold">
+            {[
+              { id: 'home', label: 'Home' },
+              { id: 'doctors', label: 'Doctors' },
+              { id: 'departments', label: 'Departments' },
+              { id: 'packages', label: 'Health Packages' },
+              { id: 'gallery', label: 'Virtual Tour' },
+              { id: 'blog', label: 'Health Blog' },
+              { id: 'careers', label: 'Careers' },
+              { id: 'contact', label: 'Contact' },
+            ].map((nav) => (
+              <button
+                key={nav.id}
+                onClick={() => setActiveTab(nav.id as any)}
+                className={`transition ${
+                  activeTab === nav.id ? 'text-cyan-400 font-extrabold border-b-2 border-cyan-400 pb-1' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                {nav.label}
+              </button>
+            ))}
+          </nav>
 
-          {/* WOW Factor 1: Animated Interactive Counters */}
-          <section className="px-4 md:px-12 py-10 bg-slate-900/80 border-y border-slate-800/80">
-            <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <div className="text-3xl font-black text-cyan-400 font-mono">250,000+</div>
-                <div className="text-xs text-slate-400 font-medium">Patients Treated</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <div className="text-3xl font-black text-emerald-400 font-mono">25+</div>
-                <div className="text-xs text-slate-400 font-medium">Years of Medical Excellence</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <div className="text-3xl font-black text-purple-400 font-mono">45+</div>
-                <div className="text-xs text-slate-400 font-medium">Senior Specialists & Doctors</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <div className="text-3xl font-black text-amber-400 font-mono">50,000+</div>
-                <div className="text-xs text-slate-400 font-medium">Successful Surgeries</div>
-              </div>
-            </div>
-          </section>
+          <button
+            onClick={() => {
+              setIsBookingModalOpen(true);
+              setBookingStep(1);
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white font-extrabold text-xs shadow-lg shadow-cyan-500/25 transition"
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Book Appointment</span>
+          </button>
+        </header>
 
-          {/* WOW Factor 2: Doctor Finder */}
-          <section className="px-4 md:px-12 py-16 max-w-7xl mx-auto space-y-8">
-            <div className="text-center space-y-2">
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-                WOW Factor 2
-              </span>
-              <h2 className="text-3xl font-black text-white">Find Your Specialist Doctor</h2>
-              <p className="text-xs text-slate-400 max-w-xl mx-auto">
-                Search our panel of interventional cardiologists, neurosurgeons, robotic joint specialists, and emergency physicians.
-              </p>
-            </div>
+        {/* Hero & WOW 1 Stats */}
+        {activeTab === 'home' && (
+          <>
+            <section className="relative px-4 md:px-12 py-16 md:py-24 overflow-hidden max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              <div className="lg:col-span-7 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">
+                  <Sparkles className="w-4 h-4 text-cyan-400" />
+                  <span>24/7 Level-1 Trauma & Multi-Specialty Care</span>
+                </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 bg-slate-900 p-4 rounded-2xl border border-slate-800">
-              <div className="relative flex-1">
-                <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
-                <input
-                  type="text"
-                  placeholder="Search doctor by name or specialization..."
-                  value={docSearchQuery}
-                  onChange={(e) => setDocSearchQuery(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                <h1 className="text-4xl md:text-5xl font-black text-white leading-tight">
+                  World-Class Healthcare Dedicated to <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Your Family's Trust</span>
+                </h1>
+
+                <p className="text-slate-300 text-sm md:text-base leading-relaxed">
+                  Equipped with 4th Gen Robotic Joint Replacement, 24/7 Cath Lab & Emergency Resuscitation, 
+                  and over 45+ renowned medical specialists.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-4 pt-2">
+                  <button
+                    onClick={() => {
+                      setIsBookingModalOpen(true);
+                      setBookingStep(1);
+                    }}
+                    className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-sm shadow-xl shadow-cyan-500/30 transition"
+                  >
+                    <span>Instant Appointment Booking</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+
+                  <a
+                    href="tel:040-23456789"
+                    className="flex items-center gap-2.5 px-5 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-rose-400 border border-rose-500/40 text-xs font-bold transition"
+                  >
+                    <Siren className="w-4 h-4 text-rose-400 animate-pulse" />
+                    <span>Emergency Hotline: 040-23456789</span>
+                  </a>
+                </div>
+              </div>
+
+              <div className="lg:col-span-5">
+                <img
+                  src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80"
+                  alt="Hospital Facility"
+                  className="w-full h-80 md:h-96 rounded-2xl object-cover ring-1 ring-cyan-500/30"
                 />
               </div>
+            </section>
 
-              <select
-                value={selectedDeptFilter}
-                onChange={(e) => setSelectedDeptFilter(e.target.value)}
-                className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
-              >
-                <option value="All">All Specialty Departments</option>
-                {departments.map((d) => (
-                  <option key={d.id} value={d.name}>
-                    {d.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {/* WOW Factor 1: Animated Interactive Counters */}
+            <section className="px-4 md:px-12 py-10 bg-slate-900/80 border-y border-slate-800/80">
+              <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
+                  <div className="text-3xl font-black text-cyan-400 font-mono">250,000+</div>
+                  <div className="text-xs text-slate-400 font-medium">Patients Treated</div>
+                </div>
+                <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
+                  <div className="text-3xl font-black text-emerald-400 font-mono">25+</div>
+                  <div className="text-xs text-slate-400 font-medium">Years of Medical Excellence</div>
+                </div>
+                <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
+                  <div className="text-3xl font-black text-purple-400 font-mono">45+</div>
+                  <div className="text-xs text-slate-400 font-medium">Senior Specialists & Doctors</div>
+                </div>
+                <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
+                  <div className="text-3xl font-black text-amber-400 font-mono">50,000+</div>
+                  <div className="text-xs text-slate-400 font-medium">Successful Surgeries</div>
+                </div>
+              </div>
+            </section>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredDoctors.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 transition space-y-4 flex flex-col justify-between"
+            {/* WOW Factor 2: Doctor Finder */}
+            <section className="px-4 md:px-12 py-16 max-w-7xl mx-auto space-y-8">
+              <div className="text-center space-y-2">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                  WOW Factor 2
+                </span>
+                <h2 className="text-3xl font-black text-white">Find Your Specialist Doctor</h2>
+                <p className="text-xs text-slate-400 max-w-xl mx-auto">
+                  Search our panel of interventional cardiologists, neurosurgeons, robotic joint specialists, and emergency physicians.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                  <input
+                    type="text"
+                    placeholder="Search doctor by name or specialization..."
+                    value={docSearchQuery}
+                    onChange={(e) => setDocSearchQuery(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+
+                <select
+                  value={selectedDeptFilter}
+                  onChange={(e) => setSelectedDeptFilter(e.target.value)}
+                  className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
                 >
-                  <div className="flex items-start gap-3">
-                    <img
-                      src={doc.image}
-                      alt={doc.name}
-                      className="w-16 h-16 rounded-2xl object-cover ring-2 ring-cyan-500/30 shrink-0"
-                    />
-                    <div>
-                      <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                        {doc.name}
-                        <span className="flex items-center text-[10px] font-bold text-amber-400">
-                          <Star className="w-3 h-3 fill-amber-400" /> {doc.rating}
-                        </span>
-                      </h3>
-                      <div className="text-xs text-cyan-400 font-semibold">{doc.specialization}</div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">{doc.qualification}</div>
-                      <div className="text-[10px] text-slate-400 font-mono mt-0.5">{doc.experienceYears} Years Exp.</div>
-                    </div>
-                  </div>
+                  <option value="All">All Specialty Departments</option>
+                  {departments.map((d) => (
+                    <option key={d.id} value={d.name}>
+                      {d.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1 text-xs">
-                    <div className="flex justify-between text-slate-400">
-                      <span>Normal Queue Fee:</span>
-                      <span className="font-bold text-slate-200 font-mono">₹{doc.consultationFee}</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredDoctors.map((doc) => (
+                  <div
+                    key={doc.id}
+                    className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 transition space-y-4 flex flex-col justify-between"
+                  >
+                    <div className="flex items-start gap-3">
+                      <img
+                        src={doc.image}
+                        alt={doc.name}
+                        className="w-16 h-16 rounded-2xl object-cover ring-2 ring-cyan-500/30 shrink-0"
+                      />
+                      <div>
+                        <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+                          {doc.name}
+                          <span className="flex items-center text-[10px] font-bold text-amber-400">
+                            <Star className="w-3 h-3 fill-amber-400" /> {doc.rating}
+                          </span>
+                        </h3>
+                        <div className="text-xs text-cyan-400 font-semibold">{doc.specialization}</div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">{doc.qualification}</div>
+                        <div className="text-[10px] text-slate-400 font-mono mt-0.5">{doc.experienceYears} Years Exp.</div>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-slate-400">
-                      <span>Premium 10-Min Slot:</span>
-                      <span className="font-bold text-purple-400 font-mono">₹{doc.premiumFee}</span>
-                    </div>
-                  </div>
 
+                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1 text-xs">
+                      <div className="flex justify-between text-slate-400">
+                        <span>Normal Queue Fee:</span>
+                        <span className="font-bold text-slate-200 font-mono">₹{doc.consultationFee}</span>
+                      </div>
+                      <div className="flex justify-between text-slate-400">
+                        <span>Premium 10-Min Slot:</span>
+                        <span className="font-bold text-purple-400 font-mono">₹{doc.premiumFee}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setBookingDoctor(doc);
+                        setIsBookingModalOpen(true);
+                        setBookingStep(1);
+                      }}
+                      className="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs transition"
+                    >
+                      Book Consultation
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Testimonials */}
+            <section className="px-4 md:px-12 py-16 bg-slate-900/60 border-y border-slate-800/80">
+              <div className="max-w-7xl mx-auto space-y-8">
+                <div className="text-center space-y-2">
+                  <h2 className="text-3xl font-black text-white">Patient Testimonials & Success Stories</h2>
+                  <p className="text-xs text-slate-400">Hear directly from patients treated at Bhaskar Reddy Hospital</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {testimonials.map((t) => (
+                    <div key={t.id} className="p-6 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
+                      <Quote className="w-8 h-8 text-cyan-400/40" />
+                      <p className="text-xs text-slate-300 italic leading-relaxed">"{t.reviewText}"</p>
+
+                      <div className="flex items-center gap-3 pt-2 border-t border-slate-800">
+                        <img src={t.photo} alt={t.patientName} className="w-10 h-10 rounded-full object-cover" />
+                        <div>
+                          <div className="text-xs font-bold text-white">{t.patientName} ({t.age} yrs)</div>
+                          <div className="text-[10px] text-cyan-400 font-semibold">{t.treatment} • Treated by {t.doctorName}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </>
+        )}
+
+        {/* Doctor Directory */}
+        {activeTab === 'doctors' && (
+          <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-6">
+            <h2 className="text-2xl font-black text-white">Our Senior Medical Specialists</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {doctors.map((doc) => (
+                <div key={doc.id} className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+                  <img src={doc.image} alt={doc.name} className="w-20 h-20 rounded-2xl object-cover" />
+                  <h3 className="text-base font-bold text-white">{doc.name}</h3>
+                  <p className="text-xs text-cyan-400">{doc.specialization}</p>
+                  <div className="text-xs text-slate-400">{doc.qualification} • {doc.experienceYears} Yrs Exp.</div>
                   <button
                     onClick={() => {
                       setBookingDoctor(doc);
                       setIsBookingModalOpen(true);
-                      setBookingStep(1);
                     }}
-                    className="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs transition"
+                    className="w-full py-2 rounded-xl bg-cyan-600 text-white font-bold text-xs"
                   >
                     Book Consultation
                   </button>
                 </div>
               ))}
             </div>
-          </section>
-        </>
-      )}
+          </div>
+        )}
 
-      {/* Doctor List Page */}
-      {activeTab === 'doctors' && (
-        <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-6">
-          <h2 className="text-2xl font-black text-white">Our Medical Specialists</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {doctors.map((doc) => (
-              <div key={doc.id} className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-                <img src={doc.image} alt={doc.name} className="w-20 h-20 rounded-2xl object-cover" />
-                <h3 className="text-base font-bold text-white">{doc.name}</h3>
-                <p className="text-xs text-cyan-400">{doc.specialization}</p>
-                <div className="text-xs text-slate-400">{doc.qualification} • {doc.experienceYears} Yrs Exp.</div>
-                <button
-                  onClick={() => {
-                    setBookingDoctor(doc);
-                    setIsBookingModalOpen(true);
-                  }}
-                  className="w-full py-2 rounded-xl bg-cyan-600 text-white font-bold text-xs"
+        {/* WOW Factor 6: Virtual Facility Gallery */}
+        {activeTab === 'gallery' && (
+          <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-6">
+            <div className="text-center space-y-2">
+              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                WOW Factor 6
+              </span>
+              <h2 className="text-3xl font-black text-white">Virtual Hospital Tour & Infrastructure</h2>
+              <p className="text-xs text-slate-400">Explore our Operation Theatres, ICUs, and Patient Suites</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {galleryItems.map((item) => (
+                <div key={item.id} className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+                  <img src={item.image} alt={item.title} className="w-full h-56 rounded-xl object-cover" />
+                  <div>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300">
+                      {item.category}
+                    </span>
+                    <h3 className="text-base font-bold text-white mt-1">{item.title}</h3>
+                    <p className="text-xs text-slate-400">{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Careers */}
+        {activeTab === 'careers' && (
+          <div className="px-4 md:px-12 py-12 max-w-3xl mx-auto space-y-6">
+            <h2 className="text-2xl font-black text-white">Join Our Healthcare Team</h2>
+            <p className="text-xs text-slate-400">Explore open opportunities for Staff Nurses, RMOs, and Technicians.</p>
+
+            <form onSubmit={handleCareerSubmit} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 text-xs">
+              <div>
+                <label className="block text-slate-400 mb-1">Full Name *</label>
+                <input
+                  type="text"
+                  placeholder="Applicant Name"
+                  value={applicantName}
+                  onChange={(e) => setApplicantName(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 mb-1">Select Position</label>
+                <select
+                  value={applicantRole}
+                  onChange={(e) => setApplicantRole(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
                 >
-                  Book Consultation
-                </button>
+                  <option value="Staff Nurse (ICU/OT)">Staff Nurse (ICU/OT)</option>
+                  <option value="Resident Medical Officer (RMO)">Resident Medical Officer (RMO)</option>
+                  <option value="Medical Counselor">Medical Counselor</option>
+                  <option value="Radiology Technician">Radiology Technician</option>
+                </select>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* Health Blog */}
-      {activeTab === 'blog' && (
-        <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-6">
-          <h2 className="text-2xl font-black text-white">Health Blog & Articles</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {blogPosts.map((post) => (
-              <div key={post.id} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-                <img src={post.image} alt={post.title} className="w-full h-48 rounded-xl object-cover" />
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300">
-                  {post.category}
-                </span>
-                <h3 className="text-lg font-bold text-white">{post.title}</h3>
-                <p className="text-xs text-slate-300">{post.excerpt}</p>
-                <div className="text-[10px] text-slate-500 font-mono">By {post.author} • {post.date}</div>
+              <button type="submit" className="px-5 py-2.5 rounded-xl bg-cyan-600 text-white font-bold">
+                Submit Online Application
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Contact */}
+        {activeTab === 'contact' && (
+          <div className="px-4 md:px-12 py-12 max-w-4xl mx-auto space-y-6">
+            <h2 className="text-2xl font-black text-white">Contact & Location</h2>
+            <form onSubmit={handleContactSubmit} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 text-xs">
+              <div>
+                <label className="block text-slate-400 mb-1">Your Name *</label>
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={contactName}
+                  onChange={(e) => setContactName(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+                  required
+                />
               </div>
-            ))}
+              <div>
+                <label className="block text-slate-400 mb-1">Phone Number *</label>
+                <input
+                  type="text"
+                  placeholder="+91 98490 00000"
+                  value={contactPhone}
+                  onChange={(e) => setContactPhone(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-slate-400 mb-1">Message</label>
+                <textarea
+                  rows={3}
+                  placeholder="How can our medical team assist you?"
+                  value={contactMessage}
+                  onChange={(e) => setContactMessage(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+                />
+              </div>
+              <button type="submit" className="px-5 py-2.5 rounded-xl bg-cyan-600 text-white font-bold">
+                Submit Inquiry Request
+              </button>
+            </form>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Contact */}
-      {activeTab === 'contact' && (
-        <div className="px-4 md:px-12 py-12 max-w-4xl mx-auto space-y-6">
-          <h2 className="text-2xl font-black text-white">Contact & Inquiry</h2>
-          <form onSubmit={handleContactSubmit} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 text-xs">
-            <div>
-              <label className="block text-slate-400 mb-1">Your Name *</label>
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={contactName}
-                onChange={(e) => setContactName(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-slate-400 mb-1">Phone Number *</label>
-              <input
-                type="text"
-                placeholder="+91 98490 00000"
-                value={contactPhone}
-                onChange={(e) => setContactPhone(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-slate-400 mb-1">Message</label>
-              <textarea
-                rows={3}
-                placeholder="How can our medical team assist you?"
-                value={contactMessage}
-                onChange={(e) => setContactMessage(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
-              />
-            </div>
-            <button type="submit" className="px-5 py-2.5 rounded-xl bg-cyan-600 text-white font-bold">
-              Submit Inquiry Request
-            </button>
-          </form>
-        </div>
-      )}
-
-      {/* WOW Factor 7: Floating Emergency Banner */}
+      {/* Floating Emergency Banner */}
       <div className="fixed bottom-4 left-4 z-40 bg-rose-950/90 border border-rose-500/60 p-3 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-3 animate-bounce">
         <Siren className="w-6 h-6 text-rose-400 animate-pulse shrink-0" />
         <div className="text-xs">
@@ -436,7 +535,7 @@ export const PublicWebsite: React.FC = () => {
         </a>
       </div>
 
-      {/* WOW Factor 3: Booking Wizard Modal */}
+      {/* Booking Wizard Modal */}
       {isBookingModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4">
@@ -639,6 +738,52 @@ export const PublicWebsite: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Public Website Footer */}
+      <footer className="bg-slate-900 border-t border-slate-800 mt-16 px-4 md:px-12 py-12 text-xs text-slate-400">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="space-y-3">
+            <h3 className="text-white font-extrabold text-sm">Bhaskar Reddy Hospital</h3>
+            <p className="text-slate-400 text-[11px] leading-relaxed">
+              Leading multi-specialty institute providing 24/7 cardiac, trauma, and surgical healthcare services.
+            </p>
+            <div className="text-[10px] text-slate-500 font-mono">Gachibowli, Hyderabad, Telangana</div>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold text-xs mb-3">Quick Navigation</h4>
+            <div className="space-y-1.5 text-[11px]">
+              <div><button onClick={() => setActiveTab('doctors')} className="hover:text-cyan-400">Find a Doctor</button></div>
+              <div><button onClick={() => setActiveTab('departments')} className="hover:text-cyan-400">Specialty Divisions</button></div>
+              <div><button onClick={() => setActiveTab('packages')} className="hover:text-cyan-400">Health Checkup Packages</button></div>
+              <div><button onClick={() => setActiveTab('gallery')} className="hover:text-cyan-400">Virtual Facility Tour</button></div>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold text-xs mb-3">Emergency & Contact</h4>
+            <div className="space-y-1.5 text-[11px]">
+              <div>Emergency Hotline: <span className="text-rose-400 font-bold">040-23456789</span></div>
+              <div>Ambulance Dispatch: <span className="text-cyan-400 font-bold">+91 98490 11223</span></div>
+              <div>Email: <span className="text-slate-300">care@bhaskarreddyhospital.com</span></div>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold text-xs mb-3">Patient Resources</h4>
+            <div className="space-y-1.5 text-[11px]">
+              <div><button onClick={() => setActiveTab('blog')} className="hover:text-cyan-400">Health Tips & Blog</button></div>
+              <div><button onClick={() => setActiveTab('careers')} className="hover:text-cyan-400">Careers & Recruitment</button></div>
+              <div><button onClick={() => setActiveTab('contact')} className="hover:text-cyan-400">Inquiry & Feedback</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto pt-8 mt-8 border-t border-slate-800 flex justify-between items-center text-[10px]">
+          <div>© 2026 Bhaskar Reddy Hospital. All rights reserved.</div>
+          <div>HIPAA & NABH Compliant Digital Health Portal</div>
+        </div>
+      </footer>
     </div>
   );
 };
