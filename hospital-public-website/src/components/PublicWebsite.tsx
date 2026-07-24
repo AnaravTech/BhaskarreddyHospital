@@ -12,6 +12,13 @@ import {
   Sparkles,
   X,
   Quote,
+  Heart,
+  Stethoscope,
+  Briefcase,
+  Award,
+  Clock,
+  Phone,
+  Building,
 } from 'lucide-react';
 
 export const PublicWebsite: React.FC = () => {
@@ -53,7 +60,7 @@ export const PublicWebsite: React.FC = () => {
 
   // Career Application State
   const [applicantName, setApplicantName] = useState('');
-  const [applicantRole, setApplicantRole] = useState('Staff Nurse');
+  const [applicantRole, setApplicantRole] = useState('Staff Nurse (ICU/OT)');
 
   const filteredDoctors = doctors.filter((doc) => {
     const matchesSearch =
@@ -111,7 +118,7 @@ export const PublicWebsite: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-blue-600 selection:text-white flex flex-col justify-between">
       <div>
-        {/* Top Notification Bar */}
+        {/* Top Portal Switcher Bar */}
         <div className="bg-slate-900 text-slate-200 py-2 px-4 md:px-12 flex items-center justify-between text-xs border-b border-slate-800">
           <div className="flex items-center gap-2 text-cyan-400 font-bold">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
@@ -134,7 +141,7 @@ export const PublicWebsite: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Navigation Header (Clean White Theme) */}
+        {/* Main Navigation Header */}
         <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 md:px-12 py-3.5 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('home')}>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 p-0.5 shadow-md shadow-blue-500/20">
@@ -155,7 +162,7 @@ export const PublicWebsite: React.FC = () => {
               { id: 'home', label: 'Home' },
               { id: 'doctors', label: 'Find Doctors' },
               { id: 'departments', label: 'Departments' },
-              { id: 'packages', label: 'Health Checkups' },
+              { id: 'packages', label: 'Health Packages' },
               { id: 'gallery', label: 'Virtual Tour' },
               { id: 'blog', label: 'Health Blog' },
               { id: 'careers', label: 'Careers' },
@@ -190,7 +197,7 @@ export const PublicWebsite: React.FC = () => {
         {/* Home Page Content */}
         {activeTab === 'home' && (
           <>
-            {/* Hero Section (Clean Light Backdrop) */}
+            {/* Hero Section */}
             <section className="relative px-4 md:px-12 py-16 md:py-24 bg-gradient-to-b from-blue-50/60 via-slate-50 to-white overflow-hidden">
               <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 <div className="lg:col-span-7 space-y-6">
@@ -242,7 +249,7 @@ export const PublicWebsite: React.FC = () => {
               </div>
             </section>
 
-            {/* WOW Factor 1: Animated Overview Counters (Clean White Cards) */}
+            {/* WOW Factor 1: Animated Overview Counters */}
             <section className="px-4 md:px-12 py-12 bg-white border-y border-slate-200">
               <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs space-y-1">
@@ -410,49 +417,12 @@ export const PublicWebsite: React.FC = () => {
               </div>
             </section>
 
-            {/* WOW Factor 5: Hospital Journey Timeline */}
-            <section className="px-4 md:px-12 py-16 max-w-7xl mx-auto space-y-8">
-              <div className="text-center space-y-2">
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
-                  WOW Factor 5
-                </span>
-                <h2 className="text-3xl font-black text-slate-900">Hospital Journey & Milestones</h2>
-                <p className="text-xs text-slate-500">Over 25 years of relentless healthcare innovation</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2">
-                  <div className="font-mono font-black text-blue-600 text-lg">1998</div>
-                  <div className="font-bold text-slate-900">Inception of Bhaskar Reddy Hospital</div>
-                  <p className="text-slate-500 text-[11px]">Started as a 50-bed community hospital in Gachibowli.</p>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2">
-                  <div className="font-mono font-black text-indigo-600 text-lg">2008</div>
-                  <div className="font-bold text-slate-900">24/7 Cardiac Cath Lab Wing</div>
-                  <p className="text-slate-500 text-[11px]">Launched dedicated interventional cardiology unit.</p>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2">
-                  <div className="font-mono font-black text-purple-600 text-lg">2018</div>
-                  <div className="font-bold text-slate-900">Robotic Joint Replacement Suite</div>
-                  <p className="text-slate-500 text-[11px]">Pioneered robotic total knee replacement in Hyderabad.</p>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2">
-                  <div className="font-mono font-black text-emerald-600 text-lg">2026</div>
-                  <div className="font-bold text-slate-900">Anarav AI Hospital Operating System</div>
-                  <p className="text-slate-500 text-[11px]">Deployed digital health platform for zero-latency care.</p>
-                </div>
-              </div>
-            </section>
-
-            {/* Preventive Health Checkup Packages */}
-            <section className="px-4 md:px-12 py-16 bg-blue-50/40 border-y border-slate-200">
+            {/* Health Packages Section on Home */}
+            <section className="px-4 md:px-12 py-16 bg-blue-50/40 border-b border-slate-200">
               <div className="max-w-7xl mx-auto space-y-8">
                 <div className="text-center space-y-2">
                   <h2 className="text-3xl font-black text-slate-900">Preventive Health Checkup Packages</h2>
-                  <p className="text-xs text-slate-500">Comprehensive health screenings for peace of mind</p>
+                  <p className="text-xs text-slate-500">Comprehensive health screenings designed for peace of mind</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -498,34 +468,114 @@ export const PublicWebsite: React.FC = () => {
                 </div>
               </div>
             </section>
-
-            {/* Testimonials */}
-            <section className="px-4 md:px-12 py-16 bg-white">
-              <div className="max-w-7xl mx-auto space-y-8">
-                <div className="text-center space-y-2">
-                  <h2 className="text-3xl font-black text-slate-900">Patient Testimonials & Reviews</h2>
-                  <p className="text-xs text-slate-500">Real recovery stories from patients treated at Bhaskar Reddy Hospital</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {testimonials.map((t) => (
-                    <div key={t.id} className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
-                      <Quote className="w-8 h-8 text-blue-500/30" />
-                      <p className="text-xs text-slate-700 italic leading-relaxed">"{t.reviewText}"</p>
-
-                      <div className="flex items-center gap-3 pt-2 border-t border-slate-200">
-                        <img src={t.photo} alt={t.patientName} className="w-10 h-10 rounded-full object-cover" />
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">{t.patientName} ({t.age} yrs)</div>
-                          <div className="text-[10px] text-blue-600 font-semibold">{t.treatment} • Treated by {t.doctorName}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
           </>
+        )}
+
+        {/* Dedicated Departments Tab Page */}
+        {activeTab === 'departments' && (
+          <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-8">
+            <div className="text-center space-y-2">
+              <h2 className="text-3xl font-black text-slate-900">All Specialty Medical Departments ({departments.length})</h2>
+              <p className="text-xs text-slate-500">Comprehensive surgical and clinical specialties at Bhaskar Reddy Hospital</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {departments.map((dept) => (
+                <div key={dept.id} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">{dept.name}</h3>
+                      <div className="text-xs text-blue-600 font-semibold mt-0.5">Department Code: {dept.code}</div>
+                    </div>
+                    <span className="px-2.5 py-1 rounded bg-blue-50 text-blue-800 text-xs font-mono font-bold">
+                      {dept.opdRoom}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-slate-600 leading-relaxed">{dept.description}</p>
+
+                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2 text-xs">
+                    <div className="font-bold text-slate-800">Specialty Head: {dept.headDoctor}</div>
+                    <div className="text-slate-500">Inpatient Bed Capacity: {dept.totalBeds} Beds</div>
+                  </div>
+
+                  <div className="space-y-1 text-xs">
+                    <div className="font-bold text-slate-700">Procedures & Treatments Offered:</div>
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {dept.services.map((srv) => (
+                        <span key={srv} className="px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 text-[11px] font-medium border border-blue-100">
+                          ✓ {srv}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setBookingDept(dept.name);
+                      setIsBookingModalOpen(true);
+                      setBookingStep(1);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition"
+                  >
+                    Book Consultation in {dept.name}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Dedicated Health Packages Tab Page */}
+        {activeTab === 'packages' && (
+          <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-8">
+            <div className="text-center space-y-2">
+              <h2 className="text-3xl font-black text-slate-900">Preventive Health Checkup Packages ({healthPackages.length})</h2>
+              <p className="text-xs text-slate-500">Early detection and comprehensive health screenings tailored for all age groups</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {healthPackages.map((pkg) => (
+                <div
+                  key={pkg.id}
+                  className={`p-6 rounded-2xl bg-white border transition flex flex-col justify-between space-y-4 ${
+                    pkg.isPopular ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-lg' : 'border-slate-200 shadow-xs'
+                  }`}
+                >
+                  <div>
+                    {pkg.isPopular && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-600 text-white uppercase tracking-wider mb-2 inline-block">
+                        Most Popular Checkup
+                      </span>
+                    )}
+                    <h3 className="text-lg font-extrabold text-slate-900">{pkg.title}</h3>
+                    <div className="text-xs text-slate-500 mt-1">{pkg.recommendedFor}</div>
+
+                    <div className="mt-4 flex items-baseline gap-2 font-mono">
+                      <span className="text-2xl font-black text-blue-600">₹{pkg.price}</span>
+                      <span className="text-xs text-slate-400 line-through">₹{pkg.originalPrice}</span>
+                    </div>
+
+                    <div className="mt-4 space-y-2 text-xs text-slate-700">
+                      {pkg.features.map((feat) => (
+                        <div key={feat} className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <span>{feat}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => addToast('Checkup Booked', `Booked ${pkg.title}`, 'success')}
+                    className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition"
+                  >
+                    Reserve Health Checkup Package
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Doctor Directory */}
@@ -576,6 +626,26 @@ export const PublicWebsite: React.FC = () => {
                     <h3 className="text-base font-bold text-slate-900 mt-1">{item.title}</h3>
                     <p className="text-xs text-slate-600">{item.description}</p>
                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Blog */}
+        {activeTab === 'blog' && (
+          <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-6">
+            <h2 className="text-2xl font-black text-slate-900">Health Education & Blog</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {blogPosts.map((post) => (
+                <div key={post.id} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+                  <img src={post.image} alt={post.title} className="w-full h-48 rounded-xl object-cover" />
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
+                    {post.category}
+                  </span>
+                  <h3 className="text-lg font-bold text-slate-900">{post.title}</h3>
+                  <p className="text-xs text-slate-600 leading-relaxed">{post.excerpt}</p>
+                  <div className="text-[10px] text-slate-500 font-mono">By {post.author} • {post.date}</div>
                 </div>
               ))}
             </div>
@@ -886,7 +956,7 @@ export const PublicWebsite: React.FC = () => {
         </div>
       )}
 
-      {/* Public Website Footer (Deep Slate Blue) */}
+      {/* Public Website Footer */}
       <footer className="bg-slate-900 border-t border-slate-800 mt-16 px-4 md:px-12 py-12 text-xs text-slate-400">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-3">
