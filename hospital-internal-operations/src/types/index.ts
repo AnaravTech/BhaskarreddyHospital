@@ -5,6 +5,8 @@ export type ModuleType =
   | 'appointments'
   | 'opd'
   | 'ipd'
+  | 'dmo-desk'
+  | 'nursing-station'
   | 'bed-management'
   | 'patient-movement'
   | 'pharmacy'
@@ -18,12 +20,25 @@ export type ModuleType =
   | 'emergency'
   | 'consent-forms'
   | 'housekeeping'
+  | 'maintenance'
   | 'reports'
   | 'settings';
 
 export type AppMode = 'hospital-os' | 'public-website' | 'website-cms';
 
-export type UserRole = 'admin' | 'ceo' | 'doctor' | 'receptionist' | 'billing' | 'insurance' | 'emergency';
+export type UserRole =
+  | 'admin'
+  | 'ceo'
+  | 'doctor'
+  | 'dmo'
+  | 'receptionist'
+  | 'billing'
+  | 'insurance'
+  | 'nurse'
+  | 'emergency'
+  | 'bed-manager'
+  | 'housekeeping-sup'
+  | 'maintenance';
 
 export interface UserSession {
   id: string;
@@ -306,7 +321,6 @@ export interface HousekeepingTask {
   completedTime?: string;
 }
 
-// Public Website & CMS Data Types
 export interface HealthPackage {
   id: string;
   title: string;

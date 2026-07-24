@@ -27,6 +27,8 @@ import {
   FlaskConical,
   Scissors,
   FileCheck,
+  Wrench,
+  HeartPulse,
 } from 'lucide-react';
 
 interface NavItem {
@@ -35,7 +37,7 @@ interface NavItem {
   icon: React.ElementType;
   badge?: string | number;
   isHot?: boolean;
-  allowedRoles: UserRole[]; // Strict designation boundary
+  allowedRoles: UserRole[]; // Strict 12-designation boundary
 }
 
 export const Sidebar: React.FC = () => {
@@ -57,30 +59,33 @@ export const Sidebar: React.FC = () => {
 
   const allNavItems: NavItem[] = [
     { id: 'settings', label: 'Administration Console', icon: Settings, allowedRoles: ['admin'] },
-    { id: 'dashboard', label: 'CEO Executive Dashboard', icon: LayoutDashboard, allowedRoles: ['ceo'] },
-    { id: 'reception', label: 'Reception Desk & Tokens', icon: UserPlus, badge: 'Token', allowedRoles: ['receptionist'] },
-    { id: 'appointments', label: 'Appointments Booking', icon: CalendarCheck, badge: '4 Today', allowedRoles: ['receptionist'] },
-    { id: 'opd', label: 'OPD Consultation Desk', icon: Stethoscope, allowedRoles: ['doctor'] },
-    { id: 'ipd', label: 'IPD Admissions', icon: Building2, allowedRoles: ['doctor', 'billing'] },
+    { id: 'dashboard', label: 'Executive Command Center', icon: LayoutDashboard, allowedRoles: ['ceo'] },
+    { id: 'opd', label: 'Clinical OPD Workspace', icon: Stethoscope, allowedRoles: ['doctor'] },
+    { id: 'dmo-desk', label: 'Emergency & IP Clinical Desk', icon: HeartPulse, allowedRoles: ['dmo'] },
+    { id: 'reception', label: 'Patient Registration & Desk', icon: UserPlus, badge: 'Token', allowedRoles: ['receptionist'] },
+    { id: 'appointments', label: 'Appointment Booking', icon: CalendarCheck, badge: '4 Today', allowedRoles: ['receptionist'] },
+    { id: 'billing', label: 'Billing & Financial Desk', icon: Receipt, allowedRoles: ['billing'] },
+    { id: 'insurance', label: 'Insurance Operations Center', icon: ShieldAlert, badge: pendingClaims > 0 ? pendingClaims : undefined, allowedRoles: ['insurance'] },
+    { id: 'nursing-station', label: 'Nursing Station (MAR)', icon: Activity, allowedRoles: ['nurse'] },
+    { id: 'emergency', label: 'Emergency Command Center', icon: Siren, badge: criticalEmergency > 0 ? criticalEmergency : undefined, isHot: true, allowedRoles: ['emergency'] },
+    { id: 'bed-management', label: 'Bed & Admission Control', icon: BedDouble, badge: `${occupiedBeds}/${beds.length}`, allowedRoles: ['bed-manager', 'admin', 'ceo'] },
+    { id: 'housekeeping', label: 'Facility Operations', icon: Sparkles, allowedRoles: ['housekeeping-sup', 'admin'] },
+    { id: 'maintenance', label: 'Asset & Equipment Desk', icon: Wrench, allowedRoles: ['maintenance', 'admin'] },
+    { id: 'ipd', label: 'Inpatient Ward Rounds', icon: Building2, allowedRoles: ['doctor', 'dmo'] },
     { id: 'operation-theatre', label: 'Operation Theatre', icon: Scissors, badge: '3 OT', allowedRoles: ['doctor', 'emergency'] },
-    { id: 'diagnostics', label: 'Laboratory & LIS Desk', icon: FlaskConical, allowedRoles: ['doctor', 'emergency'] },
+    { id: 'diagnostics', label: 'Laboratory & LIS Desk', icon: FlaskConical, allowedRoles: ['doctor', 'dmo', 'emergency'] },
     { id: 'pharmacy', label: 'Pharmacy & e-Rx', icon: Pill, badge: 'Active', allowedRoles: ['doctor', 'billing', 'admin'] },
     { id: 'discharge-summary', label: 'Discharge Summary', icon: FileCheck, allowedRoles: ['doctor'] },
     { id: 'consent-forms', label: 'Digital Consent Forms', icon: FileCheck2, allowedRoles: ['doctor', 'insurance', 'emergency'] },
-    { id: 'bed-management', label: 'Ward & Bed Grid', icon: BedDouble, badge: `${occupiedBeds}/${beds.length}`, allowedRoles: ['admin', 'ceo', 'doctor', 'emergency'] },
-    { id: 'patient-movement', label: 'Patient Movement', icon: GitCommit, allowedRoles: ['receptionist', 'emergency'] },
+    { id: 'patient-movement', label: 'Patient Movement', icon: GitCommit, allowedRoles: ['receptionist', 'emergency', 'bed-manager'] },
     { id: 'doctors', label: 'Doctors & Schedule', icon: UserCheck, allowedRoles: ['admin', 'ceo', 'receptionist'] },
     { id: 'departments', label: 'Clinical Departments', icon: Briefcase, allowedRoles: ['admin', 'ceo'] },
-    { id: 'billing', label: 'Billing & Cashier', icon: Receipt, allowedRoles: ['billing'] },
-    { id: 'insurance', label: 'Insurance / TPA Desk', icon: ShieldAlert, badge: pendingClaims > 0 ? pendingClaims : undefined, allowedRoles: ['insurance'] },
-    { id: 'emergency', label: 'Emergency & Resuscitation', icon: Siren, badge: criticalEmergency > 0 ? criticalEmergency : undefined, isHot: true, allowedRoles: ['emergency'] },
-    { id: 'housekeeping', label: 'Housekeeping & Cleanliness', icon: Sparkles, allowedRoles: ['admin', 'receptionist'] },
-    { id: 'patients', label: 'Patient Directory', icon: Users, allowedRoles: ['admin', 'ceo', 'doctor', 'receptionist', 'billing', 'insurance', 'emergency'] },
+    { id: 'patients', label: 'Patient Directory', icon: Users, allowedRoles: ['admin', 'ceo', 'doctor', 'dmo', 'receptionist', 'billing', 'insurance', 'nurse', 'emergency', 'bed-manager'] },
     { id: 'reports', label: 'Reports & Analytics', icon: BarChart3, allowedRoles: ['admin', 'ceo', 'billing'] },
   ];
 
-  // Strict Designation-Based Filtering (No Overlap)
-  const currentRole = currentUser?.role || 'doctor';
+  // Strict Designation-Based Filtering
+  const currentRole = currentUser?.role || 'admin';
   const filteredNavItems = allNavItems.filter((item) => item.allowedRoles.includes(currentRole));
 
   return (
@@ -120,8 +125,8 @@ export const Sidebar: React.FC = () => {
       {/* Designation-Scoped Scrollable Navigation Items */}
       <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
         <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex justify-between items-center">
-          <span>{currentUser?.roleTitle} Workspace</span>
-          <span className="text-[9px] text-cyan-400 font-mono">{filteredNavItems.length} Modules</span>
+          <span className="truncate">{currentUser?.roleTitle} Workspace</span>
+          <span className="text-[9px] text-cyan-400 font-mono shrink-0 ml-1">{filteredNavItems.length} Modules</span>
         </div>
 
         {filteredNavItems.map((item) => {

@@ -14,6 +14,8 @@ import { PatientManagementModule } from './components/modules/PatientManagementM
 import { AppointmentModule } from './components/modules/AppointmentModule';
 import { OPDModule } from './components/modules/OPDModule';
 import { IPDModule } from './components/modules/IPDModule';
+import { DMODeskModule } from './components/modules/DMODeskModule';
+import { NursingStationModule } from './components/modules/NursingStationModule';
 import { BedManagementModule } from './components/modules/BedManagementModule';
 import { PatientMovementModule } from './components/modules/PatientMovementModule';
 import { PharmacyModule } from './components/modules/PharmacyModule';
@@ -27,6 +29,7 @@ import { InsuranceModule } from './components/modules/InsuranceModule';
 import { EmergencyModule } from './components/modules/EmergencyModule';
 import { ConsentFormsModule } from './components/modules/ConsentFormsModule';
 import { HousekeepingModule } from './components/modules/HousekeepingModule';
+import { MaintenanceModule } from './components/modules/MaintenanceModule';
 import { ReportsModule } from './components/modules/ReportsModule';
 import { SettingsModule } from './components/modules/SettingsModule';
 import { X, CheckCircle2, Info, Siren } from 'lucide-react';
@@ -53,6 +56,10 @@ const MainContent: React.FC = () => {
         return <OPDModule />;
       case 'ipd':
         return <IPDModule />;
+      case 'dmo-desk':
+        return <DMODeskModule />;
+      case 'nursing-station':
+        return <NursingStationModule />;
       case 'bed-management':
         return <BedManagementModule />;
       case 'patient-movement':
@@ -79,6 +86,8 @@ const MainContent: React.FC = () => {
         return <ConsentFormsModule />;
       case 'housekeeping':
         return <HousekeepingModule />;
+      case 'maintenance':
+        return <MaintenanceModule />;
       case 'reports':
         return <ReportsModule />;
       case 'settings':
