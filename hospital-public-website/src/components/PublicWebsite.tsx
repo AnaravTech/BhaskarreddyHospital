@@ -1,644 +1,648 @@
-import React, { useState } from 'react';
-import { useWebsite } from '../context/WebsiteContext';
+import React, { useMemo, useState } from "react";
 import {
-  Activity,
-  Siren,
-  Search,
-  Calendar,
-  ShieldCheck,
-  Star,
-  CheckCircle2,
   ArrowRight,
-  Sparkles,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  Clock3,
+  HeartPulse,
+  MapPin,
+  Menu,
+  PhoneCall,
+  Search,
+  ShieldCheck,
+  Stethoscope,
   X,
-} from 'lucide-react';
+} from "lucide-react";
+import { useWebsite } from "../context/WebsiteContext";
+
+type Section = "home" | "doctors" | "departments" | "wellness" | "contact";
 
 export const PublicWebsite: React.FC = () => {
   const {
     doctors,
     departments,
-    healthPackages,
     blogPosts,
+    testimonials,
     addAppointment,
     addContactInquiry,
     addToast,
     setActiveView,
   } = useWebsite();
-
-  const [activeTab, setActiveTab] = useState<'home' | 'doctors' | 'departments' | 'packages' | 'gallery' | 'blog' | 'contact'>('home');
-
-  // Doctor Search
-  const [docSearchQuery, setDocSearchQuery] = useState('');
-  const [selectedDeptFilter, setSelectedDeptFilter] = useState('All');
-
-  // Booking Wizard State
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [bookingStep, setBookingStep] = useState<1 | 2 | 3 | 4>(1);
-  const [bookingDept, setBookingDept] = useState(departments[0]?.name || '');
-  const [bookingDoctor, setBookingDoctor] = useState(doctors[0]);
-  const [bookingModel, setBookingModel] = useState<'Premium Slot' | 'Normal Queue'>('Premium Slot');
-  const [bookingTime, setBookingTime] = useState('10:00 AM');
-  const [patientName, setPatientName] = useState('');
-  const [patientPhone, setPatientPhone] = useState('');
-  const [patientAge, setPatientAge] = useState('');
-  const [patientGender] = useState('Male');
-
-  // Contact Form State
-  const [contactName, setContactName] = useState('');
-  const [contactPhone, setContactPhone] = useState('');
-  const [contactMessage, setContactMessage] = useState('');
-
-  const filteredDoctors = doctors.filter((doc) => {
-    const matchesSearch =
-      doc.name.toLowerCase().includes(docSearchQuery.toLowerCase()) ||
-      doc.specialization.toLowerCase().includes(docSearchQuery.toLowerCase());
-    const matchesDept = selectedDeptFilter === 'All' || doc.departmentName === selectedDeptFilter;
-    return matchesSearch && matchesDept;
+  const [section, setSection] = useState<Section>("home");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState(doctors[0]);
+  const [query, setQuery] = useState("");
+  const [booking, setBooking] = useState({
+    name: "",
+    phone: "",
+    date: "",
+    time: "10:00 AM",
   });
-
-  const handleBookingSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!patientName || !patientPhone) return;
-
+  const [contact, setContact] = useState({ name: "", phone: "", message: "" });
+  const filteredDoctors = useMemo(
+    () =>
+      doctors.filter((doctor) =>
+        `${doctor.name} ${doctor.specialization} ${doctor.departmentName}`
+          .toLowerCase()
+          .includes(query.toLowerCase()),
+      ),
+    [doctors, query],
+  );
+  const goTo = (next: Section) => {
+    setSection(next);
+    setMobileOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const openBooking = (doctor = doctors[0]) => {
+    setSelectedDoctor(doctor);
+    setBookingOpen(true);
+  };
+  const updateBooking = (key: keyof typeof booking, value: string) =>
+    setBooking({ ...booking, [key]: value });
+  const updateContact = (key: keyof typeof contact, value: string) =>
+    setContact({ ...contact, [key]: value });
+  const submitBooking = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!booking.name || !booking.phone) {
+      addToast(
+        "A little more is needed",
+        "Please add your name and phone number so we can call you.",
+        "warning",
+      );
+      return;
+    }
     addAppointment({
-      patientName,
-      patientPhone,
-      patientAge: Number(patientAge) || 35,
-      patientGender,
-      doctorName: bookingDoctor.name,
-      departmentName: bookingDoctor.departmentName,
-      appointmentDate: '2026-07-25',
-      appointmentTime: bookingTime,
-      model: bookingModel,
-      fee: bookingModel === 'Premium Slot' ? bookingDoctor.premiumFee : bookingDoctor.consultationFee,
+      patientName: booking.name,
+      patientPhone: booking.phone,
+      patientAge: 35,
+      patientGender: "Not specified",
+      doctorName: selectedDoctor.name,
+      departmentName: selectedDoctor.departmentName,
+      appointmentDate: booking.date || "2026-07-25",
+      appointmentTime: booking.time,
+      model: "Normal Queue",
+      fee: selectedDoctor.consultationFee,
     });
-
-    setBookingStep(4);
+    setBookingOpen(false);
+    setBooking({ name: "", phone: "", date: "", time: "10:00 AM" });
   };
-
-  const handleContactSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!contactName || !contactPhone) return;
-
+  const submitContact = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!contact.name || !contact.phone) return;
     addContactInquiry({
-      name: contactName,
-      phone: contactPhone,
-      email: `${contactName.toLowerCase().replace(/\s+/g, '')}@gmail.com`,
-      subject: 'Public Website Inquiry',
-      message: contactMessage || 'Requested call back for general consultation.',
+      name: contact.name,
+      phone: contact.phone,
+      email: "",
+      subject: "Website callback request",
+      message: contact.message || "Please call me back.",
     });
-
-    setContactName('');
-    setContactPhone('');
-    setContactMessage('');
+    setContact({ name: "", phone: "", message: "" });
   };
+  const navItems: { id: Section; label: string }[] = [
+    { id: "home", label: "Home" },
+    { id: "doctors", label: "Find a doctor" },
+    { id: "departments", label: "Our care" },
+    { id: "wellness", label: "Wellness journal" },
+    { id: "contact", label: "Visit us" },
+  ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500 selection:text-white pb-20">
-      
-      {/* Top Bar Switcher */}
-      <div className="bg-slate-900 border-b border-slate-800 py-2 px-4 md:px-12 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2 text-cyan-400 font-bold">
-          <ShieldCheck className="w-4 h-4" />
-          <span>Bhaskar Reddy Hospital • Public Patient Portal</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setActiveView('public-website')}
-            className="px-2.5 py-1 rounded bg-cyan-600 text-white font-bold text-[10px]"
-          >
-            🌐 Public Patient Website
-          </button>
-          <button
-            onClick={() => setActiveView('website-cms')}
-            className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-[10px]"
-          >
-            ⚙️ Website CMS Admin
-          </button>
-        </div>
+    <div className="care-site">
+      <div className="notice-bar">
+        <ShieldCheck size={15} />
+        <span>Your privacy and comfort matter to us.</span>
+        <a href="tel:040-23456789">Emergency: 040-23456789</a>
       </div>
-
-      {/* Main Header */}
-      <header className="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 px-4 md:px-12 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('home')}>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 p-0.5 shadow-lg shadow-cyan-500/30">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Activity className="w-6 h-6 text-cyan-400 animate-pulse" />
-            </div>
-          </div>
-          <div>
-            <h1 className="font-extrabold text-white text-lg tracking-tight">
-              Bhaskar Reddy <span className="text-cyan-400">Hospital</span>
-            </h1>
-            <p className="text-[10px] text-slate-400 font-medium">Multi-Specialty & Cardiac Institute</p>
-          </div>
-        </div>
-
-        <nav className="hidden md:flex items-center gap-6 text-xs font-semibold">
-          {[
-            { id: 'home', label: 'Home' },
-            { id: 'doctors', label: 'Doctors' },
-            { id: 'departments', label: 'Departments' },
-            { id: 'packages', label: 'Health Packages' },
-            { id: 'blog', label: 'Health Blog' },
-            { id: 'contact', label: 'Contact' },
-          ].map((nav) => (
+      <header className="site-header">
+        <button
+          className="brand"
+          onClick={() => goTo("home")}
+          aria-label="Bhaskar Reddy Hospital home"
+        >
+          <span className="brand-mark">
+            <HeartPulse size={25} />
+          </span>
+          <span>
+            <strong>Bhaskar Reddy</strong>
+            <em>Hospital</em>
+          </span>
+        </button>
+        <button
+          className="menu-button"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Open menu"
+        >
+          <Menu />
+        </button>
+        <nav className={mobileOpen ? "main-nav open" : "main-nav"}>
+          {navItems.map((item) => (
             <button
-              key={nav.id}
-              onClick={() => setActiveTab(nav.id as any)}
-              className={`transition ${
-                activeTab === nav.id ? 'text-cyan-400 font-extrabold border-b-2 border-cyan-400 pb-1' : 'text-slate-300 hover:text-white'
-              }`}
+              key={item.id}
+              className={section === item.id ? "active" : ""}
+              onClick={() => goTo(item.id)}
             >
-              {nav.label}
+              {item.label}
             </button>
           ))}
+          <button
+            className="admin-link"
+            onClick={() => setActiveView("website-cms")}
+          >
+            Staff login
+          </button>
         </nav>
-
         <button
-          onClick={() => {
-            setIsBookingModalOpen(true);
-            setBookingStep(1);
-          }}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white font-extrabold text-xs shadow-lg shadow-cyan-500/25 transition"
+          className="button button-primary header-book"
+          onClick={() => openBooking()}
         >
-          <Calendar className="w-4 h-4" />
-          <span>Book Appointment</span>
+          <CalendarDays size={17} /> Book a visit
         </button>
       </header>
 
-      {/* Hero & WOW 1 Stats */}
-      {activeTab === 'home' && (
-        <>
-          <section className="relative px-4 md:px-12 py-16 md:py-24 overflow-hidden max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
-                <span>24/7 Level-1 Trauma & Multi-Specialty Care</span>
-              </div>
-
-              <h1 className="text-4xl md:text-5xl font-black text-white leading-tight">
-                World-Class Healthcare Dedicated to <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Your Family's Trust</span>
+      {section === "home" && (
+        <main>
+          <section className="hero">
+            <div className="hero-copy">
+              <p className="eyebrow">
+                <span className="eyebrow-dot" /> Care that feels human
+              </p>
+              <h1>
+                Better health begins with <span>being heard.</span>
               </h1>
-
-              <p className="text-slate-300 text-sm md:text-base leading-relaxed">
-                Equipped with 4th Gen Robotic Joint Replacement, 24/7 Cath Lab & Emergency Resuscitation, 
-                and over 45+ renowned medical specialists.
+              <p className="hero-intro">
+                Thoughtful doctors, modern medicine, and a team that stays
+                beside you through every step of healing.
               </p>
-
-              <div className="flex flex-wrap items-center gap-4 pt-2">
+              <div className="hero-actions">
                 <button
-                  onClick={() => {
-                    setIsBookingModalOpen(true);
-                    setBookingStep(1);
-                  }}
-                  className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-sm shadow-xl shadow-cyan-500/30 transition"
+                  className="button button-primary"
+                  onClick={() => openBooking()}
                 >
-                  <span>Instant Appointment Booking</span>
-                  <ArrowRight className="w-4 h-4" />
+                  Find your care <ArrowRight size={17} />
                 </button>
-
-                <a
-                  href="tel:040-23456789"
-                  className="flex items-center gap-2.5 px-5 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-rose-400 border border-rose-500/40 text-xs font-bold transition"
-                >
-                  <Siren className="w-4 h-4 text-rose-400 animate-pulse" />
-                  <span>Emergency Hotline: 040-23456789</span>
-                </a>
+                <button className="text-button" onClick={() => goTo("doctors")}>
+                  Meet our doctors <ArrowRight size={16} />
+                </button>
               </div>
-            </div>
-
-            <div className="lg:col-span-5">
-              <img
-                src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80"
-                alt="Hospital Facility"
-                className="w-full h-80 md:h-96 rounded-2xl object-cover ring-1 ring-cyan-500/30"
-              />
-            </div>
-          </section>
-
-          {/* WOW Factor 1: Animated Interactive Counters */}
-          <section className="px-4 md:px-12 py-10 bg-slate-900/80 border-y border-slate-800/80">
-            <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <div className="text-3xl font-black text-cyan-400 font-mono">250,000+</div>
-                <div className="text-xs text-slate-400 font-medium">Patients Treated</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <div className="text-3xl font-black text-emerald-400 font-mono">25+</div>
-                <div className="text-xs text-slate-400 font-medium">Years of Medical Excellence</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <div className="text-3xl font-black text-purple-400 font-mono">45+</div>
-                <div className="text-xs text-slate-400 font-medium">Senior Specialists & Doctors</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <div className="text-3xl font-black text-amber-400 font-mono">50,000+</div>
-                <div className="text-xs text-slate-400 font-medium">Successful Surgeries</div>
-              </div>
-            </div>
-          </section>
-
-          {/* WOW Factor 2: Doctor Finder */}
-          <section className="px-4 md:px-12 py-16 max-w-7xl mx-auto space-y-8">
-            <div className="text-center space-y-2">
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-                WOW Factor 2
-              </span>
-              <h2 className="text-3xl font-black text-white">Find Your Specialist Doctor</h2>
-              <p className="text-xs text-slate-400 max-w-xl mx-auto">
-                Search our panel of interventional cardiologists, neurosurgeons, robotic joint specialists, and emergency physicians.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 bg-slate-900 p-4 rounded-2xl border border-slate-800">
-              <div className="relative flex-1">
-                <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
-                <input
-                  type="text"
-                  placeholder="Search doctor by name or specialization..."
-                  value={docSearchQuery}
-                  onChange={(e) => setDocSearchQuery(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
-                />
-              </div>
-
-              <select
-                value={selectedDeptFilter}
-                onChange={(e) => setSelectedDeptFilter(e.target.value)}
-                className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
-              >
-                <option value="All">All Specialty Departments</option>
-                {departments.map((d) => (
-                  <option key={d.id} value={d.name}>
-                    {d.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredDoctors.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 transition space-y-4 flex flex-col justify-between"
-                >
-                  <div className="flex items-start gap-3">
-                    <img
-                      src={doc.image}
-                      alt={doc.name}
-                      className="w-16 h-16 rounded-2xl object-cover ring-2 ring-cyan-500/30 shrink-0"
-                    />
-                    <div>
-                      <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                        {doc.name}
-                        <span className="flex items-center text-[10px] font-bold text-amber-400">
-                          <Star className="w-3 h-3 fill-amber-400" /> {doc.rating}
-                        </span>
-                      </h3>
-                      <div className="text-xs text-cyan-400 font-semibold">{doc.specialization}</div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">{doc.qualification}</div>
-                      <div className="text-[10px] text-slate-400 font-mono mt-0.5">{doc.experienceYears} Years Exp.</div>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1 text-xs">
-                    <div className="flex justify-between text-slate-400">
-                      <span>Normal Queue Fee:</span>
-                      <span className="font-bold text-slate-200 font-mono">₹{doc.consultationFee}</span>
-                    </div>
-                    <div className="flex justify-between text-slate-400">
-                      <span>Premium 10-Min Slot:</span>
-                      <span className="font-bold text-purple-400 font-mono">₹{doc.premiumFee}</span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setBookingDoctor(doc);
-                      setIsBookingModalOpen(true);
-                      setBookingStep(1);
-                    }}
-                    className="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs transition"
-                  >
-                    Book Consultation
-                  </button>
+              <div className="trust-line">
+                <div className="avatar-stack">
+                  <span>V</span>
+                  <span>A</span>
+                  <span>R</span>
                 </div>
+                <span>
+                  <strong>250,000+</strong> families cared for, with heart
+                </span>
+              </div>
+            </div>
+            <div className="hero-art">
+              <div className="sun-disc" />
+              <div className="leaf leaf-one" />
+              <div className="leaf leaf-two" />
+              <div className="person person-one">
+                <span className="head" />
+                <span className="body" />
+              </div>
+              <div className="person person-two">
+                <span className="head" />
+                <span className="body" />
+              </div>
+              <div className="heart-doodle">♡</div>
+              <div className="care-note">
+                <HeartPulse size={18} />
+                <span>
+                  <strong>Here for you</strong>
+                  <small>24 hours, every day</small>
+                </span>
+              </div>
+            </div>
+          </section>
+          <section className="quick-care">
+            <div className="quick-heading">
+              <span className="section-kicker">Start here</span>
+              <h2>What can we help with?</h2>
+              <p>Simple next steps, whenever you need them.</p>
+            </div>
+            <button onClick={() => openBooking()}>
+              <CalendarDays />
+              <span>
+                <strong>Book an appointment</strong>
+                <small>Choose a doctor and time</small>
+              </span>
+              <ArrowRight />
+            </button>
+            <button onClick={() => goTo("doctors")}>
+              <Stethoscope />
+              <span>
+                <strong>Find a specialist</strong>
+                <small>Meet the right doctor for you</small>
+              </span>
+              <ArrowRight />
+            </button>
+            <a href="tel:040-23456789" className="urgent">
+              <PhoneCall />
+              <span>
+                <strong>Need help now?</strong>
+                <small>Call our 24/7 care line</small>
+              </span>
+              <ArrowRight />
+            </a>
+          </section>
+          <section className="content-section welcome-grid">
+            <div>
+              <p className="section-kicker">A little more human</p>
+              <h2>
+                Good care is clinical.
+                <br />
+                <i>Great care is personal.</i>
+              </h2>
+            </div>
+            <div className="welcome-copy">
+              <p>
+                At Bhaskar Reddy Hospital, we believe a hospital should feel
+                less like a building and more like a place where people look
+                after people.
+              </p>
+              <p>
+                From your first hello at reception to the moment you return
+                home, our specialists and support teams make space for your
+                questions, your family, and your peace of mind.
+              </p>
+              <button
+                className="text-button"
+                onClick={() => goTo("departments")}
+              >
+                Explore our care <ArrowRight size={16} />
+              </button>
+            </div>
+          </section>
+          <section className="content-section specialty-section">
+            <div className="section-head">
+              <div>
+                <p className="section-kicker">Care, thoughtfully arranged</p>
+                <h2>Specialties for every chapter.</h2>
+              </div>
+              <button
+                className="text-button"
+                onClick={() => goTo("departments")}
+              >
+                View all care <ArrowRight size={16} />
+              </button>
+            </div>
+            <div className="specialty-grid">
+              {departments.map((department, index) => (
+                <button
+                  className={`specialty-card card-${index}`}
+                  key={department.id}
+                  onClick={() => {
+                    goTo("doctors");
+                    setQuery(department.name);
+                  }}
+                >
+                  <span className="specialty-icon">
+                    {index === 0 ? "♡" : index === 1 ? "◌" : "✦"}
+                  </span>
+                  <h3>{department.name}</h3>
+                  <p>{department.description}</p>
+                  <span className="card-link">
+                    Meet the team <ArrowRight size={15} />
+                  </span>
+                </button>
               ))}
             </div>
           </section>
-        </>
-      )}
-
-      {/* Doctor List Page */}
-      {activeTab === 'doctors' && (
-        <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-6">
-          <h2 className="text-2xl font-black text-white">Our Medical Specialists</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {doctors.map((doc) => (
-              <div key={doc.id} className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-                <img src={doc.image} alt={doc.name} className="w-20 h-20 rounded-2xl object-cover" />
-                <h3 className="text-base font-bold text-white">{doc.name}</h3>
-                <p className="text-xs text-cyan-400">{doc.specialization}</p>
-                <div className="text-xs text-slate-400">{doc.qualification} • {doc.experienceYears} Yrs Exp.</div>
-                <button
-                  onClick={() => {
-                    setBookingDoctor(doc);
-                    setIsBookingModalOpen(true);
-                  }}
-                  className="w-full py-2 rounded-xl bg-cyan-600 text-white font-bold text-xs"
-                >
-                  Book Consultation
-                </button>
+          {testimonials[0] && (
+            <section className="story-band">
+              <div className="story-quote">“</div>
+              <div>
+                <p className="section-kicker">A patient story</p>
+                <blockquote>{testimonials[0].reviewText}</blockquote>
+                <p className="story-person">
+                  <strong>{testimonials[0].patientName}</strong> ·{" "}
+                  {testimonials[0].treatment}
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Health Blog */}
-      {activeTab === 'blog' && (
-        <div className="px-4 md:px-12 py-12 max-w-7xl mx-auto space-y-6">
-          <h2 className="text-2xl font-black text-white">Health Blog & Articles</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {blogPosts.map((post) => (
-              <div key={post.id} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-                <img src={post.image} alt={post.title} className="w-full h-48 rounded-xl object-cover" />
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300">
-                  {post.category}
+              <div className="story-seal">
+                <HeartPulse size={28} />
+                <span>
+                  Care you
+                  <br />
+                  can feel
                 </span>
-                <h3 className="text-lg font-bold text-white">{post.title}</h3>
-                <p className="text-xs text-slate-300">{post.excerpt}</p>
-                <div className="text-[10px] text-slate-500 font-mono">By {post.author} • {post.date}</div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Contact */}
-      {activeTab === 'contact' && (
-        <div className="px-4 md:px-12 py-12 max-w-4xl mx-auto space-y-6">
-          <h2 className="text-2xl font-black text-white">Contact & Inquiry</h2>
-          <form onSubmit={handleContactSubmit} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 text-xs">
-            <div>
-              <label className="block text-slate-400 mb-1">Your Name *</label>
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={contactName}
-                onChange={(e) => setContactName(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-slate-400 mb-1">Phone Number *</label>
-              <input
-                type="text"
-                placeholder="+91 98490 00000"
-                value={contactPhone}
-                onChange={(e) => setContactPhone(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-slate-400 mb-1">Message</label>
-              <textarea
-                rows={3}
-                placeholder="How can our medical team assist you?"
-                value={contactMessage}
-                onChange={(e) => setContactMessage(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
-              />
-            </div>
-            <button type="submit" className="px-5 py-2.5 rounded-xl bg-cyan-600 text-white font-bold">
-              Submit Inquiry Request
-            </button>
-          </form>
-        </div>
-      )}
-
-      {/* WOW Factor 7: Floating Emergency Banner */}
-      <div className="fixed bottom-4 left-4 z-40 bg-rose-950/90 border border-rose-500/60 p-3 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-3 animate-bounce">
-        <Siren className="w-6 h-6 text-rose-400 animate-pulse shrink-0" />
-        <div className="text-xs">
-          <div className="font-extrabold text-white">24/7 Emergency & Ambulance Dispatch</div>
-          <div className="text-[10px] text-rose-200 font-mono">Hotline: 040-23456789</div>
-        </div>
-        <a
-          href="tel:040-23456789"
-          className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-bold shrink-0"
-        >
-          Call Now
-        </a>
-      </div>
-
-      {/* WOW Factor 3: Booking Wizard Modal */}
-      {isBookingModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-cyan-400" />
-                Smart Appointment Booking Wizard (Step {bookingStep}/3)
-              </h3>
-              <button onClick={() => setIsBookingModalOpen(false)} className="text-slate-400">
-                <X className="w-4 h-4" />
+            </section>
+          )}
+          <section className="content-section journal-preview">
+            <div className="section-head">
+              <div>
+                <p className="section-kicker">From our wellness journal</p>
+                <h2>Small things. Better days.</h2>
+              </div>
+              <button className="text-button" onClick={() => goTo("wellness")}>
+                Read the journal <ArrowRight size={16} />
               </button>
             </div>
-
-            {bookingStep === 1 && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="block text-slate-400 mb-1">Select Department</label>
-                  <select
-                    value={bookingDept}
-                    onChange={(e) => setBookingDept(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
-                  >
-                    {departments.map((d) => (
-                      <option key={d.id} value={d.name}>
-                        {d.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-slate-400 mb-1">Select Doctor Specialist</label>
-                  <select
-                    value={bookingDoctor.id}
-                    onChange={(e) => {
-                      const d = doctors.find((doc) => doc.id === e.target.value);
-                      if (d) setBookingDoctor(d);
-                    }}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 font-bold text-cyan-400"
-                  >
-                    {doctors.map((doc) => (
-                      <option key={doc.id} value={doc.id}>
-                        {doc.name} ({doc.specialization})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-                  <label className="block text-slate-400 mb-1">Choose Appointment Model</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setBookingModel('Premium Slot')}
-                      className={`p-2.5 rounded-xl border text-left transition ${
-                        bookingModel === 'Premium Slot'
-                          ? 'bg-purple-600/20 border-purple-500 text-purple-300 font-bold'
-                          : 'bg-slate-900 border-slate-800 text-slate-400'
-                      }`}
-                    >
-                      <div className="text-xs">Premium Fixed Slot</div>
-                      <div className="text-[10px] font-mono mt-0.5">₹{bookingDoctor.premiumFee} • 10-Min Reserved</div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setBookingModel('Normal Queue')}
-                      className={`p-2.5 rounded-xl border text-left transition ${
-                        bookingModel === 'Normal Queue'
-                          ? 'bg-cyan-600/20 border-cyan-500 text-cyan-300 font-bold'
-                          : 'bg-slate-900 border-slate-800 text-slate-400'
-                      }`}
-                    >
-                      <div className="text-xs">Normal Queue</div>
-                      <div className="text-[10px] font-mono mt-0.5">₹{bookingDoctor.consultationFee} • Queue Token</div>
-                    </button>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setBookingStep(2)}
-                  className="w-full py-2.5 rounded-xl bg-cyan-600 text-white font-bold"
-                >
-                  Continue to Select Slot →
-                </button>
-              </div>
-            )}
-
-            {bookingStep === 2 && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="block text-slate-400 mb-1">Available Premium Time Slots for Tomorrow</label>
-                  <div className="grid grid-cols-3 gap-2 font-mono">
-                    {['10:00 AM', '10:10 AM', '10:20 AM', '10:30 AM', '11:00 AM', '11:15 AM'].map((time) => (
-                      <button
-                        key={time}
-                        type="button"
-                        onClick={() => setBookingTime(time)}
-                        className={`py-2 rounded-xl border text-center transition ${
-                          bookingTime === time
-                            ? 'bg-cyan-500 text-slate-950 font-bold border-cyan-400'
-                            : 'bg-slate-950 border-slate-800 text-slate-300'
-                        }`}
-                      >
-                        {time}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex justify-between pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setBookingStep(1)}
-                    className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setBookingStep(3)}
-                    className="px-5 py-2 rounded-xl bg-cyan-600 text-white font-bold"
-                  >
-                    Enter Patient Details →
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {bookingStep === 3 && (
-              <form onSubmit={handleBookingSubmit} className="space-y-4 text-xs">
-                <div>
-                  <label className="block text-slate-400 mb-1">Patient Full Name *</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Kavitha Venkatram"
-                    value={patientName}
-                    onChange={(e) => setPatientName(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
-                    required
+            <div className="journal-grid">
+              {blogPosts.slice(0, 3).map((post) => (
+                <article key={post.id}>
+                  <div
+                    className="journal-image"
+                    style={{ backgroundImage: `url(${post.image})` }}
                   />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-slate-400 mb-1">Mobile Phone *</label>
-                    <input
-                      type="text"
-                      placeholder="+91 98490 00000"
-                      value={patientPhone}
-                      onChange={(e) => setPatientPhone(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-slate-400 mb-1">Age & Gender</label>
-                    <input
-                      type="number"
-                      placeholder="Age (e.g. 45)"
-                      value={patientAge}
-                      onChange={(e) => setPatientAge(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-between pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setBookingStep(2)}
-                    className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300"
-                  >
-                    Back
+                  <p className="journal-category">
+                    {post.category} · {post.date}
+                  </p>
+                  <h3>{post.title}</h3>
+                  <p>{post.excerpt}</p>
+                  <button className="text-button">
+                    Read more <ArrowRight size={14} />
                   </button>
-                  <button type="submit" className="px-5 py-2 rounded-xl bg-emerald-600 text-white font-bold">
-                    Confirm & Reserve Slot
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {bookingStep === 4 && (
-              <div className="p-6 text-center space-y-4 text-xs">
-                <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
-                <h4 className="text-lg font-bold text-white">Appointment Reserved Successfully!</h4>
-                <p className="text-slate-300">
-                  Confirmation sent to <span className="text-cyan-400 font-bold">{patientPhone}</span> via SMS & WhatsApp.
-                </p>
-                <button
-                  onClick={() => setIsBookingModalOpen(false)}
-                  className="px-6 py-2.5 rounded-xl bg-cyan-600 text-white font-bold"
-                >
-                  Done & Close
-                </button>
-              </div>
-            )}
+                </article>
+              ))}
+            </div>
+          </section>
+        </main>
+      )}
+      {section === "doctors" && (
+        <Page
+          title="The right doctor changes everything."
+          intro="Search our team of experienced specialists and take the next step with someone who listens."
+          kicker="Meet your care team"
+        >
+          <div className="search-field">
+            <Search size={19} />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search by doctor, specialty, or concern"
+            />
+            <X size={17} onClick={() => setQuery("")} />
           </div>
+          <div className="doctor-grid">
+            {filteredDoctors.map((doctor) => (
+              <article className="doctor-card" key={doctor.id}>
+                <img src={doctor.image} alt={doctor.name} />
+                <div className="doctor-info">
+                  <span className="doctor-rating">★ {doctor.rating}</span>
+                  <h3>{doctor.name}</h3>
+                  <p>{doctor.specialization}</p>
+                  <small>
+                    {doctor.qualification} · {doctor.experienceYears} years
+                    experience
+                  </small>
+                  <button
+                    className="button button-primary"
+                    onClick={() => openBooking(doctor)}
+                  >
+                    Book with {doctor.name.split(" ").slice(-1)[0]}{" "}
+                    <ArrowRight size={15} />
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </Page>
+      )}
+      {section === "departments" && (
+        <Page
+          title="Care, all under one roof."
+          intro="From prevention to recovery, our teams work together around what matters most: you."
+          kicker="Our care"
+        >
+          <div className="department-list">
+            {departments.map((department, index) => (
+              <article key={department.id}>
+                <div className="department-number">0{index + 1}</div>
+                <div>
+                  <p className="section-kicker">{department.code}</p>
+                  <h2>{department.name}</h2>
+                  <p>{department.description}</p>
+                  <div className="service-list">
+                    {department.services.map((service) => (
+                      <span key={service}>
+                        <Check size={14} /> {service}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  className="round-arrow"
+                  onClick={() => {
+                    goTo("doctors");
+                    setQuery(department.name);
+                  }}
+                >
+                  <ArrowRight />
+                </button>
+              </article>
+            ))}
+          </div>
+        </Page>
+      )}
+      {section === "wellness" && (
+        <Page
+          title="A healthier day, one note at a time."
+          intro="Clear, kind guidance from our doctors to help you care for yourself and the people you love."
+          kicker="Wellness journal"
+        >
+          <div className="journal-grid full-journal">
+            {blogPosts.map((post) => (
+              <article key={post.id}>
+                <div
+                  className="journal-image"
+                  style={{ backgroundImage: `url(${post.image})` }}
+                />
+                <p className="journal-category">
+                  {post.category} · {post.date}
+                </p>
+                <h3>{post.title}</h3>
+                <p>{post.excerpt}</p>
+                <button className="text-button">
+                  Read article <ArrowRight size={14} />
+                </button>
+              </article>
+            ))}
+          </div>
+        </Page>
+      )}
+      {section === "contact" && (
+        <Page
+          title="Come as you are. We are here."
+          intro="Find us, call us, or leave your number. A member of our care team will help you find the way forward."
+          kicker="Visit Bhaskar Reddy Hospital"
+        >
+          <div className="visit-grid">
+            <div className="visit-card">
+              <MapPin size={25} />
+              <h2>Find us</h2>
+              <p>
+                Bhaskar Reddy Hospital
+                <br />
+                Hyderabad, Telangana
+              </p>
+              <span>Open every day · 24-hour emergency care</span>
+              <a className="text-button" href="tel:040-23456789">
+                Get directions <ArrowRight size={15} />
+              </a>
+            </div>
+            <form className="callback-form" onSubmit={submitContact}>
+              <p className="section-kicker">We can call you</p>
+              <h2>Questions are welcome.</h2>
+              <input
+                placeholder="Your name"
+                value={contact.name}
+                onChange={(event) => updateContact("name", event.target.value)}
+              />
+              <input
+                placeholder="Phone number"
+                value={contact.phone}
+                onChange={(event) => updateContact("phone", event.target.value)}
+              />
+              <textarea
+                placeholder="How can we help?"
+                value={contact.message}
+                onChange={(event) =>
+                  updateContact("message", event.target.value)
+                }
+              />
+              <button className="button button-primary">
+                Request a callback <ArrowRight size={16} />
+              </button>
+            </form>
+          </div>
+        </Page>
+      )}
+      <footer className="site-footer">
+        <div className="footer-brand">
+          <span className="brand-mark">
+            <HeartPulse size={22} />
+          </span>
+          <div>
+            <strong>Bhaskar Reddy Hospital</strong>
+            <p>Care that feels human.</p>
+          </div>
+        </div>
+        <div>
+          <p>24/7 care line</p>
+          <a href="tel:040-23456789">040-23456789</a>
+        </div>
+        <div>
+          <p>For appointments</p>
+          <a href="mailto:care@bhaskarreddyhospital.com">
+            care@bhaskarreddyhospital.com
+          </a>
+        </div>
+        <p className="footer-note">
+          © 2026 Bhaskar Reddy Hospital
+          <br />
+          Here for every heartbeat.
+        </p>
+      </footer>
+      <div className="floating-emergency">
+        <PhoneCall size={17} />
+        <a href="tel:040-23456789">Emergency help</a>
+      </div>
+      {bookingOpen && (
+        <div
+          className="modal-backdrop"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setBookingOpen(false);
+          }}
+        >
+          <form className="booking-modal" onSubmit={submitBooking}>
+            <button
+              type="button"
+              className="modal-close"
+              onClick={() => setBookingOpen(false)}
+              aria-label="Close"
+            >
+              <X />
+            </button>
+            <p className="section-kicker">A simple first step</p>
+            <h2>Book a visit with care.</h2>
+            <p className="modal-intro">
+              We will confirm your appointment by phone. No pressure, no
+              confusing forms.
+            </p>
+            <label>
+              Your name
+              <input
+                value={booking.name}
+                onChange={(event) => updateBooking("name", event.target.value)}
+                required
+              />
+            </label>
+            <label>
+              Phone number
+              <input
+                value={booking.phone}
+                onChange={(event) => updateBooking("phone", event.target.value)}
+                required
+              />
+            </label>
+            <div className="form-row">
+              <label>
+                Preferred date
+                <input
+                  type="date"
+                  value={booking.date}
+                  onChange={(event) =>
+                    updateBooking("date", event.target.value)
+                  }
+                />
+              </label>
+              <label>
+                Preferred time
+                <select
+                  value={booking.time}
+                  onChange={(event) =>
+                    updateBooking("time", event.target.value)
+                  }
+                >
+                  <option>10:00 AM</option>
+                  <option>12:30 PM</option>
+                  <option>03:00 PM</option>
+                  <option>05:30 PM</option>
+                </select>
+              </label>
+            </div>
+            <div className="chosen-doctor">
+              <img src={selectedDoctor.image} alt="" />
+              <span>
+                <small>Requesting an appointment with</small>
+                <strong>{selectedDoctor.name}</strong>
+              </span>
+              <ChevronDown size={16} />
+            </div>
+            <button className="button button-primary full-button">
+              Request appointment <ArrowRight size={17} />
+            </button>
+            <p className="modal-footnote">
+              <Clock3 size={14} /> Our team responds within one working hour.
+            </p>
+          </form>
         </div>
       )}
     </div>
   );
 };
+
+const Page: React.FC<{
+  title: string;
+  intro: string;
+  kicker: string;
+  children: React.ReactNode;
+}> = ({ title, intro, kicker, children }) => (
+  <main className="inner-page">
+    <section className="page-heading">
+      <p className="eyebrow">
+        <span className="eyebrow-dot" /> {kicker}
+      </p>
+      <h1>{title}</h1>
+      <p>{intro}</p>
+    </section>
+    <section className="page-content">{children}</section>
+  </main>
+);
