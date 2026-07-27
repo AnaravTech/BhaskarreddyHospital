@@ -215,7 +215,7 @@ export const Login: React.FC = () => {
               <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, fontWeight: 800, color: t.txt2, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
                 <Users style={{ width: 12, height: 12, color: t.accentText }} /> 1-Click Demo Persona Switcher
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, maxHeight: 196, overflowY: 'auto' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, maxHeight: 280, overflowY: 'auto', paddingRight: 2 }}>
                 {DEMO_PERSONAS.map(p => {
                   const sel = persona.id === p.id;
                   return (

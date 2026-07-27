@@ -19,7 +19,19 @@ export type ModuleType =
 
 export type AppMode = 'hospital-os' | 'public-website' | 'website-cms';
 
-export type UserRole = 'ceo' | 'doctor' | 'receptionist' | 'billing' | 'insurance' | 'emergency';
+export type UserRole =
+  | 'ceo'
+  | 'doctor'
+  | 'receptionist'
+  | 'billing'
+  | 'insurance'
+  | 'emergency'
+  | 'nurse'
+  | 'pharmacist'
+  | 'lab'
+  | 'admin'
+  | 'ward_manager'
+  | 'hr';
 
 export interface UserSession {
   id: string;
