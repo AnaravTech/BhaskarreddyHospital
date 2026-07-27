@@ -144,7 +144,10 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="h-16 bg-slate-900/80 border-b border-slate-800/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-20 shrink-0 font-sans">
+    <header
+      className="h-16 border-b backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-20 shrink-0 font-sans"
+      style={{ backgroundColor: 'var(--t-surface)', borderColor: 'var(--t-border)', color: 'var(--t-text)' }}
+    >
       {/* Persona Title Badge & Command Palette Search */}
       <div className="flex items-center gap-4 flex-1 max-w-xl">
         <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-bold">
@@ -198,13 +201,15 @@ export const Header: React.FC = () => {
         {/* Dynamic Persona Action Button */}
         {renderPersonaPrimaryAction()}
 
+
+
         {/* AI Assistant Drawer Trigger */}
         <button
           onClick={() => setIsAiDrawerOpen(true)}
           className="relative flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-900/60 to-purple-900/60 border border-indigo-500/40 text-indigo-200 hover:text-white hover:border-indigo-400 text-xs font-semibold shadow-sm transition group"
         >
           <Sparkles className="w-4 h-4 text-purple-400 group-hover:rotate-12 transition-transform animate-pulse" />
-          <span className="hidden sm:inline">Anarav AI</span>
+          <span className="hidden sm:inline">BRH AI</span>
         </button>
 
         {/* Notification Center */}

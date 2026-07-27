@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HospitalProvider, useHospital } from './context/HospitalContext';
 import { Login } from './components/auth/Login';
 import { Sidebar } from './components/layout/Sidebar';
@@ -8,6 +8,7 @@ import { AIAssistantDrawer } from './components/layout/AIAssistantDrawer';
 import { NotificationCenter } from './components/layout/NotificationCenter';
 
 // Hospital OS Module Components
+import { HomeDashboard } from './components/modules/HomeDashboard';
 import { CEODashboard } from './components/modules/CEODashboard';
 import { ReceptionModule } from './components/modules/ReceptionModule';
 import { PatientManagementModule } from './components/modules/PatientManagementModule';
@@ -32,10 +33,20 @@ import { HousekeepingModule } from './components/modules/HousekeepingModule';
 import { MaintenanceModule } from './components/modules/MaintenanceModule';
 import { ReportsModule } from './components/modules/ReportsModule';
 import { SettingsModule } from './components/modules/SettingsModule';
+import { WorkflowModule } from './components/modules/WorkflowModule';
+import { DocumentCenterModule } from './components/modules/DocumentCenterModule';
+import { PatientExperienceModule } from './components/modules/PatientExperienceModule';
 import { X, CheckCircle2, Info, Siren } from 'lucide-react';
 
 const MainContent: React.FC = () => {
-  const { currentUser, activeModule, toasts, removeToast } = useHospital();
+  const { currentUser, activeModule, toasts, removeToast, activeTheme } = useHospital();
+
+  // Apply theme class to <html> globally so ALL pages and components get it
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove('theme-modern', 'theme-heritage', 'theme-digital');
+    root.classList.add(`theme-${activeTheme}`);
+  }, [activeTheme]);
 
   // If user is not authenticated yet, present the Enterprise Login Screen
   if (!currentUser) {
@@ -44,6 +55,8 @@ const MainContent: React.FC = () => {
 
   const renderActiveModule = () => {
     switch (activeModule) {
+      case 'home':
+        return <HomeDashboard />;
       case 'dashboard':
         return <CEODashboard />;
       case 'reception':
@@ -92,21 +105,33 @@ const MainContent: React.FC = () => {
         return <ReportsModule />;
       case 'settings':
         return <SettingsModule />;
+      case 'workflow':
+        return <WorkflowModule />;
+      case 'document-center':
+        return <DocumentCenterModule />;
+      case 'patient-experience':
+        return <PatientExperienceModule />;
       default:
-        return <CEODashboard />;
+        return <HomeDashboard />;
     }
   };
 
   return (
-    <div className="flex h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
+    <div
+      className="flex h-screen overflow-hidden font-sans"
+      style={{ backgroundColor: 'var(--t-bg)', color: 'var(--t-text)' }}
+    >
       {/* Sidebar Navigation */}
       <Sidebar />
 
       {/* Main Operating Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Header />
-        
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-gradient-to-b from-slate-950 via-slate-900/60 to-slate-950">
+
+        <main
+          className="flex-1 overflow-y-auto p-6 md:p-8"
+          style={{ backgroundColor: 'var(--t-bg)' }}
+        >
           {renderActiveModule()}
         </main>
       </div>

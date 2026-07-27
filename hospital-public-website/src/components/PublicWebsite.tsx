@@ -46,7 +46,29 @@ export const PublicWebsite: React.FC = () => {
     setActiveView,
   } = useWebsite();
 
-  const [activeTab, setActiveTab] = useState<'home' | 'doctors' | 'departments' | 'packages' | 'gallery' | 'blog' | 'careers' | 'contact'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'doctors' | 'departments' | 'packages' | 'gallery' | 'blog' | 'careers' | 'contact' | 'symptom-checker' | 'patient-portal' | 'pay-online'>('home');
+
+  // --- AI Symptom Checker State ---
+  const [symptomMessages, setSymptomMessages] = useState<Array<{ sender: 'user' | 'bot'; text: string; triage?: 'Red' | 'Yellow' | 'Green'; dept?: string }>>([
+    { sender: 'bot', text: "Hello! I am your AI Symptom Assistant. Tell me what symptoms you are experiencing (e.g. 'chest pain', 'persistent cough', 'fever'), and I will help triage them and direct you to the right clinic." }
+  ]);
+  const [symptomInput, setSymptomInput] = useState('');
+
+  // --- Patient Portal State ---
+  const [portalUhidInput, setPortalUhidInput] = useState('');
+  const [portalPassword, setPortalPassword] = useState('');
+  const [portalLoggedIn, setPortalLoggedIn] = useState(false);
+  const [portalActiveSubTab, setPortalActiveSubTab] = useState<'reports' | 'prescriptions' | 'discharge' | 'invoices'>('reports');
+  const [portalUser, setPortalUser] = useState<{ name: string; uhid: string; age: number; gender: string } | null>(null);
+
+  // --- Pay Online State ---
+  const [payUhid, setPayUhid] = useState('');
+  const [payBillNo, setPayBillNo] = useState('');
+  const [payAmount, setPayAmount] = useState('');
+  const [payType, setPayType] = useState<'OPD' | 'IPD_Deposit' | 'Final_Bill'>('OPD');
+  const [payMethod, setPayMethod] = useState<'upi' | 'card' | 'netbanking'>('upi');
+  const [payStatus, setPayStatus] = useState<'form' | 'processing' | 'success'>('form');
+  const [payTxnId, setPayTxnId] = useState('');
 
   // Doctor Search
   const [docSearchQuery, setDocSearchQuery] = useState('');
@@ -139,6 +161,89 @@ export const PublicWebsite: React.FC = () => {
     setApplicantName('');
   };
 
+  const handleSymptomSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!symptomInput.trim()) return;
+
+    const userText = symptomInput.trim();
+    const newMsgs = [...symptomMessages, { sender: 'user' as const, text: userText }];
+    setSymptomMessages(newMsgs);
+    setSymptomInput('');
+
+    setTimeout(() => {
+      const lowerText = userText.toLowerCase();
+      let responseText = '';
+      let triage: 'Red' | 'Yellow' | 'Green' = 'Green';
+      let dept = 'General Medicine';
+
+      if (lowerText.includes('chest pain') || lowerText.includes('heart') || lowerText.includes('cardiac') || lowerText.includes('breathless') || lowerText.includes('unconscious') || lowerText.includes('accident') || lowerText.includes('bleeding')) {
+        triage = 'Red';
+        responseText = "🚨 CRITICAL TRIAGE (Red Priority): Based on your symptoms, this could be a life-threatening emergency. Please proceed immediately to our 24/7 Emergency Command Center or call the Pogathota Emergency Hotline: 0861-2345678.";
+      } else if (lowerText.includes('cough') || lowerText.includes('wheez') || lowerText.includes('asthma') || lowerText.includes('breath')) {
+        triage = 'Yellow';
+        dept = 'Pulmonology';
+        responseText = "⚠️ Triage: Yellow Priority (Urgent). Respiratory distress or persistent cough needs specialist review. We suggest booking an appointment with our Pulmonology department.";
+      } else if (lowerText.includes('stomach') || lowerText.includes('abdomen') || lowerText.includes('vomit') || lowerText.includes('loose motion') || lowerText.includes('digest')) {
+        triage = 'Yellow';
+        dept = 'Gastroenterology';
+        responseText = "⚠️ Triage: Yellow Priority. Persistent abdominal concerns should be evaluated by our Gastroenterology division.";
+      } else if (lowerText.includes('pregnancy') || lowerText.includes('delivery') || lowerText.includes('period') || lowerText.includes('gynec') || lowerText.includes('maternity')) {
+        triage = 'Green';
+        dept = 'Obstetrics & Gynecology (Women Health)';
+        responseText = "🔔 Triage: Green Priority. For maternity, prenatal, and general women's health concerns, consult our Obstetrics & Gynecology department.";
+      } else if (lowerText.includes('fracture') || lowerText.includes('bone') || lowerText.includes('joint') || lowerText.includes('knee') || lowerText.includes('fall')) {
+        triage = 'Yellow';
+        dept = 'Orthopedics';
+        responseText = "⚠️ Triage: Yellow Priority. Bone or joint symptoms should be evaluated by our Orthopedics department.";
+      } else {
+        triage = 'Green';
+        dept = 'General Medicine';
+        responseText = "🔔 Triage: Green Priority (Standard). For general symptoms, we suggest starting with our General Medicine department.";
+      }
+
+      setSymptomMessages(prev => [...prev, { sender: 'bot', text: responseText, triage, dept }]);
+    }, 1000);
+  };
+
+  const handlePortalLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!portalUhidInput) return;
+    
+    // Simulate lookup / authenticate
+    setPortalUser({
+      name: 'Ravi Kumar Devarala',
+      uhid: portalUhidInput.toUpperCase().startsWith('UHID-') ? portalUhidInput.toUpperCase() : `UHID-${portalUhidInput}`,
+      age: 38,
+      gender: 'Male'
+    });
+    setPortalLoggedIn(true);
+    addToast('Access Granted', 'Logged in successfully to MyHealth Desk.', 'success');
+  };
+
+  const handlePortalLogout = () => {
+    setPortalLoggedIn(false);
+    setPortalUser(null);
+    setPortalUhidInput('');
+    setPortalPassword('');
+    addToast('Logged Out', 'Successfully logged out of MyHealth Desk.', 'info');
+  };
+
+  const handlePaySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!payAmount || Number(payAmount) <= 0) {
+      addToast('Error', 'Please enter a valid amount.', 'warning');
+      return;
+    }
+    setPayStatus('processing');
+    
+    setTimeout(() => {
+      const generatedId = `TXN-${Math.floor(100000000 + Math.random() * 900000000)}`;
+      setPayTxnId(generatedId);
+      setPayStatus('success');
+      addToast('Payment Success', `Paid ₹${payAmount} successfully. Transaction ID: ${generatedId}`, 'success');
+    }, 1500);
+  };
+
   const faqs = [
     {
       q: 'Is Dr. YSR Aarogyasri accepted for cashless treatments?',
@@ -211,9 +316,9 @@ export const PublicWebsite: React.FC = () => {
               { id: 'doctors', label: 'Find Doctors' },
               { id: 'departments', label: 'Departments' },
               { id: 'packages', label: 'Health Packages' },
-              { id: 'gallery', label: 'Virtual Tour' },
-              { id: 'blog', label: 'Health Blog' },
-              { id: 'careers', label: 'Careers' },
+              { id: 'symptom-checker', label: '🤖 AI Symptom Checker' },
+              { id: 'patient-portal', label: '📱 MyHealth Portal' },
+              { id: 'pay-online', label: '💳 Pay Online' },
               { id: 'contact', label: 'Contact Us' },
             ].map((nav) => (
               <button
@@ -939,6 +1044,468 @@ export const PublicWebsite: React.FC = () => {
                 Submit Inquiry Request
               </button>
             </form>
+          </div>
+        )}
+
+        {/* AI Symptom Checker & Department Router */}
+        {activeTab === 'symptom-checker' && (
+          <div className="px-4 md:px-12 py-12 max-w-3xl mx-auto space-y-6">
+            <div className="text-center space-y-2">
+              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                AI Triage System
+              </span>
+              <h2 className="text-3xl font-black text-slate-900">AI Symptom Checker & Router</h2>
+              <p className="text-xs text-slate-500">Provide your symptoms below. Our automated triage system will guide you to appropriate care.</p>
+            </div>
+
+            <div className="bg-slate-50 border border-slate-200 rounded-3xl overflow-hidden flex flex-col h-[500px]">
+              <div className="bg-slate-900 px-6 py-4 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white">
+                  🤖
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-xs">Bhaskar Reddy Hospital AI Bot</h3>
+                  <p className="text-[10px] text-slate-400">Online Symptom Triage Desk</p>
+                </div>
+              </div>
+
+              {/* Chat Messages */}
+              <div className="flex-1 p-6 overflow-y-auto space-y-4">
+                {symptomMessages.map((msg, index) => (
+                  <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[80%] rounded-2xl p-4 text-xs ${
+                      msg.sender === 'user'
+                        ? 'bg-blue-600 text-white rounded-br-none'
+                        : 'bg-white border border-slate-200 text-slate-800 rounded-bl-none shadow-xs'
+                    }`}>
+                      <div className="whitespace-pre-wrap">{msg.text}</div>
+                      
+                      {msg.triage && (
+                        <div className="mt-3 pt-3 border-t border-slate-100 flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold">Estimated Triage:</span>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                              msg.triage === 'Red' ? 'bg-rose-100 text-rose-800' :
+                              msg.triage === 'Yellow' ? 'bg-amber-100 text-amber-800' :
+                              'bg-emerald-100 text-emerald-800'
+                            }`}>
+                              {msg.triage} Priority
+                            </span>
+                          </div>
+
+                          {msg.triage === 'Red' ? (
+                            <div className="flex gap-2">
+                              <a href="tel:08612345678" className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-[10px] transition text-center flex-1">
+                                Call Emergency Hotline
+                              </a>
+                            </div>
+                          ) : (
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  const matchingDept = departments.find(d => d.name === msg.dept) || departments[0];
+                                  setBookingDept(matchingDept.name);
+                                  const matchedDoc = doctors.find(d => d.departmentName === matchingDept.name) || doctors[0];
+                                  setBookingDoctor(matchedDoc);
+                                  setIsBookingModalOpen(true);
+                                  setBookingStep(1);
+                                }}
+                                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-[10px] transition text-center flex-1"
+                              >
+                                Book {msg.dept || 'Consultation'} Slot
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Chat Input */}
+              <form onSubmit={handleSymptomSubmit} className="p-4 border-t border-slate-200 bg-white flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Describe symptoms, e.g., chest pain, cough and cold..."
+                  value={symptomInput}
+                  onChange={(e) => setSymptomInput(e.target.value)}
+                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-indigo-500"
+                />
+                <button type="submit" className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs transition">
+                  Send
+                </button>
+              </form>
+            </div>
+            
+            {/* Quick Prompts */}
+            <div className="flex flex-wrap gap-2 justify-center">
+              {[
+                "Severe chest pain and sweating",
+                "Continuous coughing for 3 days",
+                "High fever with body chills",
+                "Pregnancy checkup",
+                "Fractured leg / joint pain"
+              ].map((phrase, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => {
+                    setSymptomInput(phrase);
+                  }}
+                  className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg text-[11px] transition shadow-2xs"
+                >
+                  {phrase}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Patient Portal (MyHealth Desk) */}
+        {activeTab === 'patient-portal' && (
+          <div className="px-4 md:px-12 py-12 max-w-5xl mx-auto space-y-6">
+            {!portalLoggedIn ? (
+              <div className="max-w-md mx-auto p-8 rounded-3xl bg-white border border-slate-200 shadow-md space-y-6">
+                <div className="text-center space-y-2">
+                  <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto text-xl font-bold">
+                    📱
+                  </div>
+                  <h2 className="text-xl font-black text-slate-900">MyHealth Portal Login</h2>
+                  <p className="text-[11px] text-slate-500">Access your lab reports, prescriptions, and invoices online.</p>
+                </div>
+
+                <form onSubmit={handlePortalLogin} className="space-y-4 text-xs">
+                  <div>
+                    <label className="block text-slate-600 mb-1">Patient UHID or Registered Mobile Number</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. UHID-908123 or 9849012345"
+                      value={portalUhidInput}
+                      onChange={(e) => setPortalUhidInput(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-600 mb-1">Password or OTP</label>
+                    <input
+                      type="password"
+                      placeholder="••••••"
+                      value={portalPassword}
+                      onChange={(e) => setPortalPassword(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
+                    />
+                  </div>
+                  <button type="submit" className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition">
+                    Access MyHealth Desk
+                  </button>
+                </form>
+                
+                <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 text-[10px] text-slate-500">
+                  💡 <strong>Quick Demo:</strong> Enter any value (e.g. <code>UHID-908123</code>) and click login.
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <h2 className="text-xl font-black">{portalUser?.name}</h2>
+                    <p className="text-[11px] text-blue-100">Patient ID: {portalUser?.uhid} • Age: {portalUser?.age} • Gender: {portalUser?.gender}</p>
+                  </div>
+                  <button
+                    onClick={handlePortalLogout}
+                    className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-xs font-bold rounded-xl transition"
+                  >
+                    Logout Desk
+                  </button>
+                </div>
+
+                {/* Sub tabs */}
+                <div className="flex border-b border-slate-200 gap-4">
+                  {[
+                    { id: 'reports', label: '📁 Lab Reports' },
+                    { id: 'prescriptions', label: '💊 Prescriptions' },
+                    { id: 'discharge', label: '📄 Discharge Summaries' },
+                    { id: 'invoices', label: '🧾 Invoices & Bills' }
+                  ].map((subTab) => (
+                    <button
+                      key={subTab.id}
+                      onClick={() => setPortalActiveSubTab(subTab.id as any)}
+                      className={`pb-3 font-semibold text-xs transition-colors relative ${
+                        portalActiveSubTab === subTab.id ? 'text-blue-600 font-bold border-b-2 border-blue-600' : 'text-slate-500 hover:text-slate-800'
+                      }`}
+                    >
+                      {subTab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Tab Contents */}
+                <div className="bg-white border border-slate-200 rounded-3xl p-6 text-xs shadow-2xs">
+                  {portalActiveSubTab === 'reports' && (
+                    <div className="space-y-4">
+                      <h3 className="font-bold text-slate-800 text-sm">Diagnostic Lab Investigations</h3>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className="border-b border-slate-200 text-slate-500">
+                              <th className="pb-3">Test Name</th>
+                              <th className="pb-3">Referred By</th>
+                              <th className="pb-3">Date</th>
+                              <th className="pb-3">Status</th>
+                              <th className="pb-3 text-right">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              { name: 'Lipid Profile Report', doc: 'Dr. Vikram Reddy', date: '2026-07-10', status: 'Completed' },
+                              { name: 'Complete Blood Count (CBC)', doc: 'Dr. Vikram Reddy', date: '2026-07-10', status: 'Completed' },
+                              { name: 'Thyroid Panel (T3, T4, TSH)', doc: 'Dr. Madhu Latha Marreddy', date: '2026-06-15', status: 'Completed' },
+                            ].map((rep, idx) => (
+                              <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50 transition">
+                                <td className="py-3 font-semibold text-slate-800">{rep.name}</td>
+                                <td className="py-3 text-slate-600">{rep.doc}</td>
+                                <td className="py-3 text-slate-500">{rep.date}</td>
+                                <td className="py-3">
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                    {rep.status}
+                                  </span>
+                                </td>
+                                <td className="py-3 text-right">
+                                  <button
+                                    onClick={() => addToast('Download Started', `Downloading PDF for ${rep.name}...`, 'success')}
+                                    className="px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold rounded-lg text-[10px]"
+                                  >
+                                    Download PDF
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {portalActiveSubTab === 'prescriptions' && (
+                    <div className="space-y-4">
+                      <h3 className="font-bold text-slate-800 text-sm">Active & Past Outpatient Prescriptions</h3>
+                      <div className="space-y-3">
+                        {[
+                          { med: 'Atorvastatin 10mg', ins: '1 tablet once daily at bedtime', duration: '30 days', doc: 'Dr. Vikram Reddy', date: '2026-07-10' },
+                          { med: 'Metformin 500mg', ins: '1 tablet twice daily after breakfast & dinner', duration: '60 days', doc: 'Dr. Vikram Reddy', date: '2026-07-10' },
+                        ].map((rx, idx) => (
+                          <div key={idx} className="p-4 border border-slate-100 rounded-2xl flex justify-between items-start hover:bg-slate-50 transition">
+                            <div className="space-y-1">
+                              <div className="font-bold text-slate-900">{rx.med}</div>
+                              <div className="text-slate-600">Instructions: {rx.ins}</div>
+                              <div className="text-[10px] text-slate-400">Duration: {rx.duration} • Prescribed by {rx.doc} on {rx.date}</div>
+                            </div>
+                            <button
+                              onClick={() => addToast('Print Job Sent', 'Opening print preview for Rx slip...', 'success')}
+                              className="px-3 py-1 border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold rounded-lg text-[10px]"
+                            >
+                              Print
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {portalActiveSubTab === 'discharge' && (
+                    <div className="space-y-4">
+                      <h3 className="font-bold text-slate-800 text-sm">IPD Inpatient Discharge Summaries</h3>
+                      <div className="p-4 border border-slate-100 rounded-2xl flex justify-between items-center hover:bg-slate-50 transition">
+                        <div>
+                          <div className="font-bold text-slate-950">Acute Gastroenteritis Admission Summary</div>
+                          <div className="text-slate-500">Admitted: 2026-05-10 • Discharged: 2026-05-12</div>
+                          <div className="text-[10px] text-slate-400">Division: Gastroenterology Care • Dr. S. K. Gupta</div>
+                        </div>
+                        <button
+                          onClick={() => addToast('Summary Download', 'Downloading DischargeSummary_May2026.pdf...', 'success')}
+                          className="px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold rounded-lg text-[10px]"
+                        >
+                          Download PDF
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {portalActiveSubTab === 'invoices' && (
+                    <div className="space-y-4">
+                      <h3 className="font-bold text-slate-800 text-sm">Financial Statements & Receipts</h3>
+                      <div className="space-y-2">
+                        {[
+                          { id: 'INV-2026-0710', desc: 'Lab Investigations (Lipid + CBC)', amount: '₹1,800', status: 'Paid' },
+                          { id: 'INV-2026-0512', desc: 'IPD Admission Settled Bill', amount: '₹12,500', status: 'Paid' },
+                          { id: 'INV-2026-0726', desc: 'OPD Consultation Fee', amount: '₹500', status: 'Unpaid/Pending' },
+                        ].map((inv, idx) => (
+                          <div key={idx} className="p-4 border border-slate-100 rounded-2xl flex justify-between items-center hover:bg-slate-50 transition">
+                            <div>
+                              <div className="font-bold text-slate-900">{inv.desc}</div>
+                              <div className="text-slate-400 text-[10px]">Invoice ID: {inv.id}</div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="font-bold text-slate-900">{inv.amount}</span>
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${inv.status === 'Paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                                {inv.status}
+                              </span>
+                              {inv.status === 'Unpaid/Pending' && (
+                                <button
+                                  onClick={() => {
+                                    setPayUhid(portalUser?.uhid || '');
+                                    setPayBillNo(inv.id);
+                                    setPayAmount('500');
+                                    setPayType('OPD');
+                                    setActiveTab('pay-online');
+                                  }}
+                                  className="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-[10px]"
+                                >
+                                  Pay Now
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Pay Online */}
+        {activeTab === 'pay-online' && (
+          <div className="px-4 md:px-12 py-12 max-w-md mx-auto space-y-6">
+            <div className="text-center space-y-2">
+              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                Payment Gateways
+              </span>
+              <h2 className="text-3xl font-black text-slate-900">Pay Hospital Bill Online</h2>
+              <p className="text-xs text-slate-500">Secure online gateway for outpatient care and inpatient deposits.</p>
+            </div>
+
+            {payStatus === 'form' && (
+              <form onSubmit={handlePaySubmit} className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4 text-xs">
+                <div>
+                  <label className="block text-slate-600 mb-1">Enter UHID (Optional)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. UHID-908123"
+                    value={payUhid}
+                    onChange={(e) => setPayUhid(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 mb-1">Enter Bill Number or Admission ID</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. BILL-2026-8801"
+                    value={payBillNo}
+                    onChange={(e) => setPayBillNo(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 mb-1">Select Payment Category</label>
+                  <select
+                    value={payType}
+                    onChange={(e: any) => setPayType(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
+                  >
+                    <option value="OPD">OPD Consultation Charges</option>
+                    <option value="IPD_Deposit">IPD / Emergency Advance Deposit</option>
+                    <option value="Final_Bill">Final Hospital Bill Settlement</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-600 mb-1">Amount to Pay (INR) *</label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 500"
+                    value={payAmount}
+                    onChange={(e) => setPayAmount(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2 pt-2">
+                  <label className="block text-slate-600">Select Payment Method</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: 'upi', label: '📱 UPI (GPay/PhonePe)' },
+                      { id: 'card', label: '💳 Card' },
+                      { id: 'netbanking', label: '🌐 Net Banking' }
+                    ].map((method) => (
+                      <button
+                        key={method.id}
+                        type="button"
+                        onClick={() => setPayMethod(method.id as any)}
+                        className={`py-2 rounded-xl text-[10px] font-bold border transition ${
+                          payMethod === method.id
+                            ? 'bg-emerald-50 border-emerald-600 text-emerald-800'
+                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                        }`}
+                      >
+                        {method.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-2.5 mt-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition"
+                >
+                  Pay ₹{payAmount || '0'} Now
+                </button>
+              </form>
+            )}
+
+            {payStatus === 'processing' && (
+              <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm text-center space-y-4">
+                <div className="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <h3 className="font-bold text-slate-900 text-sm">Processing Secure Transaction...</h3>
+                <p className="text-[10px] text-slate-500">Do not hit back or refresh. Authenticating via Payment Gateway...</p>
+              </div>
+            )}
+
+            {payStatus === 'success' && (
+              <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-lg text-center space-y-4 text-xs">
+                <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-xl font-bold">
+                  ✓
+                </div>
+                <h3 className="font-black text-slate-900 text-sm">Payment Successful!</h3>
+                <p className="text-[10px] text-slate-500">Receipt generated and sent via SMS/WhatsApp.</p>
+
+                <div className="border-t border-b border-slate-100 py-3 space-y-2 text-left text-[11px]">
+                  <div className="flex justify-between"><span className="text-slate-500">Transaction ID:</span> <span className="font-mono text-slate-800 font-bold">{payTxnId}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">Bill / Admission No:</span> <span className="text-slate-800 font-bold">{payBillNo}</span></div>
+                  {payUhid && <div className="flex justify-between"><span className="text-slate-500">Patient UHID:</span> <span className="text-slate-800 font-bold">{payUhid}</span></div>}
+                  <div className="flex justify-between"><span className="text-slate-500">Amount Paid:</span> <span className="text-emerald-600 font-bold">₹{payAmount}</span></div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPayStatus('form');
+                    setPayAmount('');
+                    setPayBillNo('');
+                    setPayUhid('');
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs"
+                >
+                  Pay Another Bill
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

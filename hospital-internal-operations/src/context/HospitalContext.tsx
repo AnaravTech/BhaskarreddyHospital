@@ -55,112 +55,112 @@ export const DEMO_PERSONAS: UserSession[] = [
   {
     id: 'user-admin',
     name: 'Rajesh V (Chief Admin)',
-    email: 'admin@anaravhealth.com',
+    email: 'admin@bhaskarreddyhospital.com',
     role: 'admin',
     roleTitle: 'System Super Administrator',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'settings',
+    defaultModule: 'home',
   },
   {
     id: 'user-ceo',
     name: 'Dr. Bhaskar Reddy',
-    email: 'ceo@anaravhealth.com',
+    email: 'ceo@bhaskarreddyhospital.com',
     role: 'ceo',
     roleTitle: 'Chairman / Managing Director / CEO',
     avatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'dashboard',
+    defaultModule: 'home',
   },
   {
     id: 'user-doc',
     name: 'Dr. Vikram Reddy',
-    email: 'vikram.reddy@anaravhealth.com',
+    email: 'vikram.reddy@bhaskarreddyhospital.com',
     role: 'doctor',
     roleTitle: 'Consultant Doctor (Cardiology Lead)',
     department: 'Cardiology & Cardiac Surgery',
     avatar: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'opd',
+    defaultModule: 'home',
   },
   {
     id: 'user-dmo',
     name: 'Dr. Anish Kumar',
-    email: 'dmo@anaravhealth.com',
+    email: 'dmo@bhaskarreddyhospital.com',
     role: 'dmo',
     roleTitle: 'Duty Medical Officer (DMO)',
     avatar: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'dmo-desk',
+    defaultModule: 'home',
   },
   {
     id: 'user-rec',
     name: 'Priyanka M',
-    email: 'reception@anaravhealth.com',
+    email: 'reception@bhaskarreddyhospital.com',
     role: 'receptionist',
     roleTitle: 'Reception / Front Office Executive',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'reception',
+    defaultModule: 'home',
   },
   {
     id: 'user-bill',
     name: 'Anil Kumar',
-    email: 'billing@anaravhealth.com',
+    email: 'billing@bhaskarreddyhospital.com',
     role: 'billing',
     roleTitle: 'Billing & Cashier Lead',
     avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'billing',
+    defaultModule: 'home',
   },
   {
     id: 'user-ins',
     name: 'Srinivas Rao',
-    email: 'tpa@anaravhealth.com',
+    email: 'tpa@bhaskarreddyhospital.com',
     role: 'insurance',
     roleTitle: 'Insurance / TPA Coordinator',
     avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'insurance',
+    defaultModule: 'home',
   },
   {
     id: 'user-nurse',
     name: 'Sister Mary Joseph',
-    email: 'nurse@anaravhealth.com',
+    email: 'nurse@bhaskarreddyhospital.com',
     role: 'nurse',
     roleTitle: 'Ward Nurse Station Lead',
     avatar: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'nursing-station',
+    defaultModule: 'home',
   },
   {
     id: 'user-emg',
     name: 'Dr. Sameer Khan',
-    email: 'emergency@anaravhealth.com',
+    email: 'emergency@bhaskarreddyhospital.com',
     role: 'emergency',
     roleTitle: 'Emergency & Trauma Team Lead',
     department: 'Emergency & Critical Care',
     avatar: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'emergency',
+    defaultModule: 'home',
   },
   {
     id: 'user-bed-mgr',
     name: 'Suresh V',
-    email: 'bedmgr@anaravhealth.com',
+    email: 'bedmgr@bhaskarreddyhospital.com',
     role: 'bed-manager',
     roleTitle: 'IP Coordinator / Bed Manager',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'bed-management',
+    defaultModule: 'home',
   },
   {
     id: 'user-hk-sup',
     name: 'Raju Lead',
-    email: 'housekeeping@anaravhealth.com',
+    email: 'housekeeping@bhaskarreddyhospital.com',
     role: 'housekeeping-sup',
     roleTitle: 'Housekeeping Supervisor',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'housekeeping',
+    defaultModule: 'home',
   },
   {
     id: 'user-maint',
     name: 'Venkat E',
-    email: 'maintenance@anaravhealth.com',
+    email: 'maintenance@bhaskarreddyhospital.com',
     role: 'maintenance',
     roleTitle: 'Biomedical / Maintenance Lead',
     avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'maintenance',
+    defaultModule: 'home',
   },
 ];
 
@@ -239,6 +239,9 @@ interface HospitalContextType {
   addContactInquiry: (inquiry: Omit<ContactInquiry, 'id' | 'date' | 'status'>) => void;
   addBlogPost: (post: Omit<BlogPost, 'id'>) => void;
 
+  activeTheme: 'modern' | 'heritage' | 'digital';
+  setActiveTheme: (theme: 'modern' | 'heritage' | 'digital') => void;
+
   addToast: (title: string, message: string, type?: ToastNotification['type']) => void;
   removeToast: (id: string) => void;
   
@@ -249,6 +252,7 @@ interface HospitalContextType {
 const HospitalContext = createContext<HospitalContextType | undefined>(undefined);
 
 export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [activeTheme, setActiveTheme] = useState<'modern' | 'heritage' | 'digital'>('modern');
   // App Mode State: 'hospital-os' | 'public-website' | 'website-cms'
   const [appMode, setAppMode] = useState<AppMode>('public-website');
 
@@ -538,6 +542,8 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         updateHousekeepingStatus,
         addContactInquiry,
         addBlogPost,
+        activeTheme,
+        setActiveTheme,
         addToast,
         removeToast,
         checkOPValidity,

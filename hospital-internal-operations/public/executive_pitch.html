@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Executive Pitch & Partnership Proposal — Bhaskar Reddy Hospital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #030712; color: #f3f4f6; }
+    h1, h2, h3, h4, .font-heading { font-family: 'Outfit', sans-serif; }
+    .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(31, 41, 55, 0.8); }
+    .glass-card-glow { background: linear-gradient(135deg, rgba(17, 24, 39, 0.8), rgba(15, 23, 42, 0.9)); backdrop-filter: blur(16px); border: 1px solid rgba(59, 130, 246, 0.2); }
+    .gradient-text { background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .gradient-emerald { background: linear-gradient(135deg, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    @media print {
+      body { background: #ffffff; color: #111827; }
+      .glass-card, .glass-card-glow { background: #ffffff; border: 1px solid #e5e7eb; color: #111827; }
+      .no-print { display: none !important; }
+      .text-slate-400, .text-slate-300 { color: #374151 !important; }
+      .text-white { color: #111827 !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-16 selection:bg-indigo-500 selection:text-white">
+
+  <!-- Sticky Header Bar -->
+  <header class="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-lg border-b border-slate-800/80 px-6 py-4 no-print">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center font-extrabold text-white text-lg shadow-lg shadow-indigo-500/20">
+          BRH
+        </div>
+        <div>
+          <h1 className="font-heading font-extrabold text-lg text-white">BHASKAR REDDY HOSPITAL</h1>
+          <p class="text-xs text-slate-400">Nellore, Andhra Pradesh • Enterprise Operations Platform</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition flex items-center gap-2">
+          <span>🖨️ Print / Export PDF</span>
+        </button>
+        <a href="/" target="_blank" class="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-extrabold shadow-lg shadow-indigo-500/25 transition flex items-center gap-2">
+          <span>🚀 Launch Hospital OS App</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 pt-10 space-y-12">
+
+    <!-- Hero Title & Executive Banner -->
+    <section class="text-center space-y-4 max-w-4xl mx-auto pt-4">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-extrabold uppercase tracking-wider">
+        <span>Strategic Technology Partnership & Executive Proposal</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-white leading-tight">
+        Next-Generation Enterprise <span class="gradient-text">Hospital OS</span>
+      </h1>
+      <p class="text-base text-slate-300 leading-relaxed font-light">
+        A custom-built, high-throughput hospital operations platform designed specifically for <strong class="text-white">Bhaskar Reddy Hospital, Nellore</strong>. 100% Data Ownership, Zero Vendor Lock-in, and Apollo-grade clinical workflows.
+      </p>
+    </section>
+
+    <!-- Strategic Value Comparison Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <div class="glass-card p-6 rounded-2xl space-y-3 relative overflow-hidden border-rose-500/30">
+        <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center font-bold text-lg">
+          🔓
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white">100% Data & Code Freedom</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Traditional HIS vendors hold your data hostage in proprietary clouds and charge huge export fees. We hand over total ownership of your software and database to Bhaskar Reddy Hospital.
+        </p>
+        <div class="pt-2 text-[11px] font-bold text-rose-400">✓ No Data Hostage • No Export Taxes</div>
+      </div>
+
+      <div class="glass-card-glow p-6 rounded-2xl space-y-3 relative overflow-hidden">
+        <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center font-bold text-lg">
+          💰
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white">No Forced SaaS Subscriptions</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Legacy software companies hike monthly prices by 20–30% every year per doctor, per bed, and per module. We provide the complete platform with predictable maintenance — zero per-user taxes.
+        </p>
+        <div class="pt-2 text-[11px] font-bold text-cyan-400">✓ Predictable Maintenance • Zero Price Hikes</div>
+      </div>
+
+      <div class="glass-card p-6 rounded-2xl space-y-3 relative overflow-hidden border-indigo-500/30">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center font-bold text-lg">
+          🤝
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white">Co-Investment Partnership</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          We are ready to partner with Bhaskar Reddy Hospital management. If you are interested in investing, we can co-develop and commercialize this software as an AP-wide enterprise HIS market leader.
+        </p>
+        <div class="pt-2 text-[11px] font-bold text-indigo-400">✓ Strategic Growth • Shared Enterprise Value</div>
+      </div>
+
+    </section>
+
+    <!-- Feature-by-Feature Tour Section -->
+    <section class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="font-heading text-2xl font-extrabold text-white flex items-center gap-2">
+          <span>⚡ Feature-by-Feature Executive Overview</span>
+        </h2>
+        <p class="text-xs text-slate-400">Translating high-tech capabilities into clear, high-impact clinical and business advantages.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Module 1 -->
+        <div class="glass-card p-5 rounded-2xl space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">EXECUTIVE CONTROL</span>
+            <span class="text-xs font-bold text-slate-400">01</span>
+          </div>
+          <h3 class="font-heading text-lg font-bold text-white">👑 Executive Command Center (CEO / MD Dashboard)</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Real-time revenue telemetry (₹4.28L daily), bed occupancy gauges (85% ICU alert), doctor productivity leaderboard, and clinical alerts on a single, Bloomberg-style dashboard.
+          </p>
+          <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-cyan-300">
+            <strong>Business Impact:</strong> Eliminates daily manual reporting. CEO sees revenue split & bed capacity live.
+          </div>
+        </div>
+
+        <!-- Module 2 -->
+        <div class="glass-card p-5 rounded-2xl space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">CLINICAL OPD</span>
+            <span class="text-xs font-bold text-slate-400">02</span>
+          </div>
+          <h3 class="font-heading text-lg font-bold text-white">🩺 Clinical OPD Workbench & 30-Sec e-Rx</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Fast doctor consultation workbench with live token queue, vitals entry with BMI auto-calc, symptom chip selection, SOAP notes, and autocomplete e-prescription writer.
+          </p>
+          <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-cyan-300">
+            <strong>Business Impact:</strong> Doctors save 3 mins per consultation; auto-enforces 15-day follow-up validity.
+          </div>
+        </div>
+
+        <!-- Module 3 -->
+        <div class="glass-card p-5 rounded-2xl space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">WARD NURSING</span>
+            <span class="text-xs font-bold text-slate-400">03</span>
+          </div>
+          <h3 class="font-heading text-lg font-bold text-white">🏥 Bedside Nursing MAR & 24-Hr Fluid Balance</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Shift-wise Medication Administration Record (MAR) with nurse signatures, 24-hr Intake vs. Output fluid balance (+/- mL), Morse Fall Risk (0-45+ pts), and Braden Ulcer Scores.
+          </p>
+          <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-emerald-300">
+            <strong>Business Impact:</strong> Zero medication errors in wards; clinical fall and bed-sore prevention.
+          </div>
+        </div>
+
+        <!-- Module 4 -->
+        <div class="glass-card p-5 rounded-2xl space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">TRAUMA & LEGAL</span>
+            <span class="text-xs font-bold text-slate-400">04</span>
+          </div>
+          <h3 class="font-heading text-lg font-bold text-white">🚨 Emergency Command & Medico-Legal (MLC) Desk</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Red/Yellow/Green triage queue with animated pulse alerts, 1-click police intimation form generator on hospital letterhead, sample chain of custody, and resuscitation cards.
+          </p>
+          <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-rose-300">
+            <strong>Business Impact:</strong> 100% statutory compliance for accident/trauma cases without administrative delays.
+          </div>
+        </div>
+
+        <!-- Module 5 -->
+        <div class="glass-card p-5 rounded-2xl space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-violet-500/20 text-violet-300 border border-violet-500/30">SURGICAL SUITE</span>
+            <span class="text-xs font-bold text-slate-400">05</span>
+          </div>
+          <h3 class="font-heading text-lg font-bold text-white">✂️ Operation Theatre & WHO Surgical Safety Suite</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Live OT-1, OT-2, OT-3 room monitors with elapsed time progress bars, interactive 3-phase WHO Surgical Safety Checklist (Sign In, Time Out, Sign Out), and PACU Aldrete Evaluator (0-10).
+          </p>
+          <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-violet-300">
+            <strong>Business Impact:</strong> Apollo-grade surgical safety verification; objective PACU recovery discharge scoring.
+          </div>
+        </div>
+
+        <!-- Module 6 -->
+        <div class="glass-card p-5 rounded-2xl space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">MEDICAL RECORDS</span>
+            <span class="text-xs font-bold text-slate-400">06</span>
+          </div>
+          <h3 class="font-heading text-lg font-bold text-white">👤 Patient 360° Unified Medical Record</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Epic-style 7-tab chart: Demographics → Chronological Event Feed → OPD Consultations → IPD Admissions → Billing History → Insurance Claims → Digital Document Vault.
+          </p>
+          <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-amber-300">
+            <strong>Business Impact:</strong> Lifetime medical record accessible in 2 clicks for returning patients.
+          </div>
+        </div>
+
+        <!-- Module 7 -->
+        <div class="glass-card p-5 rounded-2xl space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">GOVERNANCE</span>
+            <span class="text-xs font-bold text-slate-400">07</span>
+          </div>
+          <h3 class="font-heading text-lg font-bold text-white">🛡️ Enterprise Workflow Approvals & Discount Control</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Multi-level digital authorization engine for billing discounts, refunds, bed transfers, and emergency admissions with mandatory justification reasons and digital signatures.
+          </p>
+          <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-blue-300">
+            <strong>Business Impact:</strong> Stops cash counter revenue leakage; full digital audit trail for management concessions.
+          </div>
+        </div>
+
+        <!-- Module 8 -->
+        <div class="glass-card p-5 rounded-2xl space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">FINANCIAL ENGINE</span>
+            <span class="text-xs font-bold text-slate-400">08</span>
+          </div>
+          <h3 class="font-heading text-lg font-bold text-white">🧾 Billing & Multi-Payment Split Engine</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Multi-channel payment split engine allowing single bills to be paid via Cash + UPI/GPay + Card + TPA Insurance. Generates itemized receipts with audit timestamps.
+          </p>
+          <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-emerald-300">
+            <strong>Business Impact:</strong> Fast cashier desk operations; 100% match between cash drawer and online receipts.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Competitive Comparison Table -->
+    <section class="space-y-4">
+      <div class="border-b border-slate-800 pb-3">
+        <h2 class="font-heading text-2xl font-extrabold text-white">📊 Us vs. Legacy HIS Competitors</h2>
+        <p class="text-xs text-slate-400">Why Bhaskar Reddy Hospital gets superior value with our direct software platform.</p>
+      </div>
+
+      <div class="glass-card rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 font-semibold">
+                <th class="p-4">Feature / Parameter</th>
+                <th class="p-4 text-rose-400">Legacy SaaS HIS Vendors</th>
+                <th class="p-4 text-emerald-400 font-bold bg-emerald-950/20">Our Platform for Bhaskar Reddy Hospital</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60">
+              <tr class="hover:bg-slate-800/30">
+                <td class="p-4 font-bold text-white">Data Ownership & Control</td>
+                <td class="p-4 text-slate-400">❌ Locked in vendor servers; expensive export fees</td>
+                <td class="p-4 font-bold text-emerald-300 bg-emerald-950/10">✅ 100% Owned by Bhaskar Reddy Hospital</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="p-4 font-bold text-white">Annual Pricing Model</td>
+                <td class="p-4 text-slate-400">❌ 20–30% yearly price hikes per doctor/bed</td>
+                <td class="p-4 font-bold text-emerald-300 bg-emerald-950/10">✅ Predictable Maintenance (Zero SaaS Tax)</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="p-4 font-bold text-white">Source Code & Customization</td>
+                <td class="p-4 text-slate-400">❌ Closed proprietary black-box</td>
+                <td class="p-4 font-bold text-emerald-300 bg-emerald-950/10">✅ Full Software Handover & Custom Workflows</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="p-4 font-bold text-white">Audit & Compliance Reports</td>
+                <td class="p-4 text-slate-400">❌ Paid extra add-on service</td>
+                <td class="p-4 font-bold text-emerald-300 bg-emerald-950/10">✅ Native 1-Click Instant CSV Export</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="p-4 font-bold text-white">Nursing MAR & Fluid Balance</td>
+                <td class="p-4 text-slate-400">⚠️ Basic or missing</td>
+                <td class="p-4 font-bold text-emerald-300 bg-emerald-950/10">✅ Full 24-hr Shift MAR, Telemetry & Intake/Output</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="p-4 font-bold text-white">WHO Surgical Safety Checklist</td>
+                <td class="p-4 text-slate-400">⚠️ Paper-based</td>
+                <td class="p-4 font-bold text-emerald-300 bg-emerald-950/10">✅ Interactive 3-Phase Sign-In / Time-Out / Sign-Out</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tomorrow's Live Demo Agenda -->
+    <section class="glass-card-glow p-8 rounded-2xl space-y-6">
+      <div>
+        <h2 class="font-heading text-2xl font-extrabold text-white flex items-center gap-2">
+          <span>⏱️ Tomorrow's 10-Minute Executive Demo Agenda</span>
+        </h2>
+        <p class="text-xs text-slate-400 mt-1">Recommended step-by-step presentation order for maximum executive impact.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="font-extrabold text-cyan-400 text-sm">Step 1 (Min 0-2)</div>
+          <div class="font-bold text-white">CEO Command Center</div>
+          <p class="text-slate-400">Log in as CEO → Show ₹4.28L revenue telemetry, bed occupancy (85%), and doctor productivity leaderboard.</p>
+        </div>
+
+        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="font-extrabold text-emerald-400 text-sm">Step 2 (Min 2-4)</div>
+          <div class="font-bold text-white">OPD & Patient 360°</div>
+          <p class="text-slate-400">Log in as Doctor → Write 30-sec e-prescription → Open Patient 360° chart & explore 7 clinical tabs.</p>
+        </div>
+
+        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="font-extrabold text-amber-400 text-sm">Step 3 (Min 4-7)</div>
+          <div class="font-bold text-white">Nursing, Emergency & OT</div>
+          <p class="text-slate-400">Mark MAR given → Show fluid balance → Register emergency MLC police intimation → Complete WHO Surgical Safety sign-off.</p>
+        </div>
+
+        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="font-extrabold text-indigo-400 text-sm">Step 4 (Min 7-10)</div>
+          <div class="font-bold text-white">Audit Export & Pitch</div>
+          <p class="text-slate-400">Download 1-click audit CSV → Present 100% software ownership & strategic co-investment proposal to board.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-8 text-xs text-slate-500 border-t border-slate-800 space-y-2">
+      <p class="font-bold text-slate-400">BHASKAR REDDY HOSPITAL OPERATIONS PLATFORM</p>
+      <p>Nellore, Andhra Pradesh — Designed for Enterprise Excellence, Security & Growth</p>
+    </footer>
+
+  </main>
+
+</body>
+</html>

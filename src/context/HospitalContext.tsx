@@ -172,11 +172,16 @@ interface HospitalContextType {
   
   // Validity Engine Helper
   checkOPValidity: (lastVisitDateStr: string) => { isValid: boolean; daysRemaining: number; endDateStr: string };
+  themeId: string;
+  setThemeId: (id: string) => void;
 }
 
 const HospitalContext = createContext<HospitalContextType | undefined>(undefined);
 
 export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [themeId, setThemeId] = useState<string>(() => {
+    try { return localStorage.getItem('brhospital-theme') ?? 'light-classic'; } catch { return 'light-classic'; }
+  });
   // App Mode State: 'hospital-os' | 'public-website' | 'website-cms'
   const [appMode, setAppMode] = useState<AppMode>('public-website');
 
@@ -410,6 +415,8 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   return (
     <HospitalContext.Provider
       value={{
+        themeId,
+        setThemeId,
         appMode,
         setAppMode,
         currentUser,

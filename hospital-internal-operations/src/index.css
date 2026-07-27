@@ -2,51 +2,324 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  }
+/* ================================================================
+   THEME TRANSITION — smooth on every element
+   ================================================================ */
+*, *::before, *::after {
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* Custom Glassmorphism & Custom Scrollbar Styling */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* ================================================================
+   CSS CUSTOM PROPERTIES — set on <html> via useEffect in App.tsx
+   These variables cascade into every child element automatically
+   ================================================================ */
+
+/* ---- Default (dark / no theme selected) ---- */
+:root {
+  --t-bg:           #020617;   /* slate-950 */
+  --t-surface:      #0f172a;   /* slate-900 */
+  --t-surface2:     #1e293b;   /* slate-800 */
+  --t-border:       #334155;   /* slate-700 */
+  --t-text:         #f1f5f9;   /* slate-100 */
+  --t-text-muted:   #94a3b8;   /* slate-400 */
+  --t-text-dim:     #64748b;   /* slate-500 */
+  --t-primary:      #22d3ee;   /* cyan-400 */
+  --t-accent:       #10b981;   /* emerald-400 */
 }
 
-.glass-panel-light {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+/* ---- Theme 1: Modern Premium (Light) ---- */
+html.theme-modern {
+  --t-bg:           #f8fafc;
+  --t-surface:      #ffffff;
+  --t-surface2:     #f1f5f9;
+  --t-border:       #e2e8f0;
+  --t-text:         #0f172a;
+  --t-text-muted:   #475569;
+  --t-text-dim:     #94a3b8;
+  --t-primary:      #0f52ba;
+  --t-accent:       #059669;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ---- Theme 2: Authentic Healing (Warm Ivory) ---- */
+html.theme-heritage {
+  --t-bg:           #fbf9f4;
+  --t-surface:      #fffdf9;
+  --t-surface2:     #f5eedc;
+  --t-border:       #ddd0b3;
+  --t-text:         #2e2522;
+  --t-text-muted:   #6b5753;
+  --t-text-dim:     #9c8a86;
+  --t-primary:      #800020;
+  --t-accent:       #2e5a44;
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
+/* ---- Theme 3: Future Digital (Cyber Dark) ---- */
+html.theme-digital {
+  --t-bg:           #060913;
+  --t-surface:      #0d1527;
+  --t-surface2:     #1e2a3d;
+  --t-border:       #1e3a5f;
+  --t-text:         #f3f4f6;
+  --t-text-muted:   #9ca3af;
+  --t-text-dim:     #6b7280;
+  --t-primary:      #00d2ff;
+  --t-accent:       #2dd4bf;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(51, 65, 85, 0.6);
-  border-radius: 9999px;
+/* ================================================================
+   UNIVERSAL THEME OVERRIDES
+   Using CSS variables so EVERY element picks them up regardless
+   of how deep it is in the component tree
+   ================================================================ */
+
+/* Root backgrounds */
+html.theme-modern body,
+html.theme-modern #root,
+html.theme-heritage body,
+html.theme-heritage #root,
+html.theme-digital body,
+html.theme-digital #root {
+  background-color: var(--t-bg) !important;
+  color: var(--t-text) !important;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.8);
+/* --- bg-slate-950 → page background --- */
+html.theme-modern .bg-slate-950,
+html.theme-heritage .bg-slate-950,
+html.theme-digital .bg-slate-950 {
+  background-color: var(--t-bg) !important;
 }
 
-/* Subtle Pulsing Animations for Emergency & Live Indicators */
-@keyframes pulse-ring {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1.1); opacity: 0.4; }
-  100% { transform: scale(0.95); opacity: 0.8; }
+/* --- bg-slate-900 variants → card/panel surface --- */
+html.theme-modern .bg-slate-900,
+html.theme-modern .bg-slate-900\/95,
+html.theme-modern .bg-slate-900\/90,
+html.theme-modern .bg-slate-900\/80,
+html.theme-modern .bg-slate-900\/60,
+html.theme-modern .bg-slate-900\/50,
+html.theme-modern .bg-slate-900\/40,
+html.theme-heritage .bg-slate-900,
+html.theme-heritage .bg-slate-900\/95,
+html.theme-heritage .bg-slate-900\/90,
+html.theme-heritage .bg-slate-900\/80,
+html.theme-heritage .bg-slate-900\/60,
+html.theme-heritage .bg-slate-900\/50,
+html.theme-heritage .bg-slate-900\/40,
+html.theme-digital .bg-slate-900,
+html.theme-digital .bg-slate-900\/95,
+html.theme-digital .bg-slate-900\/90,
+html.theme-digital .bg-slate-900\/80,
+html.theme-digital .bg-slate-900\/60,
+html.theme-digital .bg-slate-900\/50,
+html.theme-digital .bg-slate-900\/40 {
+  background-color: var(--t-surface) !important;
 }
 
-.animate-pulse-slow {
-  animation: pulse-ring 3s infinite ease-in-out;
+/* --- bg-slate-950 opacity variants → page bg --- */
+html.theme-modern .bg-slate-950\/90,
+html.theme-modern .bg-slate-950\/80,
+html.theme-modern .bg-slate-950\/60,
+html.theme-modern .bg-slate-950\/40,
+html.theme-heritage .bg-slate-950\/90,
+html.theme-heritage .bg-slate-950\/80,
+html.theme-heritage .bg-slate-950\/60,
+html.theme-heritage .bg-slate-950\/40 {
+  background-color: var(--t-bg) !important;
 }
+
+/* --- bg-slate-800 variants → subtle hover surfaces --- */
+html.theme-modern .bg-slate-800,
+html.theme-modern .bg-slate-800\/60,
+html.theme-modern .bg-slate-800\/50,
+html.theme-modern .bg-slate-800\/40,
+html.theme-heritage .bg-slate-800,
+html.theme-heritage .bg-slate-800\/60,
+html.theme-heritage .bg-slate-800\/50,
+html.theme-heritage .bg-slate-800\/40 {
+  background-color: var(--t-surface2) !important;
+}
+
+html.theme-digital .bg-slate-800,
+html.theme-digital .bg-slate-800\/60,
+html.theme-digital .bg-slate-800\/50,
+html.theme-digital .bg-slate-800\/40 {
+  background-color: var(--t-surface2) !important;
+}
+
+/* --- Borders --- */
+html.theme-modern .border-slate-900,
+html.theme-modern .border-slate-800,
+html.theme-modern .border-slate-800\/80,
+html.theme-modern .border-slate-800\/60,
+html.theme-modern .border-slate-700\/80,
+html.theme-modern .border-slate-700\/50,
+html.theme-modern .border-slate-700,
+html.theme-heritage .border-slate-900,
+html.theme-heritage .border-slate-800,
+html.theme-heritage .border-slate-800\/80,
+html.theme-heritage .border-slate-800\/60,
+html.theme-heritage .border-slate-700\/80,
+html.theme-heritage .border-slate-700\/50,
+html.theme-heritage .border-slate-700 {
+  border-color: var(--t-border) !important;
+}
+
+html.theme-digital .border-slate-900,
+html.theme-digital .border-slate-800,
+html.theme-digital .border-slate-800\/80,
+html.theme-digital .border-slate-800\/60,
+html.theme-digital .border-slate-700\/80,
+html.theme-digital .border-slate-700\/50,
+html.theme-digital .border-slate-700 {
+  border-color: var(--t-border) !important;
+}
+
+/* --- Divide borders --- */
+html.theme-modern .divide-slate-800 > :not([hidden]) ~ :not([hidden]),
+html.theme-heritage .divide-slate-800 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--t-border) !important;
+}
+
+/* --- Text --- */
+html.theme-modern .text-white,
+html.theme-modern .text-slate-100 { color: var(--t-text) !important; }
+html.theme-modern .text-slate-200  { color: #1e293b !important; }
+html.theme-modern .text-slate-300  { color: var(--t-text-muted) !important; }
+html.theme-modern .text-slate-400  { color: var(--t-text-dim) !important; }
+html.theme-modern .text-slate-500  { color: #94a3b8 !important; }
+
+html.theme-heritage .text-white,
+html.theme-heritage .text-slate-100 { color: var(--t-text) !important; }
+html.theme-heritage .text-slate-200  { color: #3d322e !important; }
+html.theme-heritage .text-slate-300  { color: var(--t-text-muted) !important; }
+html.theme-heritage .text-slate-400  { color: var(--t-text-dim) !important; }
+html.theme-heritage .text-slate-500  { color: #9c8a86 !important; }
+
+/* --- Sidebar --- */
+html.theme-modern aside,
+html.theme-heritage aside {
+  background-color: var(--t-surface) !important;
+  border-right-color: var(--t-border) !important;
+}
+html.theme-digital aside {
+  background-color: #090f1e !important;
+  border-right-color: var(--t-border) !important;
+}
+
+/* --- Header bar --- */
+html.theme-modern header,
+html.theme-heritage header {
+  background-color: var(--t-surface) !important;
+  border-bottom-color: var(--t-border) !important;
+}
+
+/* --- Inputs / Selects / Textareas --- */
+html.theme-modern input,
+html.theme-modern select,
+html.theme-modern textarea,
+html.theme-heritage input,
+html.theme-heritage select,
+html.theme-heritage textarea {
+  background-color: var(--t-surface) !important;
+  color: var(--t-text) !important;
+  border-color: var(--t-border) !important;
+}
+
+/* ================================================================
+   HERITAGE THEME — Accent remapping
+   ================================================================ */
+html.theme-heritage .text-cyan-400 { color: var(--t-primary) !important; }
+html.theme-heritage .border-cyan-500\/30 { border-color: rgba(128, 0, 32, 0.3) !important; }
+html.theme-heritage .text-emerald-400 { color: var(--t-accent) !important; }
+html.theme-heritage .bg-cyan-500\/10 { background-color: rgba(128, 0, 32, 0.08) !important; }
+html.theme-heritage .bg-gradient-to-r { background-image: linear-gradient(to right, #800020, #a62b47) !important; }
+html.theme-heritage h1,
+html.theme-heritage h2,
+html.theme-heritage h3 { font-family: 'Lora', 'Georgia', serif !important; }
+html.theme-heritage button:not(.no-theme) { border-radius: 16px !important; }
+html.theme-heritage button:hover { box-shadow: 0 8px 20px rgba(128, 0, 32, 0.12); }
+
+/* ================================================================
+   DIGITAL THEME — Neon glow accents
+   ================================================================ */
+html.theme-digital .text-cyan-400 {
+  color: var(--t-primary) !important;
+  text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+}
+html.theme-digital .text-emerald-400 {
+  color: var(--t-accent) !important;
+  text-shadow: 0 0 8px rgba(45, 212, 191, 0.4);
+}
+html.theme-digital .bg-gradient-to-r {
+  background-image: linear-gradient(135deg, #00d2ff 0%, #0080ff 100%) !important;
+  color: #030712 !important;
+}
+html.theme-digital button:hover {
+  box-shadow: 0 0 18px rgba(0, 210, 255, 0.35);
+  transform: scale(1.015);
+}
+
+/* ================================================================
+   MODERN THEME — Clean microanimations
+   ================================================================ */
+html.theme-modern button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(15, 82, 186, 0.15);
+}
+
+/* ================================================================
+   DECORATIVE BACKGROUNDS
+   ================================================================ */
+
+/* Digital: cyber grid overlay */
+html.theme-digital main {
+  background-color: var(--t-bg) !important;
+  background-image: linear-gradient(to bottom, #060913, #0a1020) !important;
+  position: relative;
+}
+html.theme-digital main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 210, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 210, 255, 0.015) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Heritage: warm paper gradient */
+html.theme-heritage main {
+  background-color: var(--t-bg) !important;
+  background-image: linear-gradient(175deg, #fbf9f4 0%, #f5eedc 100%) !important;
+}
+
+/* Modern: clean white */
+html.theme-modern main {
+  background-color: var(--t-bg) !important;
+}
+
+/* ================================================================
+   PAGE ENTRANCE ANIMATION
+   ================================================================ */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+html.theme-modern main > div,
+html.theme-heritage main > div,
+html.theme-digital main > div {
+  animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ================================================================
+   SCROLLBAR
+   ================================================================ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { border-radius: 9999px; background: rgba(148, 163, 184, 0.2); }
+::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.45); }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

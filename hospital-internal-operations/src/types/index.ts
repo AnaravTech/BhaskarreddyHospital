@@ -1,4 +1,5 @@
 export type ModuleType =
+  | 'home'
   | 'dashboard'
   | 'reception'
   | 'patients'
@@ -13,6 +14,9 @@ export type ModuleType =
   | 'diagnostics'
   | 'operation-theatre'
   | 'discharge-summary'
+  | 'workflow'
+  | 'document-center'
+  | 'patient-experience'
   | 'doctors'
   | 'departments'
   | 'billing'
@@ -23,6 +27,190 @@ export type ModuleType =
   | 'maintenance'
   | 'reports'
   | 'settings';
+
+// ─── Enterprise New Types ────────────────────────────────────────────────────
+
+export interface VitalsRecord {
+  id: string;
+  patientId: string;
+  admissionId?: string;
+  shift: 'Morning' | 'Afternoon' | 'Night';
+  bp: string;
+  pulse: string;
+  temp: string;
+  spO2: string;
+  rr: string;
+  bloodSugar?: string;
+  painScore: number; // 0-10
+  recordedBy: string;
+  recordedAt: string;
+}
+
+export interface FluidEntry {
+  id: string;
+  patientId: string;
+  admissionId?: string;
+  entryType: 'Intake' | 'Output';
+  category: string; // e.g. 'IV Fluids', 'Oral', 'Urine', 'Drain'
+  amount: number; // mL
+  recordedAt: string;
+  recordedBy: string;
+}
+
+export interface NursingAssessment {
+  id: string;
+  patientId: string;
+  admissionId?: string;
+  assessmentType: 'Fall Risk' | 'Pressure Ulcer' | 'Pain' | 'Nutrition';
+  score: number;
+  riskLevel: 'Low' | 'Moderate' | 'High';
+  details: Record<string, string | number>;
+  assessedAt: string;
+  assessedBy: string;
+}
+
+export type ApprovalType =
+  | 'Admission'
+  | 'Discount'
+  | 'Refund'
+  | 'Insurance Pre-Auth'
+  | 'Bed Transfer'
+  | 'Discharge'
+  | 'OT Schedule';
+
+export interface ApprovalRequest {
+  id: string;
+  type: ApprovalType;
+  patientId?: string;
+  patientName?: string;
+  amount?: number;
+  reason: string;
+  requestedBy: string;
+  requestedByRole: string;
+  requestedAt: string;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Escalated';
+  approvedBy?: string;
+  approvedAt?: string;
+  rejectionReason?: string;
+  priority: 'Normal' | 'Urgent' | 'Critical';
+}
+
+export interface PatientFeedback {
+  id: string;
+  patientId: string;
+  patientName: string;
+  uhid: string;
+  visitType: 'OP' | 'IP' | 'Emergency';
+  doctorId?: string;
+  doctorName?: string;
+  departmentName?: string;
+  overallRating: number; // 1-5
+  doctorRating?: number;
+  nursingRating?: number;
+  facilityRating?: number;
+  foodRating?: number;
+  comments: string;
+  submittedAt: string;
+  status: 'New' | 'Acknowledged' | 'Resolved';
+}
+
+export interface Complaint {
+  id: string;
+  complaintNo: string;
+  patientId?: string;
+  patientName: string;
+  phone: string;
+  subject: string;
+  description: string;
+  category: 'Clinical' | 'Administrative' | 'Billing' | 'Facility' | 'Staff Behavior';
+  severity: 'Low' | 'Medium' | 'High' | 'Critical';
+  status: 'Open' | 'In Progress' | 'Resolved' | 'Closed';
+  assignedTo?: string;
+  resolution?: string;
+  submittedAt: string;
+  resolvedAt?: string;
+}
+
+export interface HospitalDocument {
+  id: string;
+  documentType:
+    | 'Consent Form'
+    | 'Discharge Summary'
+    | 'Medical Certificate'
+    | 'Insurance Pre-Auth'
+    | 'Lab Report'
+    | 'Radiology Report'
+    | 'Clinical Photo'
+    | 'Patient Upload';
+  patientId: string;
+  patientName: string;
+  patientUhid: string;
+  fileName: string;
+  fileSize: string;
+  uploadedBy: string;
+  uploadedByRole: string;
+  uploadedAt: string;
+  version: number;
+  status: 'Active' | 'Superseded' | 'Archived';
+  signatureStatus?: 'Unsigned' | 'Signed';
+  signedBy?: string;
+  signedAt?: string;
+  notes?: string;
+}
+
+export interface OTSurgery {
+  id: string;
+  surgeryCode: string;
+  patientId: string;
+  patientName: string;
+  patientUhid: string;
+  surgeonId: string;
+  surgeonName: string;
+  assistantSurgeonName?: string;
+  anaesthetistName: string;
+  scrubNurseName: string;
+  otRoom: 'OT-1' | 'OT-2' | 'OT-3';
+  procedureName: string;
+  scheduledDate: string;
+  scheduledStartTime: string;
+  estimatedDurationMins: number;
+  actualStartTime?: string;
+  actualEndTime?: string;
+  status: 'Scheduled' | 'Pre-Op Check' | 'In Progress' | 'Completed' | 'Post-Op Recovery' | 'Cancelled';
+  preOpChecklist: {
+    consentSigned: boolean;
+    npoDone: boolean;
+    siteMark: boolean;
+    preAnesthesiaAssessment: boolean;
+    preOpMedication: boolean;
+    ivAccess: boolean;
+  };
+  anaesthesiaType: 'General' | 'Regional' | 'Local' | 'Spinal' | 'Epidural';
+  diagnosisCode?: string;
+  notes?: string;
+}
+
+export interface SystemNotification {
+  id: string;
+  type:
+    | 'Emergency Alert'
+    | 'Bed Overflow'
+    | 'Pending Approval'
+    | 'Insurance Update'
+    | 'Appointment Reminder'
+    | 'Discharge Due'
+    | 'Lab Result'
+    | 'System Alert'
+    | 'Broadcast';
+  title: string;
+  message: string;
+  targetRoles: string[]; // which roles see this
+  isRead: boolean;
+  priority: 'Normal' | 'High' | 'Critical';
+  sentAt: string;
+  sentBy: string;
+  actionLink?: ModuleType;
+}
 
 export type AppMode = 'hospital-os' | 'public-website' | 'website-cms';
 
