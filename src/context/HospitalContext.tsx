@@ -244,7 +244,7 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // App Mode State: 'hospital-os' | 'public-website' | 'website-cms'
   const [appMode, setAppMode] = useState<AppMode>('public-website');
 
-  const [currentUser, setCurrentUser] = useState<UserSession | null>(DEMO_PERSONAS[0]);
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
   const [activeModule, setActiveModule] = useState<ModuleType>('dashboard');
   const [activeTenant] = useState<HospitalTenant>(mockTenants[0]);
   const [activeBranch, setActiveBranch] = useState<Branch>(mockTenants[0].branches[0]);
