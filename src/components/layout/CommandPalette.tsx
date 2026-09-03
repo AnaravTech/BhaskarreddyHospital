@@ -21,6 +21,7 @@ export const CommandPalette: React.FC = () => {
     beds,
     invoices,
     setActiveModule,
+    getPermission,
   } = useHospital();
 
   const [query, setQuery] = useState('');
@@ -42,7 +43,9 @@ export const CommandPalette: React.FC = () => {
 
   if (!isCommandPaletteOpen) return null;
 
-  const filteredPatients = query
+  const filteredPatients = getPermission('patients') === 'HIDDEN'
+    ? []
+    : query
     ? patients.filter(
         (p) =>
           p.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -51,7 +54,9 @@ export const CommandPalette: React.FC = () => {
       )
     : patients.slice(0, 3);
 
-  const filteredDoctors = query
+  const filteredDoctors = getPermission('doctors') === 'HIDDEN'
+    ? []
+    : query
     ? doctors.filter(
         (d) =>
           d.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -59,7 +64,9 @@ export const CommandPalette: React.FC = () => {
       )
     : doctors.slice(0, 3);
 
-  const filteredBeds = query
+  const filteredBeds = getPermission('bed-management') === 'HIDDEN'
+    ? []
+    : query
     ? beds.filter(
         (b) =>
           b.bedNumber.toLowerCase().includes(query.toLowerCase()) ||
@@ -67,7 +74,9 @@ export const CommandPalette: React.FC = () => {
       )
     : beds.filter((b) => b.status === 'Occupied').slice(0, 3);
 
-  const filteredInvoices = query
+  const filteredInvoices = getPermission('billing') === 'HIDDEN'
+    ? []
+    : query
     ? invoices.filter(
         (inv) =>
           inv.invoiceNo.toLowerCase().includes(query.toLowerCase()) ||
@@ -75,14 +84,16 @@ export const CommandPalette: React.FC = () => {
       )
     : invoices.slice(0, 2);
 
-  const quickActions: { label: string; module: ModuleType; icon: React.ElementType }[] = [
+  const allActions: { label: string; module: ModuleType; icon: React.ElementType }[] = [
     { label: 'Register New Walk-in Patient', module: 'reception', icon: Users },
     { label: 'View Interactive Bed Occupancy Map', module: 'bed-management', icon: BedDouble },
     { label: 'Generate Billing & Multi-Payment Split', module: 'billing', icon: Receipt },
     { label: 'View Emergency Triage Bay', module: 'emergency', icon: FileCheck2 },
   ];
+  const quickActions = allActions.filter((act) => getPermission(act.module) !== 'HIDDEN');
 
   const handleSelectModule = (module: ModuleType) => {
+    if (getPermission(module) === 'HIDDEN') return;
     setActiveModule(module);
     setIsCommandPaletteOpen(false);
     setQuery('');

@@ -69,7 +69,7 @@ export const AIAssistantDrawer: React.FC = () => {
         const pat = patients.find((p) => p.name.includes('Srinivas') || p.uhid.includes('9012'));
         responseText = `🩺 **Clinical Summary for ${pat?.name || 'Srinivas Goud'} (UHID: ${pat?.uhid})**:\n\n• **Admission**: Admitted on July 22, 2026 to Cardiac ICU-101.\n• **Diagnosis**: Acute Coronary Syndrome (Unstable Angina).\n• **Attending**: Dr. Vikram Reddy.\n• **Allergies**: No known drug allergies.\n• **Insurance Pre-Auth**: Star Health ₹85,000 Approved.`;
       } else {
-        responseText = `⚡ **AI Analysis Output**:\n\nI have analyzed your query "${query}". All hospital sub-systems (OPD, IPD, TPA Insurance, Cash Counter) are operational and synchronized with 0 latency. You can trigger automated SMS/WhatsApp alerts for returning OP follow-up patients or inspect floor cleanliness metrics.`;
+        responseText = `⚡ **AI Analysis Output**:\n\nI have analyzed your query "${query}". All hospital sub-systems (OPD, IPD, TPA Insurance, Cash Counter) are operational and synchronized with 0 latency. You can trigger automated WhatsApp alerts for returning OP follow-up patients or inspect floor cleanliness metrics.`;
       }
 
       const aiMsg: ChatMessage = {

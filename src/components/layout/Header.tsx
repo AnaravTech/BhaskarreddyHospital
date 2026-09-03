@@ -5,8 +5,6 @@ import {
   Sparkles,
   Bell,
   Siren,
-  Plus,
-  Command,
   BedDouble,
 } from 'lucide-react';
 
@@ -20,6 +18,7 @@ export const Header: React.FC = () => {
     beds,
     emergencyCases,
     toasts,
+    getPermission,
   } = useHospital();
 
   const occupiedBeds = beds.filter((b) => b.status === 'Occupied').length;
@@ -28,20 +27,22 @@ export const Header: React.FC = () => {
 
   return (
     <header className="h-16 bg-slate-900/80 border-b border-slate-800/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-20 shrink-0">
-      {/* Search Input & Command Palette Trigger */}
-      <div className="flex items-center gap-4 flex-1 max-w-xl">
+      {/* Compact Clean Search Bar */}
+      <div className="relative w-56 sm:w-60">
         <button
+          type="button"
           onClick={() => setIsCommandPaletteOpen(true)}
-          className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700 transition shadow-inner group"
+          className="w-full flex items-center justify-between px-2.5 py-1 bg-slate-950/60 hover:bg-slate-950/90 border border-slate-800 hover:border-slate-700 rounded-lg transition text-slate-400 hover:text-slate-200 text-left"
         >
-          <div className="flex items-center gap-2.5">
-            <Search className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
-            <span className="text-xs font-medium">Search Patients, Doctors, UHID, Bills, Beds...</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <span className="text-[11px] text-slate-400 truncate">
+              Search patients, doctors...
+            </span>
           </div>
-          <div className="flex items-center gap-1 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 text-[10px] font-mono text-slate-400">
-            <Command className="w-3 h-3" />
-            <span>K</span>
-          </div>
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1 py-0.2 text-[9px] font-mono text-slate-500 bg-slate-900 border border-slate-800 rounded">
+            <span>⌘K</span>
+          </kbd>
         </button>
       </div>
 
@@ -62,8 +63,8 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Critical Emergency Triage Pill */}
-        {criticalEmergencyCount > 0 && (
+        {/* Critical Emergency Triage Pill - only for authorized roles */}
+        {criticalEmergencyCount > 0 && getPermission('emergency') !== 'HIDDEN' && (
           <button
             onClick={() => setActiveModule('emergency')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 text-xs font-semibold animate-pulse"
@@ -72,15 +73,6 @@ export const Header: React.FC = () => {
             <span>{criticalEmergencyCount} Red Triage</span>
           </button>
         )}
-
-        {/* Quick Registration Action Dropdown / Button */}
-        <button
-          onClick={() => setActiveModule('reception')}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-cyan-600/20 transition active:scale-95"
-        >
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">New Admission / Token</span>
-        </button>
 
         {/* AI Copilot Entry Point */}
         <button
