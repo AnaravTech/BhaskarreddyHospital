@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { HospitalProvider, useHospital } from './context/HospitalContext';
+import { PublicLandingPage } from './components/public/PublicLandingPage';
 import { Login } from './components/auth/Login';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
@@ -23,9 +24,10 @@ import { InsuranceModule } from './components/modules/InsuranceModule';
 import { EmergencyModule } from './components/modules/EmergencyModule';
 import { ConsentFormsModule } from './components/modules/ConsentFormsModule';
 import { HousekeepingModule } from './components/modules/HousekeepingModule';
+import { PharmacyModule } from './components/modules/PharmacyModule';
 import { ReportsModule } from './components/modules/ReportsModule';
 import { SettingsModule } from './components/modules/SettingsModule';
-import { X, CheckCircle2, Info, Siren } from 'lucide-react';
+import { X, CheckCircle2, Info, Siren, Lock, Eye, AlertCircle } from 'lucide-react';
 
 // ─── Theme definitions (CSS variable values per theme) ──────────────────────
 const THEME_CSS_VARS: Record<string, Record<string, string>> = {
@@ -214,7 +216,19 @@ const THEME_CSS_VARS: Record<string, Record<string, string>> = {
 };
 
 const MainContent: React.FC = () => {
-  const { currentUser, activeModule, toasts, removeToast, themeId } = useHospital();
+  const hospitalCtx = useHospital();
+  const {
+    currentUser,
+    activeModule,
+    setActiveModule,
+    toasts,
+    removeToast,
+    themeId,
+    getPermission,
+    getPermissionDetails,
+    accessibleModules,
+    appMode,
+  } = hospitalCtx;
 
   // Apply CSS variables to :root whenever theme changes
   useEffect(() => {
@@ -225,11 +239,40 @@ const MainContent: React.FC = () => {
     root.setAttribute('data-theme', themeId);
   }, [themeId]);
 
+  if (appMode === 'public-website') {
+    return <PublicLandingPage />;
+  }
+
   if (!currentUser) {
     return <Login />;
   }
 
+  const permission = getPermission(activeModule);
+
   const renderActiveModule = () => {
+    if (permission === 'HIDDEN') {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center p-8 bg-slate-900/60 rounded-2xl border border-slate-800">
+          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mb-4 shadow-lg shadow-rose-500/10">
+            <Lock className="w-8 h-8 text-rose-400" />
+          </div>
+          <h2 className="text-xl font-extrabold text-slate-100 mb-2">Module Access Restricted</h2>
+          <p className="text-xs text-slate-400 max-w-md mb-6 leading-relaxed">
+            Your current role (<span className="text-cyan-400 font-semibold">{currentUser.roleTitle}</span>) does not have authorization to view the <span className="text-slate-200 font-mono font-semibold uppercase">{activeModule}</span> module under the active security policy.
+          </p>
+          <button
+            onClick={() => {
+              const fallback = accessibleModules[0] ?? currentUser.defaultModule ?? 'patients';
+              setActiveModule(fallback);
+            }}
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-cyan-600/20 transition active:scale-95"
+          >
+            Go to Accessible Module
+          </button>
+        </div>
+      );
+    }
+
     switch (activeModule) {
       case 'dashboard':
         return <CEODashboard />;
@@ -261,6 +304,8 @@ const MainContent: React.FC = () => {
         return <ConsentFormsModule />;
       case 'housekeeping':
         return <HousekeepingModule />;
+      case 'pharmacy':
+        return <PharmacyModule />;
       case 'reports':
         return <ReportsModule />;
       case 'settings':
@@ -279,7 +324,35 @@ const MainContent: React.FC = () => {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Header />
         
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-gradient-to-b from-slate-950 via-slate-900/60 to-slate-950">
+        <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-gradient-to-b from-slate-950 via-slate-900/60 to-slate-950 space-y-4">
+          {permission === 'VIEW' && (
+            <div className="p-3.5 rounded-xl bg-gradient-to-r from-blue-950/60 via-slate-900/80 to-blue-950/60 border border-blue-500/30 flex items-center justify-between gap-3 text-xs text-blue-200 shadow-sm animate-in fade-in duration-200">
+              <div className="flex items-center gap-2.5">
+                <Eye className="w-4 h-4 text-blue-400 shrink-0" />
+                <span>
+                  <strong className="text-blue-300">View-Only Mode:</strong> Logged in as <span className="font-semibold text-white">{currentUser.name} ({currentUser.roleTitle})</span>. You can inspect records, but creation, editing, and destructive actions are restricted.
+                </span>
+              </div>
+              <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-blue-500/20 text-blue-300 border border-blue-500/40 uppercase tracking-wider shrink-0">
+                READ ONLY
+              </span>
+            </div>
+          )}
+
+          {permission === 'LIMITED' && (
+            <div className="p-3.5 rounded-xl bg-gradient-to-r from-amber-950/60 via-slate-900/80 to-amber-950/60 border border-amber-500/30 flex items-center justify-between gap-3 text-xs text-amber-200 shadow-sm animate-in fade-in duration-200">
+              <div className="flex items-center gap-2.5">
+                <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>
+                  <strong className="text-amber-300">Limited Access Mode:</strong> {getPermissionDetails(activeModule) || `Scoped operational access for ${currentUser.roleTitle}.`}
+                </span>
+              </div>
+              <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-wider shrink-0">
+                LIMITED
+              </span>
+            </div>
+          )}
+
           {renderActiveModule()}
         </main>
       </div>

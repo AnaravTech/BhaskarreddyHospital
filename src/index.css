@@ -215,3 +215,19 @@
   100% { transform: scale(0.95); opacity: 0.8; }
 }
 .animate-pulse-slow { animation: pulse-ring 3s infinite ease-in-out; }
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float-slow { animation: float-slow 4s ease-in-out infinite; }
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(8px); }
+}
+.animate-float-delayed { animation: float-delayed 5s ease-in-out infinite 1.5s; }
+
+html {
+  scroll-behavior: smooth;
+}
