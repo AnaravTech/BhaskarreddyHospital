@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { useHospital } from '../../context/HospitalContext';
 import {
-  Building,
-  MessageSquare,
-  Database,
   ShieldCheck,
   Check,
   X as XIcon,
   Briefcase,
   Plus,
+  ToggleLeft,
+  ToggleRight,
+  UserCheck,
+  Save,
+  Sliders,
+  Trash2,
+  Edit3,
+  UserPlus,
 } from 'lucide-react';
 
 interface RolePermission {
@@ -29,116 +34,206 @@ interface RolePermission {
 }
 
 export const SettingsModule: React.FC = () => {
-  const { activeTenant, addToast } = useHospital();
+  const { addToast, tariffConfig, setTariffConfig, currentUser } = useHospital();
 
-  const [activeTab, setActiveTab] = useState<'rbac' | 'departments' | 'tariffs' | 'saas' | 'templates'>('rbac');
+  const [activeTab, setActiveTab] = useState<'tariffs' | 'departments' | 'users' | 'rbac' | 'workflows'>('tariffs');
 
-  // Role Permissions State Matrix
+  // Dynamic Staff Users Roster State (Admin CRUD)
+  const [staffList, setStaffList] = useState([
+    { id: 'stf-1', name: 'Rajesh V', title: 'System Super Administrator', roleCode: 'admin', email: 'admin@anaravhealth.com', status: 'Active' },
+    { id: 'stf-2', name: 'Dr. Bhaskar Reddy', title: 'Chairman / MD / CEO', roleCode: 'ceo', email: 'ceo@anaravhealth.com', status: 'Active' },
+    { id: 'stf-3', name: 'Dr. Vikram Reddy', title: 'Consultant Cardiologist', roleCode: 'doctor', email: 'vikram.reddy@anaravhealth.com', status: 'Active' },
+    { id: 'stf-4', name: 'Priyanka M', title: 'Front Office Executive', roleCode: 'receptionist', email: 'reception@anaravhealth.com', status: 'Active' },
+    { id: 'stf-5', name: 'Anil Kumar', title: 'Billing Manager', roleCode: 'billing', email: 'billing@anaravhealth.com', status: 'Active' },
+  ]);
+
+  // Dynamic Departments State (Admin CRUD)
+  const [departmentsList, setDepartmentsList] = useState([
+    { id: 'dept-1', name: 'Obstetrics & Gynecology (Women Health)', code: 'OBGY', opdRoom: 'OPD-102', head: 'Dr. Madhu Latha Marreddy', beds: 40 },
+    { id: 'dept-2', name: 'Cardiology & Cardiac Surgery', code: 'CARD', opdRoom: 'OPD-101', head: 'Dr. Vikram Reddy', beds: 45 },
+    { id: 'dept-3', name: 'Orthopedics & Joint Replacement', code: 'ORTH', opdRoom: 'OPD-202', head: 'Dr. Rajeshwar Rao', beds: 50 },
+    { id: 'dept-4', name: 'Neurology & Neurosurgery', code: 'NEUR', opdRoom: 'OPD-104', head: 'Dr. Ananya Swaminathan', beds: 30 },
+    { id: 'dept-5', name: 'Emergency & Trauma Critical Care', code: 'EMER', opdRoom: 'EMR-BAY-01', head: 'Dr. Sameer Khan', beds: 25 },
+  ]);
+
+  // Role Permissions Matrix State
   const [roles, setRoles] = useState<RolePermission[]>([
     {
       roleName: 'System Super Administrator',
       roleCode: 'ROLE_SUPERADMIN',
       userCount: 2,
       description: 'Unrestricted system access, multi-tenant branch provisioning, and audit log controls.',
-      permissions: {
-        patientReg: true,
-        writePrescription: true,
-        bedTransfer: true,
-        processPayment: true,
-        applyDiscount: true,
-        tpaPreAuth: true,
-        viewFinancials: true,
-        modifyTariffs: true,
-      },
+      permissions: { patientReg: true, writePrescription: true, bedTransfer: true, processPayment: true, applyDiscount: true, tpaPreAuth: true, viewFinancials: true, modifyTariffs: true },
     },
     {
       roleName: 'CEO / Managing Director',
       roleCode: 'ROLE_CEO',
       userCount: 3,
       description: 'Executive telemetry command center, financial analytics, and hospital performance dashboards.',
-      permissions: {
-        patientReg: true,
-        writePrescription: false,
-        bedTransfer: true,
-        processPayment: true,
-        applyDiscount: true,
-        tpaPreAuth: true,
-        viewFinancials: true,
-        modifyTariffs: true,
-      },
+      permissions: { patientReg: true, writePrescription: false, bedTransfer: true, processPayment: true, applyDiscount: true, tpaPreAuth: true, viewFinancials: true, modifyTariffs: true },
     },
     {
       roleName: 'Doctor / Medical Consultant',
       roleCode: 'ROLE_DOCTOR',
       userCount: 24,
       description: 'OPD queue management, EHR digital prescription writing, vitals telemetry, and discharge summaries.',
-      permissions: {
-        patientReg: true,
-        writePrescription: true,
-        bedTransfer: true,
-        processPayment: false,
-        applyDiscount: false,
-        tpaPreAuth: false,
-        viewFinancials: false,
-        modifyTariffs: false,
-      },
-    },
-    {
-      roleName: 'Front Desk & Reception Registrar',
-      roleCode: 'ROLE_RECEPTION',
-      userCount: 12,
-      description: 'Walk-in patient registration, UHID issuance, token generation, and appointment booking.',
-      permissions: {
-        patientReg: true,
-        writePrescription: false,
-        bedTransfer: false,
-        processPayment: true,
-        applyDiscount: false,
-        tpaPreAuth: false,
-        viewFinancials: false,
-        modifyTariffs: false,
-      },
-    },
-    {
-      roleName: 'Billing & Cashier Manager',
-      roleCode: 'ROLE_CASHIER',
-      userCount: 8,
-      description: 'Multi-payment split processing (Cash/UPI/Cards), itemized invoice printing, and cashier ledger entries.',
-      permissions: {
-        patientReg: false,
-        writePrescription: false,
-        bedTransfer: false,
-        processPayment: true,
-        applyDiscount: true,
-        tpaPreAuth: false,
-        viewFinancials: true,
-        modifyTariffs: false,
-      },
-    },
-    {
-      roleName: 'TPA & Insurance Claims Officer',
-      roleCode: 'ROLE_INSURANCE',
-      userCount: 5,
-      description: 'Pre-Authorization request submissions, claim document upload, and TPA settlement tracking.',
-      permissions: {
-        patientReg: false,
-        writePrescription: false,
-        bedTransfer: false,
-        processPayment: true,
-        applyDiscount: false,
-        tpaPreAuth: true,
-        viewFinancials: true,
-        modifyTariffs: false,
-      },
+      permissions: { patientReg: true, writePrescription: true, bedTransfer: true, processPayment: false, applyDiscount: false, tpaPreAuth: false, viewFinancials: false, modifyTariffs: false },
     },
   ]);
 
-  const [smsTemplate, setSmsTemplate] = useState(
-    'Dear {PATIENT_NAME}, your token #{TOKEN_NUMBER} with Dr. {DOCTOR_NAME} at {HOSPITAL_NAME} is confirmed for {TIME}.'
-  );
-  const [whatsappTemplate, setWhatsappTemplate] = useState(
-    '🏥 *{HOSPITAL_NAME} Alert*: Hello {PATIENT_NAME}, your appointment is scheduled today. Follow-up validity active until {OP_VALID_DATE}.'
-  );
+  // System Workflow Feature Toggles
+  const [workflows, setWorkflows] = useState([
+    { id: 'opd-work', name: 'OPD Consultation & e-Prescription Module', description: 'Enable vital telemetry and digital prescription builder', enabled: true },
+    { id: 'ipd-work', name: 'IPD Admissions & Bed Grid Engine', description: 'Enable floor-wise bed allocation and ward transfer tracking', enabled: true },
+    { id: 'pharmacy-work', name: 'Pharmacy & Stock Telemetry Module', description: 'Enable e-prescription queue dispensing and batch tracking', enabled: true },
+    { id: 'lis-work', name: 'Laboratory & Radiology LIS Desk', description: 'Enable sample processing and automated PDF report verification', enabled: true },
+  ]);
+
+  // Tariff Form Local Inputs
+  const [stdMin, setStdMin] = useState(tariffConfig.stdOpdMinFee);
+  const [stdMax, setStdMax] = useState(tariffConfig.stdOpdMaxFee);
+  const [premMin, setPremMin] = useState(tariffConfig.premiumSlotMinFee);
+  const [premMax, setPremMax] = useState(tariffConfig.premiumSlotMaxFee);
+  const [validDays, setValidDays] = useState(tariffConfig.opReturnValidityDays);
+  const [icuTariff, setIcuTariff] = useState(tariffConfig.icuBedDailyTariff);
+
+  // Modal States for Add/Edit Department
+  const [isDeptModalOpen, setIsDeptModalOpen] = useState(false);
+  const [editingDeptId, setEditingDeptId] = useState<string | null>(null);
+  const [deptName, setDeptName] = useState('');
+  const [deptCode, setDeptCode] = useState('');
+  const [deptRoom, setDeptRoom] = useState('');
+  const [deptHead, setDeptHead] = useState('');
+  const [deptBeds, setDeptBeds] = useState('20');
+
+  // Modal States for Add/Edit Staff User
+  const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
+  const [editingStaffId, setEditingStaffId] = useState<string | null>(null);
+  const [staffName, setStaffName] = useState('');
+  const [staffTitle, setStaffTitle] = useState('');
+  const [staffRoleCode, setStaffRoleCode] = useState('doctor');
+  const [staffEmail, setStaffEmail] = useState('');
+
+  // Department CRUD Handlers
+  const openAddDeptModal = () => {
+    setEditingDeptId(null);
+    setDeptName('');
+    setDeptCode('');
+    setDeptRoom('');
+    setDeptHead('');
+    setDeptBeds('20');
+    setIsDeptModalOpen(true);
+  };
+
+  const openEditDeptModal = (dept: (typeof departmentsList)[0]) => {
+    setEditingDeptId(dept.id);
+    setDeptName(dept.name);
+    setDeptCode(dept.code);
+    setDeptRoom(dept.opdRoom);
+    setDeptHead(dept.head);
+    setDeptBeds(dept.beds.toString());
+    setIsDeptModalOpen(true);
+  };
+
+  const handleSaveDepartment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!deptName || !deptCode) return;
+
+    if (editingDeptId) {
+      // Modify existing department
+      setDepartmentsList((prev) =>
+        prev.map((d) =>
+          d.id === editingDeptId
+            ? {
+                ...d,
+                name: deptName,
+                code: deptCode.toUpperCase(),
+                opdRoom: deptRoom || 'OPD-110',
+                head: deptHead || 'Dr. Lead Consultant',
+                beds: Number(deptBeds) || 20,
+              }
+            : d
+        )
+      );
+      addToast('Department Updated', `Modified clinical department: ${deptName}`, 'success');
+    } else {
+      // Add new department
+      const newDept = {
+        id: `dept-${Date.now()}`,
+        name: deptName,
+        code: deptCode.toUpperCase(),
+        opdRoom: deptRoom || 'OPD-110',
+        head: deptHead || 'Dr. Lead Consultant',
+        beds: Number(deptBeds) || 20,
+      };
+      setDepartmentsList((prev) => [...prev, newDept]);
+      addToast('Department Created', `Registered new clinical department: ${deptName}`, 'success');
+    }
+
+    setIsDeptModalOpen(false);
+  };
+
+  const handleDeleteDepartment = (id: string, name: string) => {
+    if (confirm(`Are you sure you want to delete department "${name}"?`)) {
+      setDepartmentsList((prev) => prev.filter((d) => d.id !== id));
+      addToast('Department Removed', `Deleted department ${name} from master register`, 'warning');
+    }
+  };
+
+  // Staff User CRUD Handlers
+  const openAddStaffModal = () => {
+    setEditingStaffId(null);
+    setStaffName('');
+    setStaffTitle('');
+    setStaffRoleCode('doctor');
+    setStaffEmail('');
+    setIsStaffModalOpen(true);
+  };
+
+  const openEditStaffModal = (stf: (typeof staffList)[0]) => {
+    setEditingStaffId(stf.id);
+    setStaffName(stf.name);
+    setStaffTitle(stf.title);
+    setStaffRoleCode(stf.roleCode);
+    setStaffEmail(stf.email);
+    setIsStaffModalOpen(true);
+  };
+
+  const handleSaveStaff = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!staffName || !staffEmail) return;
+
+    if (editingStaffId) {
+      setStaffList((prev) =>
+        prev.map((s) =>
+          s.id === editingStaffId
+            ? { ...s, name: staffName, title: staffTitle, roleCode: staffRoleCode, email: staffEmail }
+            : s
+        )
+      );
+      addToast('Staff User Updated', `Modified user profile for ${staffName}`, 'success');
+    } else {
+      const newStf = {
+        id: `stf-${Date.now()}`,
+        name: staffName,
+        title: staffTitle || 'Staff Specialist',
+        roleCode: staffRoleCode,
+        email: staffEmail,
+        status: 'Active',
+      };
+      setStaffList((prev) => [...prev, newStf]);
+      addToast('Staff User Provisioned', `Created new staff account for ${staffName}`, 'success');
+    }
+
+    setIsStaffModalOpen(false);
+  };
+
+  const handleDeleteStaff = (id: string, name: string) => {
+    if (confirm(`Deactivate staff account for "${name}"?`)) {
+      setStaffList((prev) => prev.filter((s) => s.id !== id));
+      addToast('User Account Deactivated', `Removed ${name} from active staff roster`, 'warning');
+    }
+  };
 
   const togglePermission = (roleCode: string, key: keyof RolePermission['permissions']) => {
     setRoles((prev) =>
@@ -146,103 +241,356 @@ export const SettingsModule: React.FC = () => {
         if (r.roleCode === roleCode) {
           return {
             ...r,
-            permissions: {
-              ...r.permissions,
-              [key]: !r.permissions[key],
-            },
+            permissions: { ...r.permissions, [key]: !r.permissions[key] },
           };
         }
         return r;
       })
     );
-    addToast('RBAC Permission Updated', `Security policy updated for ${roleCode}`, 'info');
+    addToast('RBAC Permission Saved', `Security policy updated for ${roleCode}`, 'info');
   };
 
-  const handleSaveTemplates = (e: React.FormEvent) => {
+  const toggleWorkflow = (id: string) => {
+    setWorkflows((prev) =>
+      prev.map((w) => (w.id === id ? { ...w, enabled: !w.enabled } : w))
+    );
+    addToast('Workflow Configured', 'System feature module status updated live', 'success');
+  };
+
+  const handleSaveTariffs = (e: React.FormEvent) => {
     e.preventDefault();
-    addToast('Templates Saved', 'SMS & WhatsApp notification templates updated successfully.', 'success');
+    setTariffConfig({
+      stdOpdMinFee: Number(stdMin),
+      stdOpdMaxFee: Number(stdMax),
+      premiumSlotMinFee: Number(premMin),
+      premiumSlotMaxFee: Number(premMax),
+      opReturnValidityDays: Number(validDays),
+      icuBedDailyTariff: Number(icuTariff),
+    });
+
+    addToast(
+      'Master Tariffs & Rules Saved',
+      `Updated: Standard OPD (₹${stdMin}-₹${stdMax}), Premium Slot (₹${premMin}-₹${premMax}), Validity (${validDays} Days), ICU Bed Rate (₹${icuTariff})`,
+      'success'
+    );
   };
 
   return (
-    <div className="space-y-6 pb-12">
-      {/* Title */}
+    <div className="space-y-6 pb-12 text-slate-100 font-sans">
+      {/* Title Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800/80">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
               System Governance & Admin Console
             </span>
           </div>
-          <h2 className="text-2xl font-extrabold text-white mt-1">Administration, User Roles & Master Data</h2>
+          <h2 className="text-2xl font-extrabold text-white mt-1">Administration & Hospital Control Center</h2>
           <p className="text-xs text-slate-400">
-            Role-Based Access Control (RBAC), multi-tenant branch settings, and master tariff matrices.
+            Logged in as <span className="text-amber-400 font-bold">{currentUser?.name} ({currentUser?.roleTitle})</span>. Full Add, Edit, Delete CRUD permissions over staff, departments, & tariffs.
           </p>
         </div>
 
-        {/* Tabs */}
+        {/* Navigation Tabs */}
         <div className="flex items-center p-1 bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab('tariffs')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              activeTab === 'tariffs' ? 'bg-amber-600 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Master Tariffs & Rules
+          </button>
+          <button
+            onClick={() => setActiveTab('departments')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              activeTab === 'departments' ? 'bg-amber-600 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Departments Master ({departmentsList.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              activeTab === 'users' ? 'bg-amber-600 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Staff User Accounts ({staffList.length})
+          </button>
           <button
             onClick={() => setActiveTab('rbac')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-              activeTab === 'rbac' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
+              activeTab === 'rbac' ? 'bg-amber-600 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             User Roles & RBAC
           </button>
           <button
-            onClick={() => setActiveTab('departments')}
+            onClick={() => setActiveTab('workflows')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-              activeTab === 'departments' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
+              activeTab === 'workflows' ? 'bg-amber-600 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            Departments Master
-          </button>
-          <button
-            onClick={() => setActiveTab('tariffs')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-              activeTab === 'tariffs' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Master Tariffs
-          </button>
-          <button
-            onClick={() => setActiveTab('saas')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-              activeTab === 'saas' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Multi-Tenant SaaS
-          </button>
-          <button
-            onClick={() => setActiveTab('templates')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-              activeTab === 'templates' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            SMS / WhatsApp Alerts
+            System Workflows
           </button>
         </div>
       </div>
 
-      {/* Tab 1: RBAC Permission Matrix */}
+      {/* Tab: Master Tariffs & Rule Engine (Interactive Editing) */}
+      {activeTab === 'tariffs' && (
+        <form onSubmit={handleSaveTariffs} className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-6 max-w-4xl">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div className="flex items-center gap-2.5">
+              <Sliders className="w-5 h-5 text-amber-400" />
+              <div>
+                <h3 className="text-sm font-bold text-slate-100">Configurable Tariff Master Data & Rule Engine</h3>
+                <p className="text-xs text-slate-400">Modify fee structures, consultation rules, and OP validity thresholds live</p>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30"
+            >
+              <Save className="w-4 h-4" /> Save Tariff & Rule Engine
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+            {/* Standard OPD Consultation Fee */}
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div className="font-bold text-slate-200 flex justify-between items-center">
+                <span>Standard OPD Consultation Fee</span>
+                <span className="text-cyan-400 font-mono text-xs">Normal Walk-in Queue</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-slate-400 text-[10px] mb-1">Min Fee (₹)</label>
+                  <input
+                    type="number"
+                    value={stdMin}
+                    onChange={(e) => setStdMin(Number(e.target.value))}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 font-mono text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 text-[10px] mb-1">Max Fee (₹)</label>
+                  <input
+                    type="number"
+                    value={stdMax}
+                    onChange={(e) => setStdMax(Number(e.target.value))}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 font-mono text-slate-100"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Premium Fixed Slot Fee */}
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div className="font-bold text-slate-200 flex justify-between items-center">
+                <span>Premium Time Slot Consultation Fee</span>
+                <span className="text-purple-400 font-mono text-xs">10-Min Reserved Slot</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-slate-400 text-[10px] mb-1">Min Fee (₹)</label>
+                  <input
+                    type="number"
+                    value={premMin}
+                    onChange={(e) => setPremMin(Number(e.target.value))}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 font-mono text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 text-[10px] mb-1">Max Fee (₹)</label>
+                  <input
+                    type="number"
+                    value={premMax}
+                    onChange={(e) => setPremMax(Number(e.target.value))}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 font-mono text-slate-100"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 15-Day OP Return Validity Rule */}
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div className="font-bold text-slate-200 flex justify-between items-center">
+                <span>OP Consultation Return Validity Rule</span>
+                <span className="text-emerald-400 font-mono text-xs">Auto Waiver Threshold</span>
+              </div>
+              <div>
+                <label className="block text-slate-400 text-[10px] mb-1">Validity Days (e.g. 7, 10, 15, 30 days)</label>
+                <input
+                  type="number"
+                  value={validDays}
+                  onChange={(e) => setValidDays(Number(e.target.value))}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 font-mono text-emerald-400 font-bold"
+                />
+              </div>
+              <p className="text-[10px] text-slate-500">Patients returning within {validDays} days pay zero consultation fee.</p>
+            </div>
+
+            {/* ICU Daily Bed Rate */}
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div className="font-bold text-slate-200 flex justify-between items-center">
+                <span>ICU Critical Care Suite Daily Tariff</span>
+                <span className="text-rose-400 font-mono text-xs">Per Day Inpatient Charge</span>
+              </div>
+              <div>
+                <label className="block text-slate-400 text-[10px] mb-1">Daily ICU Rate (₹)</label>
+                <input
+                  type="number"
+                  value={icuTariff}
+                  onChange={(e) => setIcuTariff(Number(e.target.value))}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 font-mono text-slate-100 font-bold"
+                />
+              </div>
+              <p className="text-[10px] text-slate-500">Includes cardiac telemetry, oxygen line, and 1:1 nursing monitoring.</p>
+            </div>
+          </div>
+        </form>
+      )}
+
+      {/* Tab: Departments Master (Full Add, Modify, Delete CRUD) */}
+      {activeTab === 'departments' && (
+        <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Briefcase className="w-5 h-5 text-amber-400" />
+              <div>
+                <h3 className="text-sm font-bold text-slate-100">Hospital Departments Master Register ({departmentsList.length})</h3>
+                <p className="text-xs text-slate-400">Admin Control: Add, Modify, or Delete clinical specialty divisions</p>
+              </div>
+            </div>
+            <button
+              onClick={openAddDeptModal}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-md"
+            >
+              <Plus className="w-4 h-4" /> + Add New Department
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            {departmentsList.map((dept) => (
+              <div key={dept.id} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 relative group">
+                <div className="flex justify-between items-start font-bold text-slate-100 pr-16">
+                  <span>{dept.name}</span>
+                  <span className="text-amber-400 font-mono font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                    {dept.code}
+                  </span>
+                </div>
+                <div className="flex justify-between text-slate-400 text-[11px]">
+                  <span>Head: {dept.head}</span>
+                  <span>Room: {dept.opdRoom} • Beds: {dept.beds}</span>
+                </div>
+
+                {/* Admin Action Buttons (Edit / Delete) */}
+                <div className="absolute top-3 right-3 flex items-center gap-1">
+                  <button
+                    onClick={() => openEditDeptModal(dept)}
+                    title="Modify Department"
+                    className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteDepartment(dept.id, dept.name)}
+                    title="Delete Department"
+                    className="p-1.5 rounded-lg bg-slate-900 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 border border-slate-800"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Staff User Accounts (Full Add, Modify, Delete CRUD) */}
+      {activeTab === 'users' && (
+        <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <UserCheck className="w-5 h-5 text-amber-400" />
+              <div>
+                <h3 className="text-sm font-bold text-slate-100">Staff Accounts & User Provisioning ({staffList.length})</h3>
+                <p className="text-xs text-slate-400">Admin Control: Register new staff accounts, modify designation, or delete access</p>
+              </div>
+            </div>
+            <button
+              onClick={openAddStaffModal}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-md"
+            >
+              <UserPlus className="w-4 h-4" /> + Register Staff User
+            </button>
+          </div>
+
+          <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-slate-800 text-slate-400 uppercase text-[9px] tracking-wider">
+                  <th className="py-3 px-4">Staff Name & Title</th>
+                  <th className="py-3 px-3">Role Designation</th>
+                  <th className="py-3 px-3">Official Email</th>
+                  <th className="py-3 px-3">Status</th>
+                  <th className="py-3 px-3 text-right">Admin Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60 text-slate-200">
+                {staffList.map((stf) => (
+                  <tr key={stf.id} className="hover:bg-slate-900/60 transition">
+                    <td className="py-3 px-4">
+                      <div className="font-bold text-white">{stf.name}</div>
+                      <div className="text-[10px] text-slate-400">{stf.title}</div>
+                    </td>
+                    <td className="py-3 px-3">
+                      <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
+                        {stf.roleCode}
+                      </span>
+                    </td>
+                    <td className="py-3 px-3 font-mono text-[11px] text-slate-300">{stf.email}</td>
+                    <td className="py-3 px-3">
+                      <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {stf.status}
+                      </span>
+                    </td>
+                    <td className="py-3 px-3 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => openEditStaffModal(stf)}
+                          className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 text-[11px] font-semibold border border-slate-800"
+                        >
+                          Modify
+                        </button>
+                        <button
+                          onClick={() => handleDeleteStaff(stf.id, stf.name)}
+                          className="px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-[11px] font-semibold border border-rose-500/30"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: RBAC Permission Matrix */}
       {activeTab === 'rbac' && (
         <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <ShieldCheck className="w-5 h-5 text-cyan-400" />
+              <ShieldCheck className="w-5 h-5 text-amber-400" />
               <div>
                 <h3 className="text-sm font-bold text-slate-100">Role-Based Access Control (RBAC) Security Policy</h3>
                 <p className="text-xs text-slate-400">Configure granular module permissions per user role</p>
               </div>
             </div>
-
-            <button
-              onClick={() => addToast('Role Created', 'New custom system role added to policy store.', 'success')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow-md"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Create Custom Role</span>
-            </button>
           </div>
 
           <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
@@ -265,7 +613,7 @@ export const SettingsModule: React.FC = () => {
                   <tr key={role.roleCode} className="hover:bg-slate-900/60 transition">
                     <td className="py-3.5 px-4 max-w-xs">
                       <div className="font-bold text-slate-100">{role.roleName}</div>
-                      <div className="font-mono text-[10px] text-cyan-400">{role.roleCode} • {role.userCount} Users</div>
+                      <div className="font-mono text-[10px] text-amber-400">{role.roleCode} • {role.userCount} Users</div>
                       <div className="text-[10px] text-slate-400 mt-0.5 leading-tight">{role.description}</div>
                     </td>
 
@@ -295,176 +643,198 @@ export const SettingsModule: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 2: Departments Master */}
-      {activeTab === 'departments' && (
+      {/* Tab: System Workflows & Feature Toggles */}
+      {activeTab === 'workflows' && (
         <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-cyan-400" />
-              <h3 className="text-sm font-bold text-slate-100">Hospital Departments Master Register</h3>
-            </div>
-            <button
-              onClick={() => addToast('Department Added', 'New specialty division registered.', 'success')}
-              className="px-3 py-1.5 rounded-xl bg-cyan-600 text-white text-xs font-bold"
-            >
-              + Add Department
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="flex justify-between font-bold text-slate-100">
-                <span>Cardiology & Cardiac Surgery (CARD)</span>
-                <span className="text-cyan-400 font-mono">OPD Room: 101</span>
-              </div>
-              <div className="text-slate-400">Head: Dr. Vikram Reddy • Beds: 45</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="flex justify-between font-bold text-slate-100">
-                <span>Neurology & Neurosurgery (NEUR)</span>
-                <span className="text-cyan-400 font-mono">OPD Room: 104</span>
-              </div>
-              <div className="text-slate-400">Head: Dr. Ananya Swaminathan • Beds: 30</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="flex justify-between font-bold text-slate-100">
-                <span>Orthopedics & Joint Replacement (ORTH)</span>
-                <span className="text-cyan-400 font-mono">OPD Room: 202</span>
-              </div>
-              <div className="text-slate-400">Head: Dr. Rajeshwar Rao • Beds: 50</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="flex justify-between font-bold text-slate-100">
-                <span>Emergency & Trauma Critical Care (EMER)</span>
-                <span className="text-rose-400 font-mono">Bay 1-6</span>
-              </div>
-              <div className="text-slate-400">Head: Dr. Sameer Khan • Resuscitation Beds: 25</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 3: Tariffs & Rules */}
-      {activeTab === 'tariffs' && (
-        <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-4 max-w-3xl">
           <div className="flex items-center gap-2">
-            <Database className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-sm font-bold text-slate-100">Configurable Tariff Master Data & Rule Engine</h3>
-          </div>
-
-          <div className="space-y-2 text-xs">
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-              <div>
-                <div className="font-bold text-slate-200">Standard OPD Consultation Fee</div>
-                <div className="text-[10px] text-slate-400">Normal Walk-in Queue Model</div>
-              </div>
-              <span className="font-bold text-cyan-400 font-mono text-sm">₹300 - ₹500</span>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-              <div>
-                <div className="font-bold text-slate-200">Premium Time Slot Consultation Fee</div>
-                <div className="text-[10px] text-slate-400">Fixed 10-Min Reservation Model</div>
-              </div>
-              <span className="font-bold text-purple-400 font-mono text-sm">₹400 - ₹850</span>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-              <div>
-                <div className="font-bold text-slate-200">15-Day OP Consultation Return Validity</div>
-                <div className="text-[10px] text-slate-400">Automatic Fee Waiver Threshold Engine</div>
-              </div>
-              <span className="font-bold text-emerald-400 font-mono text-sm">15 Days Active</span>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-              <div>
-                <div className="font-bold text-slate-200">ICU Suite Daily Tariff</div>
-                <div className="text-[10px] text-slate-400">Includes Cardiac & Neuro Monitoring Line</div>
-              </div>
-              <span className="font-bold text-slate-100 font-mono text-sm">₹7,500 / day</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 4: Multi-Tenant SaaS */}
-      {activeTab === 'saas' && (
-        <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-6 max-w-3xl">
-          <div className="flex items-center gap-3">
-            <Building className="w-6 h-6 text-cyan-400" />
+            <UserCheck className="w-5 h-5 text-amber-400" />
             <div>
-              <h3 className="text-sm font-bold text-slate-100">{activeTenant.name}</h3>
-              <p className="text-xs text-slate-400">Tenant Code: {activeTenant.code} • Multi-Tenant SaaS Isolation</p>
+              <h3 className="text-sm font-bold text-slate-100">System Feature Modules & Workflow Toggles</h3>
+              <p className="text-xs text-slate-400">Enable or disable operational modules across the platform</p>
             </div>
           </div>
 
-          <div className="space-y-3 pt-2">
-            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Registered Hospital Branches</h4>
-            <div className="space-y-2">
-              {activeTenant.branches.map((b) => (
-                <div
-                  key={b.id}
-                  className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs"
-                >
-                  <div>
-                    <div className="font-bold text-slate-100">{b.name}</div>
-                    <div className="text-[10px] text-slate-400">City: {b.city}</div>
-                  </div>
-                  {b.isMainBranch && (
-                    <span className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold text-[10px]">
-                      Headquarters
-                    </span>
-                  )}
+          <div className="space-y-3 text-xs">
+            {workflows.map((wf) => (
+              <div key={wf.id} className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-slate-100">{wf.name}</div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">{wf.description}</div>
                 </div>
-              ))}
-            </div>
+
+                <button
+                  onClick={() => toggleWorkflow(wf.id)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border font-bold transition ${
+                    wf.enabled
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                      : 'bg-slate-900 text-slate-500 border-slate-800'
+                  }`}
+                >
+                  {wf.enabled ? <ToggleRight className="w-5 h-5 text-emerald-400" /> : <ToggleLeft className="w-5 h-5 text-slate-600" />}
+                  <span>{wf.enabled ? 'Active' : 'Disabled'}</span>
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* Tab 5: Templates */}
-      {activeTab === 'templates' && (
-        <form onSubmit={handleSaveTemplates} className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-4 max-w-3xl">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-sm font-bold text-slate-100">SMS & WhatsApp Notification Templates</h3>
-          </div>
+      {/* Department Add/Modify Modal */}
+      {isDeptModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <form onSubmit={handleSaveDepartment} className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4 text-xs">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="font-bold text-white text-sm">
+                {editingDeptId ? 'Modify Clinical Department' : 'Add New Hospital Department'}
+              </h3>
+              <button type="button" onClick={() => setIsDeptModalOpen(false)} className="text-slate-400 hover:text-white">
+                <XIcon className="w-4 h-4" />
+              </button>
+            </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-              SMS Gateway Template
-            </label>
-            <textarea
-              rows={3}
-              value={smsTemplate}
-              onChange={(e) => setSmsTemplate(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 font-mono"
-            />
-          </div>
+            <div>
+              <label className="block text-slate-400 mb-1">Department Name *</label>
+              <input
+                type="text"
+                placeholder="e.g. Pulmonology & Respiratory Medicine"
+                value={deptName}
+                onChange={(e) => setDeptName(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 font-bold"
+                required
+              />
+            </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-              WhatsApp API Gateway Template
-            </label>
-            <textarea
-              rows={3}
-              value={whatsappTemplate}
-              onChange={(e) => setWhatsappTemplate(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 font-mono"
-            />
-          </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-slate-400 mb-1">Department Code *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. PULM"
+                  value={deptCode}
+                  onChange={(e) => setDeptCode(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-amber-400 font-mono font-bold"
+                  required
+                />
+              </div>
 
-          <button
-            type="submit"
-            className="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition shadow-md"
-          >
-            Save Gateway Templates
-          </button>
-        </form>
+              <div>
+                <label className="block text-slate-400 mb-1">OPD Room No</label>
+                <input
+                  type="text"
+                  placeholder="e.g. OPD-305"
+                  value={deptRoom}
+                  onChange={(e) => setDeptRoom(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-slate-400 mb-1">Head Consultant Doctor</label>
+              <input
+                type="text"
+                placeholder="e.g. Dr. Ramesh Kumar, MD"
+                value={deptHead}
+                onChange={(e) => setDeptHead(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-400 mb-1">Total Inpatient Beds</label>
+              <input
+                type="number"
+                placeholder="20"
+                value={deptBeds}
+                onChange={(e) => setDeptBeds(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+              />
+            </div>
+
+            <button type="submit" className="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold">
+              {editingDeptId ? 'Save Changes' : 'Register Department'}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Staff Add/Modify Modal */}
+      {isStaffModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <form onSubmit={handleSaveStaff} className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4 text-xs">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="font-bold text-white text-sm">
+                {editingStaffId ? 'Modify Staff Account' : 'Register Staff Account'}
+              </h3>
+              <button type="button" onClick={() => setIsStaffModalOpen(false)} className="text-slate-400 hover:text-white">
+                <XIcon className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <label className="block text-slate-400 mb-1">Full Staff Name *</label>
+              <input
+                type="text"
+                placeholder="e.g. Dr. Ananya Swaminathan"
+                value={staffName}
+                onChange={(e) => setStaffName(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 font-bold"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-400 mb-1">Role Title / Designation</label>
+              <input
+                type="text"
+                placeholder="e.g. Senior Neurologist"
+                value={staffTitle}
+                onChange={(e) => setStaffTitle(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-slate-400 mb-1">Role Code *</label>
+                <select
+                  value={staffRoleCode}
+                  onChange={(e) => setStaffRoleCode(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-amber-400 font-mono font-bold"
+                >
+                  <option value="admin">admin</option>
+                  <option value="ceo">ceo</option>
+                  <option value="doctor">doctor</option>
+                  <option value="dmo">dmo</option>
+                  <option value="receptionist">receptionist</option>
+                  <option value="billing">billing</option>
+                  <option value="insurance">insurance</option>
+                  <option value="nurse">nurse</option>
+                  <option value="emergency">emergency</option>
+                  <option value="bed-manager">bed-manager</option>
+                  <option value="housekeeping-sup">housekeeping-sup</option>
+                  <option value="maintenance">maintenance</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 mb-1">Official Email *</label>
+                <input
+                  type="email"
+                  placeholder="name@anaravhealth.com"
+                  value={staffEmail}
+                  onChange={(e) => setStaffEmail(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 font-mono"
+                  required
+                />
+              </div>
+            </div>
+
+            <button type="submit" className="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold">
+              {editingStaffId ? 'Save Account Changes' : 'Provision Staff Account'}
+            </button>
+          </form>
+        </div>
       )}
     </div>
   );

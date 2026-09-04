@@ -1,0 +1,716 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   BHASKAR REDDY HOSPITAL — PUBLIC LANDING PAGE THEME SYSTEM
+   Strictly scoped to [data-landing-theme] to avoid affecting internal portals
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Medical Blue (Default) ───────────────────────────────────────────── */
+[data-landing-theme="medical-blue"] {
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --primary-rgb: 2, 132, 199;
+  --accent: #2563eb;
+  --accent-light: #e0f2fe;
+  --accent-gradient: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --border-subtle: #f1f5f9;
+  --shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.1), 0 8px 10px -6px rgba(2, 132, 199, 0.05);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 20px 30px -10px rgba(2, 132, 199, 0.2);
+  --hero-background: linear-gradient(180deg, #f0f9ff 0%, #f8fafc 50%, #ffffff 100%);
+  --section-alt-bg: #f8fafc;
+  --card-background: #ffffff;
+  --button-text: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.92);
+  --nav-text: #1e293b;
+  --badge-bg: #e0f2fe;
+  --badge-text: #0369a1;
+  --badge-border: #bae6fd;
+  --cta-bg: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0369a1 100%);
+  --stat-card-bg: rgba(255, 255, 255, 0.07);
+  --stat-card-border: rgba(255, 255, 255, 0.12);
+  --stat-num: #38bdf8;
+  --scrollbar-thumb: #94a3b8;
+  --scrollbar-track: #f1f5f9;
+  --logo-gradient: linear-gradient(135deg, #0284c7 0%, #1d4ed8 100%);
+  --glow-color: rgba(2, 132, 199, 0.15);
+}
+
+/* ── 2. Healthcare Green ─────────────────────────────────────────────────── */
+[data-landing-theme="healthcare-green"] {
+  --background: #f6fbf7;
+  --surface: #ffffff;
+  --primary: #059669;
+  --primary-hover: #047857;
+  --primary-rgb: 5, 150, 105;
+  --accent: #0d9488;
+  --accent-light: #d1fae5;
+  --accent-gradient: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+  --text-primary: #064e3b;
+  --text-secondary: #166534;
+  --text-muted: #4b5563;
+  --border: #d1fae5;
+  --border-subtle: #ecfdf5;
+  --shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.12), 0 8px 10px -6px rgba(5, 150, 105, 0.06);
+  --shadow-sm: 0 1px 3px rgba(6, 78, 59, 0.08);
+  --shadow-lg: 0 20px 30px -10px rgba(5, 150, 105, 0.22);
+  --hero-background: linear-gradient(180deg, #ecfdf5 0%, #f6fbf7 50%, #ffffff 100%);
+  --section-alt-bg: #f6fbf7;
+  --card-background: #ffffff;
+  --button-text: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.92);
+  --nav-text: #064e3b;
+  --badge-bg: #d1fae5;
+  --badge-text: #047857;
+  --badge-border: #a7f3d0;
+  --cta-bg: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+  --stat-card-bg: rgba(255, 255, 255, 0.08);
+  --stat-card-border: rgba(255, 255, 255, 0.14);
+  --stat-num: #34d399;
+  --scrollbar-thumb: #6ee7b7;
+  --scrollbar-track: #f0fdf4;
+  --logo-gradient: linear-gradient(135deg, #059669 0%, #047857 100%);
+  --glow-color: rgba(5, 150, 105, 0.15);
+}
+
+/* ── 3. Modern Purple ────────────────────────────────────────────────────── */
+[data-landing-theme="modern-purple"] {
+  --background: #faf8ff;
+  --surface: #ffffff;
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --primary-rgb: 124, 58, 237;
+  --accent: #9333ea;
+  --accent-light: #ede9fe;
+  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+  --text-primary: #1e1b4b;
+  --text-secondary: #4338ca;
+  --text-muted: #6b7280;
+  --border: #ede9fe;
+  --border-subtle: #f5f3ff;
+  --shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.12), 0 8px 10px -6px rgba(124, 58, 237, 0.06);
+  --shadow-sm: 0 1px 3px rgba(30, 27, 75, 0.08);
+  --shadow-lg: 0 20px 30px -10px rgba(124, 58, 237, 0.22);
+  --hero-background: linear-gradient(180deg, #f5f3ff 0%, #faf8ff 50%, #ffffff 100%);
+  --section-alt-bg: #faf8ff;
+  --card-background: #ffffff;
+  --button-text: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.92);
+  --nav-text: #1e1b4b;
+  --badge-bg: #ede9fe;
+  --badge-text: #6d28d9;
+  --badge-border: #ddd6fe;
+  --cta-bg: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 50%, #6d28d9 100%);
+  --stat-card-bg: rgba(255, 255, 255, 0.08);
+  --stat-card-border: rgba(255, 255, 255, 0.14);
+  --stat-num: #c084fc;
+  --scrollbar-thumb: #c4b5fd;
+  --scrollbar-track: #faf5ff;
+  --logo-gradient: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+  --glow-color: rgba(124, 58, 237, 0.15);
+}
+
+/* ── 4. Ocean ────────────────────────────────────────────────────────────── */
+[data-landing-theme="ocean"] {
+  --background: #f0fdfa;
+  --surface: #ffffff;
+  --primary: #0891b2;
+  --primary-hover: #0e7490;
+  --primary-rgb: 8, 145, 178;
+  --accent: #0284c7;
+  --accent-light: #cffafe;
+  --accent-gradient: linear-gradient(135deg, #0891b2 0%, #0284c7 100%);
+  --text-primary: #134e4a;
+  --text-secondary: #115e59;
+  --text-muted: #52525b;
+  --border: #ccfbf1;
+  --border-subtle: #e6fffa;
+  --shadow: 0 10px 25px -5px rgba(8, 145, 178, 0.12), 0 8px 10px -6px rgba(8, 145, 178, 0.06);
+  --shadow-sm: 0 1px 3px rgba(19, 78, 74, 0.08);
+  --shadow-lg: 0 20px 30px -10px rgba(8, 145, 178, 0.22);
+  --hero-background: linear-gradient(180deg, #ccfbf1 0%, #f0fdfa 50%, #ffffff 100%);
+  --section-alt-bg: #f0fdfa;
+  --card-background: #ffffff;
+  --button-text: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.92);
+  --nav-text: #134e4a;
+  --badge-bg: #cffafe;
+  --badge-text: #0e7490;
+  --badge-border: #a5f3fc;
+  --cta-bg: linear-gradient(135deg, #083344 0%, #155e75 50%, #0e7490 100%);
+  --stat-card-bg: rgba(255, 255, 255, 0.08);
+  --stat-card-border: rgba(255, 255, 255, 0.14);
+  --stat-num: #22d3ee;
+  --scrollbar-thumb: #67e8f9;
+  --scrollbar-track: #ecfeff;
+  --logo-gradient: linear-gradient(135deg, #0891b2 0%, #0369a1 100%);
+  --glow-color: rgba(8, 145, 178, 0.15);
+}
+
+/* ── 5. Dark Medical ─────────────────────────────────────────────────────── */
+[data-landing-theme="dark-medical"] {
+  --background: #0b0f19;
+  --surface: #111827;
+  --primary: #38bdf8;
+  --primary-hover: #7dd3fc;
+  --primary-rgb: 56, 189, 248;
+  --accent: #818cf8;
+  --accent-light: rgba(56, 189, 248, 0.15);
+  --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border: #1e293b;
+  --border-subtle: #172033;
+  --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.1);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 30px -10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.18);
+  --hero-background: linear-gradient(180deg, #0f172a 0%, #0b0f19 50%, #030712 100%);
+  --section-alt-bg: #0d1322;
+  --card-background: #141c2e;
+  --button-text: #0b0f19;
+  --nav-bg: rgba(11, 15, 25, 0.92);
+  --nav-text: #f8fafc;
+  --badge-bg: rgba(56, 189, 248, 0.14);
+  --badge-text: #38bdf8;
+  --badge-border: rgba(56, 189, 248, 0.3);
+  --cta-bg: linear-gradient(135deg, #030712 0%, #0f172a 50%, #1e293b 100%);
+  --stat-card-bg: rgba(255, 255, 255, 0.04);
+  --stat-card-border: rgba(255, 255, 255, 0.09);
+  --stat-num: #38bdf8;
+  --scrollbar-thumb: #334155;
+  --scrollbar-track: #0f172a;
+  --logo-gradient: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+  --glow-color: rgba(56, 189, 248, 0.2);
+}
+
+/* ── 6. Warm Care ────────────────────────────────────────────────────────── */
+[data-landing-theme="warm-care"] {
+  --background: #fffbf5;
+  --surface: #ffffff;
+  --primary: #ea580c;
+  --primary-hover: #c2410c;
+  --primary-rgb: 234, 88, 12;
+  --accent: #d97706;
+  --accent-light: #ffedd5;
+  --accent-gradient: linear-gradient(135deg, #ea580c 0%, #d97706 100%);
+  --text-primary: #431407;
+  --text-secondary: #7c2d12;
+  --text-muted: #78716c;
+  --border: #fed7aa;
+  --border-subtle: #fff7ed;
+  --shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.12), 0 8px 10px -6px rgba(234, 88, 12, 0.06);
+  --shadow-sm: 0 1px 3px rgba(67, 20, 7, 0.08);
+  --shadow-lg: 0 20px 30px -10px rgba(234, 88, 12, 0.22);
+  --hero-background: linear-gradient(180deg, #fff7ed 0%, #fffbf5 50%, #ffffff 100%);
+  --section-alt-bg: #fffbf5;
+  --card-background: #ffffff;
+  --button-text: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.92);
+  --nav-text: #431407;
+  --badge-bg: #ffedd5;
+  --badge-text: #c2410c;
+  --badge-border: #fed7aa;
+  --cta-bg: linear-gradient(135deg, #431407 0%, #7c2d12 50%, #9a3412 100%);
+  --stat-card-bg: rgba(255, 255, 255, 0.08);
+  --stat-card-border: rgba(255, 255, 255, 0.14);
+  --stat-num: #fb923c;
+  --scrollbar-thumb: #fdba74;
+  --scrollbar-track: #fff7ed;
+  --logo-gradient: linear-gradient(135deg, #ea580c 0%, #b45309 100%);
+  --glow-color: rgba(234, 88, 12, 0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SMOOTH THEME TRANSITION & BASE SCOPING
+   ═══════════════════════════════════════════════════════════════════════════ */
+.landing-theme-root {
+  background-color: var(--background);
+  color: var(--text-primary);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.landing-theme-root *,
+.landing-theme-root *::before,
+.landing-theme-root *::after {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Landing Page Custom Scrollbar */
+.landing-theme-root::-webkit-scrollbar {
+  width: 8px;
+}
+.landing-theme-root::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+.landing-theme-root::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 9999px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SEMANTIC THEME CLASSES (Used in PublicLandingPage.tsx)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Navbar ──────────────────────────────────────────────────────────────── */
+.theme-nav {
+  background-color: var(--nav-bg) !important;
+  border-color: var(--border) !important;
+  color: var(--nav-text) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.theme-nav-link {
+  color: var(--nav-text) !important;
+  background-color: transparent !important;
+  opacity: 0.85;
+  transition: all 0.25s ease;
+}
+.theme-nav-link:hover {
+  color: var(--primary) !important;
+  background-color: var(--accent-light) !important;
+  opacity: 1;
+}
+
+.theme-nav-link-active {
+  color: var(--primary) !important;
+  background-color: transparent !important;
+  font-weight: 700 !important;
+  opacity: 1;
+}
+.theme-nav-link-active:hover {
+  background-color: var(--accent-light) !important;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.theme-btn-primary {
+  background: var(--accent-gradient) !important;
+  color: var(--button-text) !important;
+  box-shadow: var(--shadow) !important;
+}
+.theme-btn-primary:hover {
+  opacity: 0.94;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.theme-btn-secondary {
+  background-color: var(--surface) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border) !important;
+}
+.theme-btn-secondary:hover {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+  background-color: var(--accent-light) !important;
+}
+
+/* ── Cards & Surfaces ────────────────────────────────────────────────────── */
+.theme-card {
+  background-color: var(--card-background) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04), 0 2px 4px -1px rgba(15, 23, 42, 0.02) !important;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.theme-card:hover {
+  border-color: rgba(var(--primary-rgb, 2, 132, 199), 0.38) !important;
+  box-shadow: 0 16px 30px -8px rgba(2, 132, 199, 0.12), 0 4px 8px -2px rgba(2, 132, 199, 0.04) !important;
+}
+
+.theme-card-alt {
+  background-color: var(--section-alt-bg) !important;
+  border: 1px solid var(--border) !important;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* ── Headings & Text ─────────────────────────────────────────────────────── */
+.theme-heading {
+  color: var(--text-primary) !important;
+}
+
+.theme-body {
+  color: var(--text-secondary) !important;
+}
+
+.theme-muted {
+  color: var(--text-muted) !important;
+}
+
+.theme-primary-text {
+  color: var(--primary) !important;
+}
+
+.theme-hero-gradient-text {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* ── Badges ──────────────────────────────────────────────────────────────── */
+.theme-badge {
+  background-color: var(--badge-bg) !important;
+  color: var(--badge-text) !important;
+  border: 1px solid var(--badge-border) !important;
+}
+
+/* ── Section Backgrounds ─────────────────────────────────────────────────── */
+.theme-section-alt {
+  background-color: var(--section-alt-bg) !important;
+}
+
+.theme-section-surface {
+  background-color: var(--surface) !important;
+}
+
+.theme-hero-bg {
+  background: var(--hero-background) !important;
+}
+
+.theme-cta-banner {
+  background: var(--cta-bg) !important;
+}
+
+.theme-stat-card {
+  background: var(--stat-card-bg) !important;
+  border: 1px solid var(--stat-card-border) !important;
+}
+
+.theme-stat-num {
+  color: var(--stat-num) !important;
+}
+
+/* ── Theme Selector Dropdown Menu ────────────────────────────────────────── */
+.theme-selector-popover {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  color: var(--text-primary);
+  border-radius: 1rem;
+  overflow: hidden;
+  z-index: 60;
+}
+
+.theme-option-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-radius: 0.625rem;
+  transition: all 0.18s ease;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+.theme-option-item:hover {
+  background-color: var(--accent-light);
+  color: var(--primary);
+}
+.theme-option-item.active {
+  background-color: var(--badge-bg);
+  color: var(--badge-text);
+  border: 1px solid var(--badge-border);
+}
+
+/* ── Dark theme special contrast adjustments ─────────────────────────────── */
+[data-landing-theme="dark-medical"] .theme-card {
+  background-color: #131b2e !important;
+}
+[data-landing-theme="dark-medical"] .theme-nav {
+  background-color: rgba(11, 15, 25, 0.95) !important;
+}
+[data-landing-theme="dark-medical"] .theme-card-alt {
+  background-color: #0f172a !important;
+}
+[data-landing-theme="dark-medical"] .theme-btn-primary {
+  color: #0b0f19 !important;
+  font-weight: 800 !important;
+}
+
+/* ── Theme Modal & Form Controls ─────────────────────────────────────────── */
+.theme-modal {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.theme-input {
+  background-color: var(--card-background) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border) !important;
+}
+.theme-input:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px var(--accent-light) !important;
+  outline: none !important;
+}
+.theme-input::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.8;
+}
+
+[data-landing-theme="dark-medical"] .theme-modal {
+  background-color: #111827 !important;
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+[data-landing-theme="dark-medical"] .theme-input {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+[data-landing-theme="dark-medical"] .theme-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO DYNAMIC BACKGROUND & SCROLLING VISUALS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Infinite Background Scrolling Marquee ────────────────────────────── */
+@keyframes hero-bg-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.hero-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: hero-bg-scroll 60s linear infinite;
+  will-change: transform;
+}
+
+.hero-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.hero-marquee-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+/* ── 2. Heartbeat Scrolling ECG Waveform ─────────────────────────────────── */
+@keyframes ecg-scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.hero-ecg-track {
+  display: flex;
+  width: max-content;
+  animation: ecg-scroll-left 14s linear infinite;
+  will-change: transform;
+}
+
+@keyframes ecg-pulse-beat {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.65;
+  }
+  25% {
+    transform: scale(1.3);
+    opacity: 1;
+    filter: drop-shadow(0 0 5px currentColor);
+  }
+  40% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  55% {
+    transform: scale(1.2);
+    opacity: 1;
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+  70% {
+    transform: scale(1);
+    opacity: 0.65;
+  }
+}
+
+.animate-heart-beat {
+  animation: ecg-pulse-beat 2.2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+  transform-origin: center;
+}
+
+@keyframes ecg-scan-line {
+  0% {
+    left: -10%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    left: 110%;
+    opacity: 0;
+  }
+}
+
+.ecg-scanner-beam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(90deg, transparent, rgba(var(--primary-rgb, 2, 132, 199), 0.25), transparent);
+  animation: ecg-scan-line 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ECG Medical Millimeter Grid */
+.hero-ecg-grid {
+  background-size: 20px 20px;
+  background-image:
+    linear-gradient(to right, rgba(var(--primary-rgb, 2, 132, 199), 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--primary-rgb, 2, 132, 199), 0.06) 1px, transparent 1px);
+}
+
+[data-landing-theme="dark-medical"] .hero-ecg-grid {
+  background-image:
+    linear-gradient(to right, rgba(56, 189, 248, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.07) 1px, transparent 1px);
+}
+
+/* ── 3. Right Box Auto Slider Progress Bar ───────────────────────────────── */
+@keyframes slide-timer {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.hero-slide-timer-bar {
+  animation: slide-timer 3.8s linear infinite;
+}
+
+/* ─── 4. Highlights Auto-Scrolling & Heartbeat Pulse ─────────────────────── */
+@keyframes highlights-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.highlights-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: highlights-scroll 34s linear infinite;
+  will-change: transform;
+}
+
+.highlights-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes box-heartbeat {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 4px -1px rgba(15, 23, 42, 0.02);
+  }
+  14% {
+    transform: scale(1.025);
+    box-shadow: 0 12px 24px -4px rgba(var(--primary-rgb, 2, 132, 199), 0.22), 0 0 16px rgba(var(--primary-rgb, 2, 132, 199), 0.16);
+    border-color: rgba(var(--primary-rgb, 2, 132, 199), 0.5);
+  }
+  24% {
+    transform: scale(1.01);
+  }
+  36% {
+    transform: scale(1.035);
+    box-shadow: 0 16px 32px -4px rgba(var(--primary-rgb, 2, 132, 199), 0.28), 0 0 22px rgba(var(--primary-rgb, 2, 132, 199), 0.22);
+    border-color: rgba(var(--primary-rgb, 2, 132, 199), 0.65);
+  }
+  50% {
+    transform: scale(1);
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 4px -1px rgba(15, 23, 42, 0.02);
+  }
+}
+
+.animate-box-heartbeat {
+  animation: box-heartbeat 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  transform-origin: center;
+}
+
+/* Background effects for highlight boxes */
+.highlight-card-bg {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--card-background) 0%, rgba(var(--primary-rgb, 2, 132, 199), 0.04) 100%) !important;
+  border: 1.5px solid var(--border) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.highlight-card-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(var(--primary-rgb, 2, 132, 199), 0.09) 0%, transparent 60%);
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.highlight-card-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: translateX(-100%);
+  animation: card-shimmer 4.5s infinite 1.2s;
+  pointer-events: none;
+}
+
+@keyframes card-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  25%, 100% {
+    transform: translateX(100%);
+  }
+}
+
+[data-landing-theme="dark-medical"] .highlight-card-bg::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+}
+
+/* ── Tab View Page Transition Animation ───────────────────────────────────── */
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: tabFadeIn 0.28s ease-out forwards;
+}
+

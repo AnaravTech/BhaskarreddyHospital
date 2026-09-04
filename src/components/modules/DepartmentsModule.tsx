@@ -12,10 +12,13 @@ export const DepartmentsModule: React.FC = () => {
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
               Specialty Divisions
             </span>
+            <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+              👁️ View Only Access
+            </span>
           </div>
           <h2 className="text-2xl font-extrabold text-white mt-1">Medical Departments Overview</h2>
           <p className="text-xs text-slate-400">
-            Specialty heads, assigned OPD consultation rooms, and ward bed allocations.
+            Specialty heads, assigned OPD consultation rooms, and ward bed allocations across all clinical divisions.
           </p>
         </div>
       </div>

@@ -53,60 +53,114 @@ interface ToastNotification {
 
 export const DEMO_PERSONAS: UserSession[] = [
   {
+    id: 'user-admin',
+    name: 'Rajesh V (Chief Admin)',
+    email: 'admin@bhaskarreddyhospital.com',
+    role: 'admin',
+    roleTitle: 'System Super Administrator',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
+    defaultModule: 'home',
+  },
+  {
     id: 'user-ceo',
     name: 'Dr. Bhaskar Reddy',
-    email: 'ceo@anaravhealth.com',
+    email: 'ceo@bhaskarreddyhospital.com',
     role: 'ceo',
-    roleTitle: 'Chief Executive Officer',
+    roleTitle: 'Chairman / Managing Director / CEO',
     avatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'dashboard',
+    defaultModule: 'home',
   },
   {
     id: 'user-doc',
     name: 'Dr. Vikram Reddy',
-    email: 'vikram.reddy@anaravhealth.com',
+    email: 'vikram.reddy@bhaskarreddyhospital.com',
     role: 'doctor',
-    roleTitle: 'Chief Interventional Cardiologist',
+    roleTitle: 'Consultant Doctor (Cardiology Lead)',
     department: 'Cardiology & Cardiac Surgery',
     avatar: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'opd',
+    defaultModule: 'home',
+  },
+  {
+    id: 'user-dmo',
+    name: 'Dr. Anish Kumar',
+    email: 'dmo@bhaskarreddyhospital.com',
+    role: 'dmo',
+    roleTitle: 'Duty Medical Officer (DMO)',
+    avatar: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&auto=format&fit=crop&q=80',
+    defaultModule: 'home',
   },
   {
     id: 'user-rec',
     name: 'Priyanka M',
-    email: 'reception@anaravhealth.com',
+    email: 'reception@bhaskarreddyhospital.com',
     role: 'receptionist',
-    roleTitle: 'Front Desk & Patient Registrar',
+    roleTitle: 'Reception / Front Office Executive',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'reception',
+    defaultModule: 'home',
   },
   {
     id: 'user-bill',
     name: 'Anil Kumar',
-    email: 'billing@anaravhealth.com',
+    email: 'billing@bhaskarreddyhospital.com',
     role: 'billing',
-    roleTitle: 'Chief Cashier & Ledger Manager',
+    roleTitle: 'Billing & Cashier Lead',
     avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'billing',
+    defaultModule: 'home',
   },
   {
     id: 'user-ins',
     name: 'Srinivas Rao',
-    email: 'tpa@anaravhealth.com',
+    email: 'tpa@bhaskarreddyhospital.com',
     role: 'insurance',
-    roleTitle: 'TPA Cashless & Claims Officer',
+    roleTitle: 'Insurance / TPA Coordinator',
     avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'insurance',
+    defaultModule: 'home',
+  },
+  {
+    id: 'user-nurse',
+    name: 'Sister Mary Joseph',
+    email: 'nurse@bhaskarreddyhospital.com',
+    role: 'nurse',
+    roleTitle: 'Ward Nurse Station Lead',
+    avatar: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=150&auto=format&fit=crop&q=80',
+    defaultModule: 'home',
   },
   {
     id: 'user-emg',
     name: 'Dr. Sameer Khan',
-    email: 'emergency@anaravhealth.com',
+    email: 'emergency@bhaskarreddyhospital.com',
     role: 'emergency',
-    roleTitle: 'Trauma & Emergency Resuscitation Lead',
+    roleTitle: 'Emergency & Trauma Team Lead',
     department: 'Emergency & Critical Care',
     avatar: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&auto=format&fit=crop&q=80',
-    defaultModule: 'emergency',
+    defaultModule: 'home',
+  },
+  {
+    id: 'user-bed-mgr',
+    name: 'Suresh V',
+    email: 'bedmgr@bhaskarreddyhospital.com',
+    role: 'bed-manager',
+    roleTitle: 'IP Coordinator / Bed Manager',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+    defaultModule: 'home',
+  },
+  {
+    id: 'user-hk-sup',
+    name: 'Raju Lead',
+    email: 'housekeeping@bhaskarreddyhospital.com',
+    role: 'housekeeping-sup',
+    roleTitle: 'Housekeeping Supervisor',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    defaultModule: 'home',
+  },
+  {
+    id: 'user-maint',
+    name: 'Venkat E',
+    email: 'maintenance@bhaskarreddyhospital.com',
+    role: 'maintenance',
+    roleTitle: 'Biomedical / Maintenance Lead',
+    avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80',
+    defaultModule: 'home',
   },
 ];
 
@@ -147,6 +201,24 @@ interface HospitalContextType {
   consentForms: DigitalConsentForm[];
   housekeepingTasks: HousekeepingTask[];
 
+  // Tariff & Rule Engine State
+  tariffConfig: {
+    stdOpdMinFee: number;
+    stdOpdMaxFee: number;
+    premiumSlotMinFee: number;
+    premiumSlotMaxFee: number;
+    opReturnValidityDays: number;
+    icuBedDailyTariff: number;
+  };
+  setTariffConfig: React.Dispatch<React.SetStateAction<{
+    stdOpdMinFee: number;
+    stdOpdMaxFee: number;
+    premiumSlotMinFee: number;
+    premiumSlotMaxFee: number;
+    opReturnValidityDays: number;
+    icuBedDailyTariff: number;
+  }>>;
+
   // Website Collections
   healthPackages: HealthPackage[];
   blogPosts: BlogPost[];
@@ -167,6 +239,9 @@ interface HospitalContextType {
   addContactInquiry: (inquiry: Omit<ContactInquiry, 'id' | 'date' | 'status'>) => void;
   addBlogPost: (post: Omit<BlogPost, 'id'>) => void;
 
+  activeTheme: 'modern' | 'heritage' | 'digital';
+  setActiveTheme: (theme: 'modern' | 'heritage' | 'digital') => void;
+
   addToast: (title: string, message: string, type?: ToastNotification['type']) => void;
   removeToast: (id: string) => void;
   
@@ -177,11 +252,12 @@ interface HospitalContextType {
 const HospitalContext = createContext<HospitalContextType | undefined>(undefined);
 
 export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [activeTheme, setActiveTheme] = useState<'modern' | 'heritage' | 'digital'>('modern');
   // App Mode State: 'hospital-os' | 'public-website' | 'website-cms'
   const [appMode, setAppMode] = useState<AppMode>('public-website');
 
   const [currentUser, setCurrentUser] = useState<UserSession | null>(DEMO_PERSONAS[0]);
-  const [activeModule, setActiveModule] = useState<ModuleType>('dashboard');
+  const [activeModule, setActiveModule] = useState<ModuleType>('settings');
   const [activeTenant] = useState<HospitalTenant>(mockTenants[0]);
   const [activeBranch, setActiveBranch] = useState<Branch>(mockTenants[0].branches[0]);
   
@@ -202,6 +278,16 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [consentForms, setConsentForms] = useState<DigitalConsentForm[]>(mockConsentForms);
   const [housekeepingTasks, setHousekeepingTasks] = useState<HousekeepingTask[]>(mockHousekeepingTasks);
   
+  // Tariff & Rule Engine Config State
+  const [tariffConfig, setTariffConfig] = useState({
+    stdOpdMinFee: 300,
+    stdOpdMaxFee: 500,
+    premiumSlotMinFee: 400,
+    premiumSlotMaxFee: 850,
+    opReturnValidityDays: 15,
+    icuBedDailyTariff: 7500,
+  });
+
   const [healthPackages] = useState<HealthPackage[]>(mockHealthPackages);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>(mockBlogPosts);
   const [galleryItems] = useState<GalleryItem[]>(mockGalleryItems);
@@ -211,9 +297,9 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [toasts, setToasts] = useState<ToastNotification[]>([
     {
       id: 't-1',
-      title: 'Welcome to Bhaskar Reddy Healthcare Portal',
-      message: 'Toggle between Public Patient Website, CMS Admin, and Hospital OS.',
-      type: 'info',
+      title: 'Authenticated as System Super Administrator',
+      message: 'Full governance access to Tariff Master, RBAC, and Department provisioning.',
+      type: 'success',
       timestamp: 'Just now',
     },
   ]);
@@ -244,11 +330,11 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // 15-day OP Consultation Validity Calculator Engine
+  // Dynamic OP Consultation Validity Calculator Engine
   const checkOPValidity = (lastVisitDateStr: string) => {
     const lastVisit = new Date(lastVisitDateStr);
     const validUntil = new Date(lastVisit);
-    validUntil.setDate(validUntil.getDate() + 15);
+    validUntil.setDate(validUntil.getDate() + tariffConfig.opReturnValidityDays);
     
     const today = new Date('2026-07-24');
     const diffTime = validUntil.getTime() - today.getTime();
@@ -266,7 +352,7 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const uhid = `BRH-2026-${Math.floor(1000 + Math.random() * 9000)}`;
     const todayStr = '2026-07-24';
     const endDate = new Date('2026-07-24');
-    endDate.setDate(endDate.getDate() + 15);
+    endDate.setDate(endDate.getDate() + tariffConfig.opReturnValidityDays);
 
     const created: Patient = {
       ...newPatData,
@@ -439,6 +525,8 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         emergencyCases,
         consentForms,
         housekeepingTasks,
+        tariffConfig,
+        setTariffConfig,
         healthPackages,
         blogPosts,
         galleryItems,
@@ -454,6 +542,8 @@ export const HospitalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         updateHousekeepingStatus,
         addContactInquiry,
         addBlogPost,
+        activeTheme,
+        setActiveTheme,
         addToast,
         removeToast,
         checkOPValidity,
