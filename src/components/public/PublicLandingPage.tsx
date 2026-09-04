@@ -211,6 +211,40 @@ const HERO_FEATURED_SLIDES = [
   },
 ];
 
+// ─── Pioneering Healthcare Excellence & Heart for Humanity Slides (About Section Left Box) ───
+const ABOUT_EXCELLENCE_SLIDES = [
+  {
+    url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80',
+    tag: 'Heart for Humanity',
+    title: 'Compassionate Medical Care & Healing',
+    desc: 'Empathetic consultations with gentle clinical healing and patient dignity.',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=800&auto=format&fit=crop&q=80',
+    tag: 'Cardiology Excellence',
+    title: 'Advanced Cardiac ICU & Rhythm Telemetry',
+    desc: 'Cutting-edge telemetry monitoring and continuous hemodynamic clinical supervision.',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1551076805-e1869033e561?w=800&auto=format&fit=crop&q=80',
+    tag: 'Pioneering Precision',
+    title: 'Ultra-Modern Hybrid Operation Theatres',
+    desc: 'Laminar airflow surgical suites with minimally invasive precision instrumentation.',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&auto=format&fit=crop&q=80',
+    tag: 'Patient Dignity',
+    title: 'Dedicated Bedside Nursing with Empathy',
+    desc: 'Round-the-clock personalized nursing care prioritizing human connection and comfort.',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80',
+    tag: 'Clinical Infrastructure',
+    title: 'State-of-the-Art Multi-Specialty Campus',
+    desc: 'Comprehensive diagnostics, emergency trauma bays, and patient-centered healing spaces.',
+  },
+];
+
 const HOSPITAL_HIGHLIGHTS = [
   {
     icon: Siren,
@@ -290,6 +324,26 @@ export const PublicLandingPage: React.FC = () => {
 
   const handleNextHeroSlide = () => {
     setCurrentHeroSlide((prev) => (prev + 1) % HERO_FEATURED_SLIDES.length);
+  };
+
+  // Auto-scrolling visual slider for Pioneering Healthcare Excellence (Left Box)
+  const [currentAboutSlide, setCurrentAboutSlide] = useState(0);
+  const [isAboutSlidePaused, setIsAboutSlidePaused] = useState(false);
+
+  useEffect(() => {
+    if (isAboutSlidePaused) return;
+    const interval = setInterval(() => {
+      setCurrentAboutSlide((prev) => (prev + 1) % ABOUT_EXCELLENCE_SLIDES.length);
+    }, 3600);
+    return () => clearInterval(interval);
+  }, [isAboutSlidePaused]);
+
+  const handlePrevAboutSlide = () => {
+    setCurrentAboutSlide((prev) => (prev - 1 + ABOUT_EXCELLENCE_SLIDES.length) % ABOUT_EXCELLENCE_SLIDES.length);
+  };
+
+  const handleNextAboutSlide = () => {
+    setCurrentAboutSlide((prev) => (prev + 1) % ABOUT_EXCELLENCE_SLIDES.length);
   };
 
   const NAV_ITEMS = [
@@ -381,31 +435,11 @@ export const PublicLandingPage: React.FC = () => {
     setAppMode('hospital-os');
   };
 
-  // Track scroll for sticky navbar compression, glassmorphism & active tab highlight
+  // Track scroll for sticky navbar compression & glassmorphism
   useEffect(() => {
-    const sections = ['home', 'about', 'services', 'doctors', 'facilities', 'contact'] as const;
-
     const handleScroll = () => {
-      if (window.scrollY > 24) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-
-      // Determine active section for subtle active tab highlight
-      const scrollPos = window.scrollY + 130;
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sections[i]);
-        if (el) {
-          const top = el.offsetTop;
-          if (scrollPos >= top) {
-            setActiveSection(sections[i]);
-            break;
-          }
-        }
-      }
+      setScrolled(window.scrollY > 24);
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
@@ -429,33 +463,318 @@ export const PublicLandingPage: React.FC = () => {
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
-  }, []);
+  }, [activeSection]);
 
   // Counters
   const countSpecialists = useAnimatedCounter(20, 1800, statsVisible);
   const countDepts = useAnimatedCounter(10, 1500, statsVisible);
   const countPatients = useAnimatedCounter(1000, 2200, statsVisible);
 
-  // Smooth scroll handler
+  // Switch tab view with smooth scroll to top & stats activation
+  const switchTab = (tabId: 'home' | 'about' | 'services' | 'doctors' | 'facilities' | 'contact') => {
+    setActiveSection(tabId);
+    setMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setStatsVisible(true);
+  };
+
+  // Universal navigation handler for buttons & footer links
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
     if (['home', 'about', 'services', 'doctors', 'facilities', 'contact'].includes(id)) {
-      setActiveSection(id as any);
+      switchTab(id as any);
+      return;
+    }
+    if (id === 'appointment-cta') {
+      if (activeSection !== 'home' && activeSection !== 'services') {
+        setActiveSection('home');
+      }
+      setTimeout(() => {
+        const el = document.getElementById('appointment-cta');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      return;
     }
     const element = document.getElementById(id);
     if (element) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  // ── Tab Header Banner ──────────────────────────────────────────────────────
+  const renderTabHeader = (breadcrumbLabel: string, title: string, subtitle: string) => (
+    <div
+      className="pt-28 pb-8 md:pt-32 md:pb-10 border-b theme-section-surface relative overflow-hidden select-none"
+      style={{ borderColor: 'var(--border)' }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="flex items-center gap-2 text-xs font-semibold theme-muted mb-2.5">
+          <button
+            onClick={() => switchTab('home')}
+            className="hover:underline cursor-pointer flex items-center gap-1 hover:text-primary transition-colors"
+          >
+            <span>Home</span>
+          </button>
+          <span>/</span>
+          <span className="font-bold" style={{ color: 'var(--primary)' }}>
+            {breadcrumbLabel}
+          </span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold theme-heading tracking-tight">
+          {title}
+        </h1>
+        <p className="text-xs sm:text-sm theme-body mt-1 max-w-2xl leading-relaxed">
+          {subtitle}
+        </p>
+      </div>
+    </div>
+  );
+
+  // ── Hospital Statistics Section ──────────────────────────────────────────
+  const renderStatsSection = (key?: string) => (
+    <section
+      key={key}
+      ref={statsRef}
+      className="py-14 text-white relative overflow-hidden theme-cta-banner"
+    >
+      {/* Subtle Background Glow */}
+      <div
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{ background: 'radial-gradient(circle at 30% 50%, var(--primary), transparent 60%)' }}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span
+            className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              borderColor: 'rgba(255, 255, 255, 0.2)',
+              color: '#ffffff',
+            }}
+          >
+            Trusted Clinical Excellence
+          </span>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-white mt-2">
+            Our Journey in Numbers
+          </h3>
+          <p className="text-xs text-white/80 mt-1">
+            Indicative hospital statistics reflecting our active departments and clinical reach.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+          <div className="p-6 rounded-2xl backdrop-blur-xs transition theme-stat-card">
+            <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-1 theme-stat-num">
+              {countSpecialists}+
+            </div>
+            <div className="text-sm font-bold text-white">Specialists</div>
+            <div className="text-[11px] text-white/75 mt-0.5">Senior Medical Consultants</div>
+          </div>
+
+          <div className="p-6 rounded-2xl backdrop-blur-xs transition theme-stat-card">
+            <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-1 theme-stat-num">
+              {countDepts}+
+            </div>
+            <div className="text-sm font-bold text-white">Departments</div>
+            <div className="text-[11px] text-white/75 mt-0.5">Multi-Specialty Centers</div>
+          </div>
+
+          <div className="p-6 rounded-2xl backdrop-blur-xs transition theme-stat-card">
+            <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-1 theme-stat-num">
+              24/7
+            </div>
+            <div className="text-sm font-bold text-white">Emergency Care</div>
+            <div className="text-[11px] text-white/75 mt-0.5">Round-the-Clock Support</div>
+          </div>
+
+          <div className="p-6 rounded-2xl backdrop-blur-xs transition theme-stat-card">
+            <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-1 theme-stat-num">
+              {countPatients}+
+            </div>
+            <div className="text-sm font-bold text-white">Patients Served</div>
+            <div className="text-[11px] text-white/75 mt-0.5">Compassionate Consultations</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  // ── Why Choose Us Section ────────────────────────────────────────────────
+  const renderWhyUsSection = (key?: string) => (
+    <section
+      key={key}
+      id="why-us"
+      className="py-16 md:py-24 border-t theme-section-alt"
+      style={{ borderColor: 'var(--border)' }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-3 theme-badge">
+            <Shield className="w-3.5 h-3.5" />
+            <span>Why Choose Us</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight theme-heading">
+            Why Patients Trust Bhaskar Reddy Hospital
+          </h2>
+          <p className="text-sm sm:text-base mt-3 leading-relaxed theme-body">
+            We stand as a trusted healthcare partner for thousands of families through dedicated clinical excellence,
+            patient-first integrity, and modern infrastructure.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="p-6 rounded-2xl transition-all duration-300 group hover:-translate-y-1 theme-card">
+            <div
+              className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+              style={{ backgroundColor: 'var(--accent-light)', color: 'var(--primary)' }}
+            >
+              <UserCheck className="w-6 h-6" />
+            </div>
+            <h4 className="text-base font-extrabold mb-2 theme-heading">Experienced Medical Team</h4>
+            <p className="text-xs leading-relaxed theme-body">
+              Our senior clinicians and surgeons bring comprehensive expertise from leading medical institutions,
+              delivering accurate diagnosis and personalized treatment plans.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl transition-all duration-300 group hover:-translate-y-1 theme-card">
+            <div className="w-11 h-11 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <Heart className="w-6 h-6" />
+            </div>
+            <h4 className="text-base font-extrabold mb-2 theme-heading">Patient-Focused Care</h4>
+            <p className="text-xs leading-relaxed theme-body">
+              From pre-admission counseling to post-discharge recovery monitoring, your comfort, dignity,
+              and speedy recovery remain our foremost priorities.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl transition-all duration-300 group hover:-translate-y-1 theme-card">
+            <div
+              className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+              style={{ backgroundColor: 'var(--accent-light)', color: 'var(--primary)' }}
+            >
+              <Building2 className="w-6 h-6" />
+            </div>
+            <h4 className="text-base font-extrabold mb-2 theme-heading">Modern Medical Facilities</h4>
+            <p className="text-xs leading-relaxed theme-body">
+              High-definition digital diagnostics, modern modular operating theatres, and clean sterile recovery
+              wards built strictly to NABH accreditation benchmarks.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl transition-all duration-300 group hover:-translate-y-1 theme-card">
+            <div
+              className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+              style={{ backgroundColor: 'var(--accent-light)', color: 'var(--primary)' }}
+            >
+              <Clock className="w-6 h-6" />
+            </div>
+            <h4 className="text-base font-extrabold mb-2 theme-heading">24/7 Emergency Support</h4>
+            <p className="text-xs leading-relaxed theme-body">
+              Always-awake trauma resuscitation team, on-call emergency surgical specialists, in-house blood bank
+              coordination, and quick response ambulance dispatches.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl transition-all duration-300 group hover:-translate-y-1 theme-card">
+            <div
+              className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+              style={{ backgroundColor: 'var(--accent-light)', color: 'var(--primary)' }}
+            >
+              <Calendar className="w-6 h-6" />
+            </div>
+            <h4 className="text-base font-extrabold mb-2 theme-heading">Easy Appointment Booking</h4>
+            <p className="text-xs leading-relaxed theme-body">
+              Streamlined outpatient registration with zero unnecessary waiting times and simplified token tracking
+              for doctor consultations.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl transition-all duration-300 group hover:-translate-y-1 theme-card">
+            <div
+              className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+              style={{ backgroundColor: 'var(--accent-light)', color: 'var(--primary)' }}
+            >
+              <Shield className="w-6 h-6" />
+            </div>
+            <h4 className="text-base font-extrabold mb-2 theme-heading">Comprehensive Healthcare</h4>
+            <p className="text-xs leading-relaxed theme-body">
+              Under one roof: Outpatient, Inpatient, Diagnostics, Pharmacy, Emergency, and Cashless Insurance TPA
+              services for a seamless healing journey.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  // ── Appointment Booking CTA Banner ───────────────────────────────────────
+  const renderAppointmentCtaSection = (key?: string) => (
+    <section
+      key={key}
+      id="appointment-cta"
+      className="py-16 md:py-24 text-white relative overflow-hidden theme-cta-banner"
+    >
+      <div
+        className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full blur-3xl pointer-events-none opacity-30"
+        style={{ background: 'var(--primary)' }}
+      />
+      <div
+        className="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-3xl pointer-events-none opacity-25"
+        style={{ background: 'var(--accent)' }}
+      />
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold mb-4 shadow-sm">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Fast & Convenient Consultation</span>
+        </div>
+
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-4">
+          Your Health Is Our Priority
+        </h2>
+
+        <p className="text-white/80 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-8">
+          Book an appointment with our experienced medical professionals today. Our front desk and care 
+          coordinators are ready to assist you with quick scheduling.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a
+            href="tel:+918612345678"
+            className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-sm shadow-xl hover:-translate-y-0.5 transition duration-200 flex items-center justify-center gap-2 theme-btn-primary"
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Call Front Desk: +91 861 234 5678</span>
+          </a>
+
+          <button
+            onClick={() => switchTab('contact')}
+            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/20 backdrop-blur-xs transition duration-200 flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <Mail className="w-4 h-4" />
+            <span>Contact Us</span>
+          </button>
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-white/80">
+          <span className="flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+            No Prepayment Required
+          </span>
+          <span className="flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+            Same-Day Specialist Slots
+          </span>
+          <span className="flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+            Dedicated Patient Assistance
+          </span>
+        </div>
+      </div>
+    </section>
+  );
 
   // Render Patient Health Dashboard if patient is logged in & dashboard is open
   if (isPatientDashboardOpen && currentPatient) {
@@ -539,7 +858,7 @@ export const PublicLandingPage: React.FC = () => {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => scrollToSection(item.id)}
+                    onClick={() => switchTab(item.id)}
                     className={`relative px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer flex items-center justify-center bg-transparent ${
                       isActive ? 'theme-nav-link-active' : 'theme-nav-link'
                     }`}
@@ -784,7 +1103,7 @@ export const PublicLandingPage: React.FC = () => {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => scrollToSection(item.id)}
+                    onClick={() => switchTab(item.id)}
                     className={`w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-between ${
                       isActive ? 'theme-nav-link-active font-bold' : 'theme-nav-link'
                     }`}
@@ -1144,78 +1463,6 @@ export const PublicLandingPage: React.FC = () => {
 
           </div>
         </div>
-
-        {/* ── Heartbeat Scrolling ECG Live Monitor Line (Prominently Visible at Base of Hero) ── */}
-        <div
-          className="relative z-20 w-full mt-10 md:mt-12 border-t pt-3 pb-1 select-none overflow-hidden"
-          style={{ borderColor: 'var(--border)', backgroundColor: 'rgba(var(--primary-rgb, 2, 132, 199), 0.03)' }}
-        >
-          {/* Subtle ECG Millimeter Graph Paper Grid */}
-          <div className="absolute inset-0 hero-ecg-grid opacity-50 pointer-events-none" />
-
-          {/* Telemetry Status Pill & Live Indicator */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex items-center justify-between mb-1.5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-tight border shadow-xs backdrop-blur-md theme-badge">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: 'var(--primary)' }} />
-                <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: 'var(--primary)' }} />
-              </span>
-              <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-heart-beat" />
-              <span className="font-extrabold uppercase tracking-wider" style={{ color: 'var(--primary)' }}>
-                Live ECG Telemetry
-              </span>
-              <span className="hidden sm:inline opacity-40">•</span>
-              <span className="hidden sm:inline">72 BPM (Sinus Rhythm)</span>
-              <span className="hidden md:inline opacity-40">•</span>
-              <span className="hidden md:inline text-emerald-600 font-semibold">SpO₂ 99% Normal</span>
-            </div>
-            <div className="hidden lg:flex items-center gap-3 text-[10px] font-mono theme-muted">
-              <span>LEAD II • 25mm/s • 10mm/mV</span>
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            </div>
-          </div>
-
-          {/* Scrolling Continuous Cardiac Waveform */}
-          <div className="relative h-14 w-full overflow-hidden">
-            <div className="hero-ecg-track items-center">
-              {/* SVG Loop 1 */}
-              <svg
-                className="h-14 w-[1000px] shrink-0"
-                viewBox="0 0 1000 60"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M 0,30 L 35,30 Q 42,22 50,22 Q 58,30 65,30 L 85,30 L 92,35 L 102,5 L 112,56 L 120,24 L 126,30 L 140,30 Q 155,16 170,30 L 250,30 L 285,30 Q 292,22 300,22 Q 308,30 315,30 L 335,30 L 342,35 L 352,5 L 362,56 L 370,24 L 376,30 L 390,30 Q 405,16 420,30 L 500,30 L 535,30 Q 542,22 550,22 Q 558,30 565,30 L 585,30 L 592,35 L 602,5 L 612,56 L 620,24 L 626,30 L 640,30 Q 655,16 670,30 L 750,30 L 785,30 Q 792,22 800,22 Q 808,30 815,30 L 835,30 L 842,35 L 852,5 L 862,56 L 870,24 L 876,30 L 890,30 Q 905,16 920,30 L 1000,30"
-                  stroke="var(--primary)"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ filter: 'drop-shadow(0 0 5px var(--primary))' }}
-                />
-              </svg>
-
-              {/* SVG Loop 2 */}
-              <svg
-                className="h-14 w-[1000px] shrink-0"
-                viewBox="0 0 1000 60"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M 0,30 L 35,30 Q 42,22 50,22 Q 58,30 65,30 L 85,30 L 92,35 L 102,5 L 112,56 L 120,24 L 126,30 L 140,30 Q 155,16 170,30 L 250,30 L 285,30 Q 292,22 300,22 Q 308,30 315,30 L 335,30 L 342,35 L 352,5 L 362,56 L 370,24 L 376,30 L 390,30 Q 405,16 420,30 L 500,30 L 535,30 Q 542,22 550,22 Q 558,30 565,30 L 585,30 L 592,35 L 602,5 L 612,56 L 620,24 L 626,30 L 640,30 Q 655,16 670,30 L 750,30 L 785,30 Q 792,22 800,22 Q 808,30 815,30 L 835,30 L 842,35 L 852,5 L 862,56 L 870,24 L 876,30 L 890,30 Q 905,16 920,30 L 1000,30"
-                  stroke="var(--primary)"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ filter: 'drop-shadow(0 0 5px var(--primary))' }}
-                />
-              </svg>
-            </div>
-            {/* Real-time Telemetry Light Beam Scanner */}
-            <div className="ecg-scanner-beam" />
-          </div>
-        </div>
       </section>
 
       {/* ─── 3. Quick Hospital Highlights (Auto-Scrolling Marquee & Heartbeat Pulse) ─── */}
@@ -1272,7 +1519,7 @@ export const PublicLandingPage: React.FC = () => {
                     24/7 Verified
                   </span>
                   <span className="font-mono text-xs opacity-75 flex items-center gap-1">
-                    <Heart className="w-3 h-3 text-rose-500 animate-pulse" />
+                    <Heart className="w-3.5 h-3.5 text-rose-500 animate-pulse" />
                     Pulse Active
                   </span>
                 </div>
@@ -1287,96 +1534,249 @@ export const PublicLandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            {/* Visual Image Grid */}
-            <div className="lg:col-span-6 relative">
+            {/* Visual Image Slider with Auto-Scrolling Animation (Left Box) */}
+            <div className="lg:col-span-6 relative group select-none">
               <div
-                className="relative rounded-3xl overflow-hidden shadow-2xl border-4"
+                className="relative rounded-3xl overflow-hidden shadow-2xl border-4 h-80 sm:h-[390px] md:h-[420px] lg:h-[430px]"
                 style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}
+                onMouseEnter={() => setIsAboutSlidePaused(true)}
+                onMouseLeave={() => setIsAboutSlidePaused(false)}
               >
-                <img
-                  src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80"
-                  alt="Bhaskar Reddy Hospital Campus"
-                  className="w-full h-80 sm:h-96 object-cover hover:scale-105 transition-transform duration-500"
-                />
+                {/* Auto Slider Progress Bar on Top */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-black/30 z-30 overflow-hidden">
+                  <div
+                    key={currentAboutSlide}
+                    className="h-full hero-slide-timer-bar"
+                    style={{ backgroundColor: 'var(--primary)' }}
+                  />
+                </div>
+
+                {/* Animated Horizontal Sliding Track */}
+                <div
+                  className="flex h-full transition-transform duration-700 ease-out"
+                  style={{ transform: `translateX(-${currentAboutSlide * 100}%)` }}
+                >
+                  {ABOUT_EXCELLENCE_SLIDES.map((slide, index) => (
+                    <div key={index} className="w-full h-full shrink-0 relative overflow-hidden">
+                      <img
+                        src={slide.url}
+                        alt={slide.title}
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                      />
+                      {/* Gradient scrim overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-transparent" />
+
+                      {/* Content Overlay */}
+                      <div className="absolute bottom-6 left-5 right-5 text-white z-20">
+                        <div
+                          className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full mb-2 backdrop-blur-md shadow-xs border border-white/20"
+                          style={{ backgroundColor: 'rgba(var(--primary-rgb, 2, 132, 199), 0.35)', color: '#ffffff' }}
+                        >
+                          <Heart className="w-3 h-3 text-rose-400 fill-rose-400 animate-pulse" />
+                          <span>{slide.tag}</span>
+                        </div>
+                        <h3 className="text-base sm:text-lg font-bold leading-snug drop-shadow-sm text-white">
+                          {slide.title}
+                        </h3>
+                        <p className="text-xs text-slate-200 font-medium leading-tight mt-1 opacity-90 line-clamp-2">
+                          {slide.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Prev / Next Nav Buttons on Hover */}
+                <button
+                  type="button"
+                  onClick={handlePrevAboutSlide}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-black/45 hover:bg-black/75 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer backdrop-blur-xs shadow-md"
+                  aria-label="Previous slide"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextAboutSlide}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-black/45 hover:bg-black/75 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer backdrop-blur-xs shadow-md"
+                  aria-label="Next slide"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                {/* Slide Indicators (Dots) */}
+                <div className="absolute top-3.5 right-3.5 z-30 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/15">
+                  {ABOUT_EXCELLENCE_SLIDES.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentAboutSlide(i)}
+                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                        i === currentAboutSlide
+                          ? 'w-4.5 bg-sky-400'
+                          : 'w-1.5 bg-white/40 hover:bg-white/70'
+                      }`}
+                      style={{
+                        backgroundColor: i === currentAboutSlide ? 'var(--primary)' : undefined,
+                      }}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
+                  ))}
+                </div>
               </div>
 
               {/* Floating Mission Badge */}
-              <div className="absolute -bottom-6 -right-2 sm:right-6 p-5 rounded-2xl shadow-xl max-w-xs theme-card">
-                <div className="flex items-center gap-2 font-bold text-xs mb-1" style={{ color: 'var(--primary)' }}>
-                  <Activity className="w-4 h-4" />
+              <div className="absolute -bottom-5 -right-2 sm:right-5 p-3.5 sm:p-4 rounded-2xl shadow-xl max-w-[260px] sm:max-w-xs theme-card z-30 border backdrop-blur-md">
+                <div className="flex items-center gap-2 font-bold text-xs mb-0.5" style={{ color: 'var(--primary)' }}>
+                  <Activity className="w-3.5 h-3.5 animate-pulse" />
                   <span>Our Healing Mission</span>
                 </div>
-                <p className="text-xs italic theme-body">
+                <p className="text-[11px] sm:text-xs italic theme-body leading-snug">
                   &ldquo;Delivering healthcare with precision, dignity, and accessibility for all.&rdquo;
                 </p>
               </div>
             </div>
 
-            {/* Text & Narrative */}
-            <div className="lg:col-span-6 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold theme-badge">
-                <Hospital className="w-3.5 h-3.5" />
+            {/* Text & Narrative CSS Box (Reduced & Refined Size) */}
+            <div className="lg:col-span-6 p-5 sm:p-6 lg:p-7 rounded-3xl theme-card border shadow-xl relative overflow-hidden space-y-3.5 sm:space-y-4">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold theme-badge">
+                <Hospital className="w-3 h-3" />
                 <span>About Bhaskar Reddy Hospital</span>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-snug theme-heading">
+              <h2 className="text-2xl sm:text-[27px] font-extrabold tracking-tight leading-snug theme-heading">
                 Pioneering Healthcare Excellence with a Heart for Humanity
               </h2>
 
-              <p className="text-sm sm:text-base leading-relaxed theme-body">
+              <p className="text-xs sm:text-[13px] leading-relaxed theme-body">
                 Founded with the commitment to elevate medical care in the region, Bhaskar Reddy Hospital
                 brings together multi-specialty clinical infrastructure, cutting-edge diagnostic technology,
                 and an exceptional team of senior consultants and caring nurses.
               </p>
 
-              <div className="space-y-3 pt-2">
-                <div className="flex items-start gap-3">
-                  <div
-                    className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                    style={{ backgroundColor: 'var(--badge-bg)', color: 'var(--primary)' }}
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
+              {/* ── Heartbeat Scrolling ECG Live Monitor at Center of CSS Box ── */}
+              <div
+                className="relative z-10 w-full rounded-2xl border p-2.5 sm:p-3 select-none overflow-hidden shadow-xs theme-card-alt"
+                style={{
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'rgba(var(--primary-rgb, 2, 132, 199), 0.04)',
+                }}
+              >
+                {/* Subtle ECG Millimeter Graph Paper Grid */}
+                <div className="absolute inset-0 hero-ecg-grid opacity-40 pointer-events-none" />
+
+                {/* Telemetry Status Pill & Live Indicator */}
+                <div className="relative z-10 flex items-center justify-between mb-1.5">
+                  <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-bold tracking-tight border shadow-xs backdrop-blur-md theme-badge">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: 'var(--primary)' }} />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ backgroundColor: 'var(--primary)' }} />
+                    </span>
+                    <Heart className="w-3 h-3 text-rose-500 fill-rose-500 animate-heart-beat" />
+                    <span className="font-extrabold uppercase tracking-wider" style={{ color: 'var(--primary)' }}>
+                      Live ECG Telemetry
+                    </span>
+                    <span className="opacity-40">•</span>
+                    <span>72 BPM</span>
                   </div>
-                  <div>
-                    <h5 className="text-sm font-bold theme-heading">Comprehensive Clinical Disciplines</h5>
-                    <p className="text-xs theme-muted">From interventional cardiology to emergency trauma and advanced orthopedics under one roof.</p>
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono theme-muted">
+                    <span className="hidden sm:inline">LEAD II • Sinus Rhythm</span>
+                    <span className="text-emerald-600 font-semibold font-sans">99% SpO₂</span>
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
+                {/* Scrolling Continuous Cardiac Waveform (Compact h-10) */}
+                <div className="relative h-10 w-full overflow-hidden rounded-lg">
+                  <div className="hero-ecg-track items-center">
+                    {/* SVG Loop 1 */}
+                    <svg
+                      className="h-10 w-[1000px] shrink-0"
+                      viewBox="0 0 1000 60"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M 0,30 L 35,30 Q 42,22 50,22 Q 58,30 65,30 L 85,30 L 92,35 L 102,5 L 112,56 L 120,24 L 126,30 L 140,30 Q 155,16 170,30 L 250,30 L 285,30 Q 292,22 300,22 Q 308,30 315,30 L 335,30 L 342,35 L 352,5 L 362,56 L 370,24 L 376,30 L 390,30 Q 405,16 420,30 L 500,30 L 535,30 Q 542,22 550,22 Q 558,30 565,30 L 585,30 L 592,35 L 602,5 L 612,56 L 620,24 L 626,30 L 640,30 Q 655,16 670,30 L 750,30 L 785,30 Q 792,22 800,22 Q 808,30 815,30 L 835,30 L 842,35 L 852,5 L 862,56 L 870,24 L 876,30 L 890,30 Q 905,16 920,30 L 1000,30"
+                        stroke="var(--primary)"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        style={{ filter: 'drop-shadow(0 0 5px var(--primary))' }}
+                      />
+                    </svg>
+
+                    {/* SVG Loop 2 */}
+                    <svg
+                      className="h-10 w-[1000px] shrink-0"
+                      viewBox="0 0 1000 60"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M 0,30 L 35,30 Q 42,22 50,22 Q 58,30 65,30 L 85,30 L 92,35 L 102,5 L 112,56 L 120,24 L 126,30 L 140,30 Q 155,16 170,30 L 250,30 L 285,30 Q 292,22 300,22 Q 308,30 315,30 L 335,30 L 342,35 L 352,5 L 362,56 L 370,24 L 376,30 L 390,30 Q 405,16 420,30 L 500,30 L 535,30 Q 542,22 550,22 Q 558,30 565,30 L 585,30 L 592,35 L 602,5 L 612,56 L 620,24 L 626,30 L 640,30 Q 655,16 670,30 L 750,30 L 785,30 Q 792,22 800,22 Q 808,30 815,30 L 835,30 L 842,35 L 852,5 L 862,56 L 870,24 L 876,30 L 890,30 Q 905,16 920,30 L 1000,30"
+                        stroke="var(--primary)"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        style={{ filter: 'drop-shadow(0 0 5px var(--primary))' }}
+                      />
+                    </svg>
+                  </div>
+                  {/* Real-time Telemetry Light Beam Scanner */}
+                  <div className="ecg-scanner-beam" />
+                </div>
+              </div>
+
+              {/* Tighter 3 Clinical Feature Points */}
+              <div className="space-y-2 pt-1">
+                <div className="flex items-start gap-2.5">
                   <div
-                    className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                    className="w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
                     style={{ backgroundColor: 'var(--badge-bg)', color: 'var(--primary)' }}
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <CheckCircle2 className="w-3 h-3" />
                   </div>
                   <div>
-                    <h5 className="text-sm font-bold theme-heading">Patient Safety & NABH Compliance</h5>
-                    <p className="text-xs theme-muted">Zero-infection OT protocols, digital medication management, and transparent medical charting.</p>
+                    <h5 className="text-xs sm:text-[13px] font-bold theme-heading leading-snug">Comprehensive Clinical Disciplines</h5>
+                    <p className="text-[11px] sm:text-xs theme-muted leading-tight">Interventional cardiology, emergency trauma, and advanced orthopedics.</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-2.5">
                   <div
-                    className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                    className="w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
                     style={{ backgroundColor: 'var(--badge-bg)', color: 'var(--primary)' }}
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <CheckCircle2 className="w-3 h-3" />
                   </div>
                   <div>
-                    <h5 className="text-sm font-bold theme-heading">Community & Ethical Focus</h5>
-                    <p className="text-xs theme-muted">Committed to providing compassionate care with accessible consultation fee structures.</p>
+                    <h5 className="text-xs sm:text-[13px] font-bold theme-heading leading-snug">Patient Safety & NABH Compliance</h5>
+                    <p className="text-[11px] sm:text-xs theme-muted leading-tight">Zero-infection OT protocols, digital medication management, and transparent charting.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                    style={{ backgroundColor: 'var(--badge-bg)', color: 'var(--primary)' }}
+                  >
+                    <CheckCircle2 className="w-3 h-3" />
+                  </div>
+                  <div>
+                    <h5 className="text-xs sm:text-[13px] font-bold theme-heading leading-snug">Community & Ethical Focus</h5>
+                    <p className="text-[11px] sm:text-xs theme-muted leading-tight">Compassionate care with accessible, transparent consultation fee structures.</p>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-3">
+              <div className="pt-1.5">
                 <button
                   onClick={() => scrollToSection('facilities')}
-                  className="px-6 py-3 rounded-xl font-bold text-xs sm:text-sm shadow-md transition duration-200 flex items-center gap-2 cursor-pointer theme-btn-primary"
+                  className="px-5 py-2.5 rounded-xl font-bold text-xs shadow-sm transition duration-200 flex items-center gap-2 cursor-pointer theme-btn-primary"
                 >
                   <span>Explore Facilities</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
