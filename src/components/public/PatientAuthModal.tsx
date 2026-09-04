@@ -18,7 +18,6 @@ import {
   Activity,
   Send,
   RotateCw,
-  Sparkles,
 } from 'lucide-react';
 
 interface PatientAuthModalProps {
@@ -336,23 +335,30 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden relative animate-in zoom-in-95 duration-200"
+          className="w-full max-w-lg rounded-3xl overflow-hidden relative animate-in zoom-in-95 duration-200 theme-modal shadow-2xl"
+          style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
         >
           {/* Header Banner */}
-          <div className="bg-gradient-to-r from-cyan-700 via-cyan-800 to-blue-900 px-6 py-5 text-white relative">
+          <div
+            className="px-6 py-5 text-white relative theme-cta-banner"
+            style={{ background: 'var(--cta-bg)' }}
+          >
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition"
+              className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="flex items-center gap-2.5 mb-1">
-              <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center">
-                <Activity className="w-4 h-4 text-cyan-300" />
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center border"
+                style={{ backgroundColor: 'var(--badge-bg)', borderColor: 'var(--badge-border)' }}
+              >
+                <Activity className="w-4 h-4" style={{ color: 'var(--primary)' }} />
               </div>
-              <span className="text-xs font-extrabold uppercase tracking-widest text-cyan-200">
+              <span className="text-xs font-extrabold uppercase tracking-widest text-white/90">
                 Bhaskar Reddy Hospital
               </span>
             </div>
@@ -362,7 +368,7 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
               {mode === 'register' && 'New Patient Registration'}
               {mode === 'registered_success' && 'Registration Complete'}
             </h2>
-            <p className="text-xs text-cyan-100/80 mt-0.5">
+            <p className="text-xs text-white/80 mt-0.5">
               {mode === 'login' && 'Enter your Aadhaar & mobile number to access your EHR & reports.'}
               {mode === 'register' && 'Create your permanent digital hospital record and UHID.'}
               {mode === 'registered_success' && 'Your permanent UHID has been generated successfully.'}
@@ -370,7 +376,13 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
 
             {/* Mode Switcher Tabs */}
             {mode !== 'registered_success' && (
-              <div className="mt-4 flex bg-cyan-950/50 p-1 rounded-xl border border-cyan-700/50">
+              <div
+                className="mt-4 flex p-1 rounded-xl border"
+                style={{
+                  backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                  borderColor: 'rgba(255, 255, 255, 0.15)',
+                }}
+              >
                 <button
                   type="button"
                   id="auth-tab-login"
@@ -379,11 +391,16 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                     setErrorMessage(null);
                     setExistingPatientPrompt(null);
                   }}
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer ${
                     mode === 'login'
-                      ? 'bg-white text-cyan-950 shadow-sm'
-                      : 'text-cyan-200 hover:text-white'
+                      ? 'shadow-sm'
+                      : 'hover:text-white opacity-80'
                   }`}
+                  style={
+                    mode === 'login'
+                      ? { backgroundColor: 'var(--surface)', color: 'var(--text-primary)' }
+                      : { color: '#ffffff' }
+                  }
                 >
                   Existing Patient Login
                 </button>
@@ -395,11 +412,16 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                     setErrorMessage(null);
                     setExistingPatientPrompt(null);
                   }}
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer ${
                     mode === 'register'
-                      ? 'bg-white text-cyan-950 shadow-sm'
-                      : 'text-cyan-200 hover:text-white'
+                      ? 'shadow-sm'
+                      : 'hover:text-white opacity-80'
                   }`}
+                  style={
+                    mode === 'register'
+                      ? { backgroundColor: 'var(--surface)', color: 'var(--text-primary)' }
+                      : { color: '#ffffff' }
+                  }
                 >
                   New Patient Registration
                 </button>
@@ -408,7 +430,7 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
           </div>
 
           {/* Modal Body */}
-          <div className="p-6 max-h-[75vh] overflow-y-auto">
+          <div className="p-6 max-h-[75vh] overflow-y-auto" style={{ backgroundColor: 'var(--surface)' }}>
             {/* Error Message Alert */}
             {errorMessage && (
               <div className="mb-4 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5">
@@ -427,7 +449,7 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                         setExistingPatientPrompt(null);
                         setErrorMessage(null);
                       }}
-                      className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-cyan-700 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-300 hover:bg-cyan-100 transition"
+                      className="mt-2 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-md border transition cursor-pointer theme-btn-secondary"
                     >
                       <span>[ Go to Patient Login ]</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -444,76 +466,76 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
               <form onSubmit={handleLoginSubmit} className="space-y-4">
                 {/* Full Name */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold mb-1 theme-heading">
                     Full Name (as per Hospital / Aadhaar record) *
                   </label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <User className="w-4 h-4 absolute left-3 top-3 theme-muted" />
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Kavitha Venkatram"
+                      placeholder="Enter full name"
                       value={loginName}
                       onChange={(e) => setLoginName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition"
+                      className="w-full pl-9 pr-3 py-2 text-sm rounded-xl outline-none transition theme-input"
                     />
                   </div>
                 </div>
 
                 {/* Aadhaar Number */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold mb-1 theme-heading">
                     12-Digit Aadhaar Number *
                   </label>
                   <div className="relative">
-                    <Shield className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <Shield className="w-4 h-4 absolute left-3 top-3 theme-muted" />
                     <input
                       type="text"
                       maxLength={14}
                       required
-                      placeholder="5421 8890 1234"
+                      placeholder="Enter 12-digit Aadhaar number"
                       value={loginAadhaar}
                       onChange={(e) => setLoginAadhaar(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-sm font-mono border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition"
+                      className="w-full pl-9 pr-3 py-2 text-sm font-mono rounded-xl outline-none transition theme-input"
                     />
                   </div>
-                  <span className="text-[10px] text-slate-400 mt-0.5 block">
-                    Example demo registered Aadhaar: <strong>5421 8890 1234</strong>
+                  <span className="text-[10px] mt-0.5 block theme-muted">
+                    Demo registered Aadhaar: <strong className="theme-heading">5421 8890 1234</strong>
                   </span>
                 </div>
 
                 {/* Mobile Number */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold mb-1 theme-heading">
                     Registered Mobile Number *
                   </label>
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <Phone className="w-4 h-4 absolute left-3 top-3 theme-muted" />
                     <input
                       type="tel"
                       maxLength={10}
                       required
-                      placeholder="9849012345"
+                      placeholder="Enter 10-digit mobile number"
                       value={loginMobile}
                       onChange={(e) => setLoginMobile(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-sm font-mono border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition"
+                      className="w-full pl-9 pr-3 py-2 text-sm font-mono rounded-xl outline-none transition theme-input"
                     />
                   </div>
-                  <span className="text-[10px] text-slate-400 mt-0.5 block">
-                    Example demo registered mobile: <strong>9849012345</strong>
+                  <span className="text-[10px] mt-0.5 block theme-muted">
+                    Demo registered mobile: <strong className="theme-heading">9849012345</strong>
                   </span>
                 </div>
 
                 {/* OTP Field with Send OTP Button */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-bold text-slate-700">
+                    <label className="text-xs font-bold theme-heading">
                       One-Time Password (OTP) *
                     </label>
                     <button
                       type="button"
                       onClick={() => handleSendOtp('login')}
-                      className="text-xs font-bold text-cyan-700 hover:text-cyan-800 flex items-center gap-1 hover:underline"
+                      className="text-xs font-bold flex items-center gap-1 hover:underline cursor-pointer theme-primary-text"
                     >
                       <Send className="w-3 h-3" />
                       <span>{otpSentAtLeastOnce ? 'Resend OTP' : 'Send OTP'}</span>
@@ -521,7 +543,7 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                   </div>
 
                   <div className="relative">
-                    <KeyRound className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <KeyRound className="w-4 h-4 absolute left-3 top-3 theme-muted" />
                     <input
                       type="text"
                       maxLength={6}
@@ -529,13 +551,13 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                       placeholder="Enter 6-digit OTP"
                       value={loginOtp}
                       onChange={(e) => setLoginOtp(e.target.value)}
-                      className="w-full pl-9 pr-24 py-2 text-sm font-mono tracking-widest border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition"
+                      className="w-full pl-9 pr-24 py-2 text-sm font-mono tracking-widest rounded-xl outline-none transition theme-input"
                     />
                     <button
                       type="button"
                       id="login-send-otp-btn"
                       onClick={() => handleSendOtp('login')}
-                      className="absolute right-1.5 top-1.5 px-3 py-1.5 rounded-lg bg-cyan-50 hover:bg-cyan-100 text-cyan-700 text-xs font-bold border border-cyan-200 transition"
+                      className="absolute right-1.5 top-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border transition cursor-pointer theme-btn-secondary"
                     >
                       {otpSentAtLeastOnce ? 'Resend' : 'Send OTP'}
                     </button>
@@ -555,7 +577,7 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                     type="submit"
                     id="login-submit-btn"
                     disabled={loading}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-sm shadow-md shadow-cyan-600/25 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-xl font-bold text-sm shadow-md transition disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer theme-btn-primary"
                   >
                     {loading ? (
                       <RotateCw className="w-4 h-4 animate-spin" />
@@ -569,8 +591,8 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                 </div>
 
                 {/* Register Here Link */}
-                <div className="text-center pt-2 border-t border-slate-100">
-                  <span className="text-xs text-slate-500">New patient? </span>
+                <div className="text-center pt-2 border-t" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-xs theme-muted">New patient? </span>
                   <button
                     type="button"
                     onClick={() => {
@@ -578,7 +600,7 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                       setErrorMessage(null);
                       setExistingPatientPrompt(null);
                     }}
-                    className="text-xs font-bold text-cyan-700 hover:text-cyan-800 hover:underline"
+                    className="text-xs font-bold hover:underline cursor-pointer theme-primary-text"
                   >
                     Register here
                   </button>
@@ -593,18 +615,18 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
               <form onSubmit={handleRegisterSubmit} className="space-y-4">
                 {/* Full Name */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold mb-1 theme-heading">
                     Full Name *
                   </label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <User className="w-4 h-4 absolute left-3 top-3 theme-muted" />
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Ramesh Kumar"
+                      placeholder="Enter full name"
                       value={regName}
                       onChange={(e) => setRegName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition"
+                      className="w-full pl-9 pr-3 py-2 text-sm rounded-xl outline-none transition theme-input"
                     />
                   </div>
                 </div>
@@ -612,19 +634,19 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                 {/* Mobile Number & DOB in 2-col */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold mb-1 theme-heading">
                       Mobile Number *
                     </label>
                     <div className="relative">
-                      <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                      <Phone className="w-4 h-4 absolute left-3 top-3 theme-muted" />
                       <input
                         type="tel"
                         maxLength={10}
                         required
-                        placeholder="10-digit mobile"
+                        placeholder="Enter 10-digit mobile number"
                         value={regMobile}
                         onChange={(e) => setRegMobile(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 text-sm font-mono border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none transition"
+                        className="w-full pl-9 pr-3 py-2 text-sm font-mono rounded-xl outline-none transition theme-input"
                       />
                     </div>
                   </div>
@@ -632,23 +654,23 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                   {/* DOB with Automatic Age Calculation */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-bold text-slate-700">
+                      <label className="text-xs font-bold theme-heading">
                         Date of Birth *
                       </label>
                       {calculatedAge !== null && (
-                        <span className="text-[11px] font-bold text-cyan-700 bg-cyan-50 px-2 py-0.5 rounded-full border border-cyan-200">
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full border theme-badge">
                           Age: {calculatedAge} years
                         </span>
                       )}
                     </div>
                     <div className="relative">
-                      <Calendar className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+                      <Calendar className="w-4 h-4 absolute left-3 top-3 pointer-events-none theme-muted" />
                       <input
                         type="date"
                         required
                         value={regDob}
                         onChange={(e) => setRegDob(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none transition"
+                        className="w-full pl-9 pr-3 py-2 text-sm rounded-xl outline-none transition theme-input"
                       />
                     </div>
                   </div>
@@ -656,19 +678,19 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
 
                 {/* Aadhaar Number */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold mb-1 theme-heading">
                     12-Digit Aadhaar Number *
                   </label>
                   <div className="relative">
-                    <Shield className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <Shield className="w-4 h-4 absolute left-3 top-3 theme-muted" />
                     <input
                       type="text"
                       maxLength={14}
                       required
-                      placeholder="XXXX XXXX XXXX"
+                      placeholder="Enter 12-digit Aadhaar number"
                       value={regAadhaar}
                       onChange={(e) => setRegAadhaar(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-sm font-mono border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none transition"
+                      className="w-full pl-9 pr-3 py-2 text-sm font-mono rounded-xl outline-none transition theme-input"
                     />
                   </div>
                 </div>
@@ -676,31 +698,31 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                 {/* Email & Blood Group */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Gmail / Email (Optional)
+                    <label className="block text-xs font-bold mb-1 theme-heading">
+                      Email Address (Optional)
                     </label>
                     <div className="relative">
-                      <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                      <Mail className="w-4 h-4 absolute left-3 top-3 theme-muted" />
                       <input
                         type="email"
-                        placeholder="patient@gmail.com"
+                        placeholder="Enter email address"
                         value={regEmail}
                         onChange={(e) => setRegEmail(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none transition"
+                        className="w-full pl-9 pr-3 py-2 text-sm rounded-xl outline-none transition theme-input"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold mb-1 theme-heading">
                       Blood Group
                     </label>
                     <div className="relative">
-                      <Droplet className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+                      <Droplet className="w-4 h-4 absolute left-3 top-3 pointer-events-none theme-muted" />
                       <select
                         value={regBloodGroup}
                         onChange={(e) => setRegBloodGroup(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none transition bg-white"
+                        className="w-full pl-9 pr-3 py-2 text-sm rounded-xl outline-none transition theme-input cursor-pointer"
                       >
                         <option value="Unknown / N/A">Unknown / N/A</option>
                         <option value="A+">A+</option>
@@ -718,18 +740,18 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
 
                 {/* Residential Address */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold mb-1 theme-heading">
                     Residential Address *
                   </label>
                   <div className="relative">
-                    <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <MapPin className="w-4 h-4 absolute left-3 top-3 theme-muted" />
                     <input
                       type="text"
                       required
-                      placeholder="House/Flat, Street, Area, City, Andhra Pradesh"
+                      placeholder="Enter residential address"
                       value={regAddress}
                       onChange={(e) => setRegAddress(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none transition"
+                      className="w-full pl-9 pr-3 py-2 text-sm rounded-xl outline-none transition theme-input"
                     />
                   </div>
                 </div>
@@ -737,13 +759,13 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                 {/* Registration OTP Field */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-bold text-slate-700">
+                    <label className="text-xs font-bold theme-heading">
                       OTP Verification *
                     </label>
                     <button
                       type="button"
                       onClick={() => handleSendOtp('register')}
-                      className="text-xs font-bold text-cyan-700 hover:text-cyan-800 flex items-center gap-1 hover:underline"
+                      className="text-xs font-bold flex items-center gap-1 hover:underline cursor-pointer theme-primary-text"
                     >
                       <Send className="w-3 h-3" />
                       <span>{otpSentAtLeastOnce ? 'Resend OTP' : 'Send OTP'}</span>
@@ -751,7 +773,7 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                   </div>
 
                   <div className="relative">
-                    <KeyRound className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <KeyRound className="w-4 h-4 absolute left-3 top-3 theme-muted" />
                     <input
                       type="text"
                       maxLength={6}
@@ -759,13 +781,13 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                       placeholder="Enter 6-digit OTP"
                       value={regOtp}
                       onChange={(e) => setRegOtp(e.target.value)}
-                      className="w-full pl-9 pr-24 py-2 text-sm font-mono tracking-widest border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none transition"
+                      className="w-full pl-9 pr-24 py-2 text-sm font-mono tracking-widest rounded-xl outline-none transition theme-input"
                     />
                     <button
                       type="button"
                       id="reg-send-otp-btn"
                       onClick={() => handleSendOtp('register')}
-                      className="absolute right-1.5 top-1.5 px-3 py-1.5 rounded-lg bg-cyan-50 hover:bg-cyan-100 text-cyan-700 text-xs font-bold border border-cyan-200 transition"
+                      className="absolute right-1.5 top-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border transition cursor-pointer theme-btn-secondary"
                     >
                       {otpSentAtLeastOnce ? 'Resend' : 'Send OTP'}
                     </button>
@@ -785,7 +807,7 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                     type="submit"
                     id="reg-submit-btn"
                     disabled={loading}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-sm shadow-md shadow-emerald-600/25 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-xl font-bold text-sm shadow-md transition disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer theme-btn-primary"
                   >
                     {loading ? (
                       <RotateCw className="w-4 h-4 animate-spin" />
@@ -799,8 +821,8 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                 </div>
 
                 {/* Already registered link */}
-                <div className="text-center pt-2 border-t border-slate-100">
-                  <span className="text-xs text-slate-500">Already have a hospital UHID? </span>
+                <div className="text-center pt-2 border-t" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-xs theme-muted">Already have a hospital UHID? </span>
                   <button
                     type="button"
                     onClick={() => {
@@ -808,7 +830,7 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                       setErrorMessage(null);
                       setExistingPatientPrompt(null);
                     }}
-                    className="text-xs font-bold text-cyan-700 hover:text-cyan-800 hover:underline"
+                    className="text-xs font-bold hover:underline cursor-pointer theme-primary-text"
                   >
                     Go to Login
                   </button>
@@ -821,31 +843,37 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
             ────────────────────────────────────────────────────────────────── */}
             {mode === 'registered_success' && registeredPatient && (
               <div className="text-center py-4 space-y-4">
-                <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center shadow-lg shadow-emerald-600/10">
+                <div
+                  className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center shadow-lg border"
+                  style={{ backgroundColor: 'var(--badge-bg)', borderColor: 'var(--badge-border)', color: 'var(--primary)' }}
+                >
                   <CheckCircle2 className="w-9 h-9" />
                 </div>
 
                 <div>
-                  <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                  <span className="text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full border theme-badge">
                     Registration Successful
                   </span>
-                  <h3 className="text-xl font-black text-slate-900 mt-2">
+                  <h3 className="text-xl font-black mt-2 theme-heading">
                     Welcome, {registeredPatient.name}!
                   </h3>
-                  <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                  <p className="text-xs mt-1 max-w-sm mx-auto theme-muted">
                     Your digital hospital health file has been initialized under Bhaskar Reddy Hospital network.
                   </p>
                 </div>
 
                 {/* Generated UHID Highlight Box */}
-                <div className="p-4 rounded-2xl bg-slate-900 text-white border border-cyan-500/30 max-w-sm mx-auto shadow-xl">
-                  <div className="text-[11px] font-bold text-cyan-300 uppercase tracking-widest mb-1">
+                <div
+                  className="p-4 rounded-2xl max-w-sm mx-auto shadow-xl border"
+                  style={{ backgroundColor: 'var(--section-alt-bg)', borderColor: 'var(--border)' }}
+                >
+                  <div className="text-[11px] font-bold uppercase tracking-widest mb-1 theme-primary-text">
                     Your Permanent Hospital UHID
                   </div>
-                  <div className="text-3xl font-black font-mono tracking-wider text-white">
+                  <div className="text-3xl font-black font-mono tracking-wider theme-heading">
                     {registeredPatient.uhid}
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-1">
+                  <p className="text-[11px] mt-1 theme-muted">
                     Save this UHID for all future appointments, OPD visits, and lab report downloads.
                   </p>
                 </div>
@@ -858,7 +886,7 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                       onSuccess(registeredPatient);
                       onClose();
                     }}
-                    className="w-full max-w-sm py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-600/30 transition flex items-center justify-center gap-2 mx-auto"
+                    className="w-full max-w-sm py-3 rounded-xl font-bold text-sm shadow-lg transition flex items-center justify-center gap-2 mx-auto cursor-pointer theme-btn-primary"
                   >
                     <span>Continue to Patient Dashboard</span>
                     <ArrowRight className="w-4 h-4" />
@@ -873,17 +901,27 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
       {/* ─── FLOATING SIMULATED OTP NOTIFICATION (BOTTOM-RIGHT CORNER) ───────── */}
       {/* Visible for exactly 5 seconds as specified in requirement 2 */}
       {otpToastVisible && generatedOtp && (
-        <div className="fixed bottom-5 right-5 z-[100] max-w-sm w-full bg-slate-950 text-white p-4 rounded-2xl shadow-2xl border border-cyan-500/60 animate-in slide-in-from-bottom-5 duration-200">
+        <div
+          className="fixed bottom-5 right-5 z-[100] max-w-sm w-full p-4 rounded-2xl shadow-2xl border animate-in slide-in-from-bottom-5 duration-200"
+          style={{
+            backgroundColor: 'var(--card-background)',
+            borderColor: 'var(--primary)',
+            color: 'var(--text-primary)',
+          }}
+        >
           <div className="flex items-start justify-between gap-3 mb-2">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400">
-                <Shield className="w-4 h-4" />
+              <div
+                className="w-7 h-7 rounded-lg border flex items-center justify-center"
+                style={{ backgroundColor: 'var(--badge-bg)', borderColor: 'var(--badge-border)' }}
+              >
+                <Shield className="w-4 h-4" style={{ color: 'var(--primary)' }} />
               </div>
               <div>
-                <div className="text-xs font-extrabold text-white">
+                <div className="text-xs font-extrabold theme-heading">
                   Bhaskar Reddy Hospital
                 </div>
-                <div className="text-[10px] text-cyan-400 font-medium">
+                <div className="text-[10px] font-medium theme-primary-text">
                   ABDM SMS Gateway Telemetry
                 </div>
               </div>
@@ -896,16 +934,19 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
             </div>
           </div>
 
-          <div className="bg-slate-900/90 rounded-xl p-3 border border-slate-800 my-2 text-center">
-            <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">
+          <div
+            className="rounded-xl p-3 border my-2 text-center"
+            style={{ backgroundColor: 'var(--section-alt-bg)', borderColor: 'var(--border)' }}
+          >
+            <div className="text-[10px] uppercase tracking-wider font-semibold mb-1 theme-muted">
               Your 6-Digit Verification OTP
             </div>
-            <div className="text-2xl font-black font-mono tracking-widest text-cyan-400">
+            <div className="text-2xl font-black font-mono tracking-widest theme-primary-text">
               {generatedOtp}
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-2 pt-1 text-[10px] text-slate-400">
+          <div className="flex items-center justify-between gap-2 pt-1 text-[10px] theme-muted">
             <span>* Simulated OTP for frontend demonstration.</span>
             <button
               type="button"
@@ -914,7 +955,7 @@ export const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
                 if (mode === 'login') setLoginOtp(generatedOtp);
                 if (mode === 'register') setRegOtp(generatedOtp);
               }}
-              className="text-cyan-400 font-bold hover:underline cursor-pointer"
+              className="font-bold hover:underline cursor-pointer theme-primary-text"
             >
               [ Auto-fill OTP ]
             </button>
