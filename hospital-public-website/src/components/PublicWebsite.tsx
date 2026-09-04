@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import { useWebsite } from '../context/WebsiteContext';
+import React, { useMemo, useState } from "react";
 import {
-  Activity,
-  Siren,
-  Search,
-  Calendar,
-  ShieldCheck,
-  Star,
-  CheckCircle2,
   ArrowRight,
-  Sparkles,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  Clock3,
+  HeartPulse,
+  MapPin,
+  Menu,
+  PhoneCall,
+  Search,
+  ShieldCheck,
+  Stethoscope,
   X,
   Quote,
   MapPin,
@@ -36,7 +38,6 @@ export const PublicWebsite: React.FC = () => {
   const {
     doctors,
     departments,
-    healthPackages,
     blogPosts,
     galleryItems,
     testimonials,
@@ -121,37 +122,39 @@ export const PublicWebsite: React.FC = () => {
     if (!patientName || !patientPhone) return;
 
     addAppointment({
-      patientName,
-      patientPhone,
-      patientAge: Number(patientAge) || 35,
-      patientGender,
-      doctorName: bookingDoctor.name,
-      departmentName: bookingDoctor.departmentName,
-      appointmentDate: '2026-07-25',
-      appointmentTime: bookingTime,
-      model: bookingModel,
-      fee: bookingModel === 'Premium Slot' ? bookingDoctor.premiumFee : bookingDoctor.consultationFee,
+      patientName: booking.name,
+      patientPhone: booking.phone,
+      patientAge: 35,
+      patientGender: "Not specified",
+      doctorName: selectedDoctor.name,
+      departmentName: selectedDoctor.departmentName,
+      appointmentDate: booking.date || "2026-07-25",
+      appointmentTime: booking.time,
+      model: "Normal Queue",
+      fee: selectedDoctor.consultationFee,
     });
-
-    setBookingStep(4);
+    setBookingOpen(false);
+    setBooking({ name: "", phone: "", date: "", time: "10:00 AM" });
   };
-
-  const handleContactSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!contactName || !contactPhone) return;
-
+  const submitContact = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!contact.name || !contact.phone) return;
     addContactInquiry({
-      name: contactName,
-      phone: contactPhone,
-      email: `${contactName.toLowerCase().replace(/\s+/g, '')}@gmail.com`,
-      subject: 'Public Website Inquiry',
-      message: contactMessage || 'Requested call back for general consultation.',
+      name: contact.name,
+      phone: contact.phone,
+      email: "",
+      subject: "Website callback request",
+      message: contact.message || "Please call me back.",
     });
-
-    setContactName('');
-    setContactPhone('');
-    setContactMessage('');
+    setContact({ name: "", phone: "", message: "" });
   };
+  const navItems: { id: Section; label: string }[] = [
+    { id: "home", label: "Home" },
+    { id: "doctors", label: "Find a doctor" },
+    { id: "departments", label: "Our care" },
+    { id: "wellness", label: "Wellness journal" },
+    { id: "contact", label: "Visit us" },
+  ];
 
   const handleCareerSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -962,7 +965,7 @@ export const PublicWebsite: React.FC = () => {
                   >
                     Book Consultation
                   </button>
-                </div>
+                </article>
               ))}
             </div>
           </div>
@@ -1785,11 +1788,28 @@ export const PublicWebsite: React.FC = () => {
                   onClick={() => setIsBookingModalOpen(false)}
                   className="px-6 py-2.5 rounded-xl bg-blue-600 text-white font-bold"
                 >
-                  Done & Close
-                </button>
-              </div>
-            )}
-          </div>
+                  <option>10:00 AM</option>
+                  <option>12:30 PM</option>
+                  <option>03:00 PM</option>
+                  <option>05:30 PM</option>
+                </select>
+              </label>
+            </div>
+            <div className="chosen-doctor">
+              <img src={selectedDoctor.image} alt="" />
+              <span>
+                <small>Requesting an appointment with</small>
+                <strong>{selectedDoctor.name}</strong>
+              </span>
+              <ChevronDown size={16} />
+            </div>
+            <button className="button button-primary full-button">
+              Request appointment <ArrowRight size={17} />
+            </button>
+            <p className="modal-footnote">
+              <Clock3 size={14} /> Our team responds within one working hour.
+            </p>
+          </form>
         </div>
       )}
 
@@ -1841,3 +1861,21 @@ export const PublicWebsite: React.FC = () => {
     </div>
   );
 };
+
+const Page: React.FC<{
+  title: string;
+  intro: string;
+  kicker: string;
+  children: React.ReactNode;
+}> = ({ title, intro, kicker, children }) => (
+  <main className="inner-page">
+    <section className="page-heading">
+      <p className="eyebrow">
+        <span className="eyebrow-dot" /> {kicker}
+      </p>
+      <h1>{title}</h1>
+      <p>{intro}</p>
+    </section>
+    <section className="page-content">{children}</section>
+  </main>
+);
